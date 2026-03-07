@@ -7,22 +7,28 @@ WORKDIR /app
 # Enable bytecode compilation
 ENV UV_COMPILE_BYTECODE=1
 
-# Install build dependencies
+# Install build dependencies for:
+# - lxml: libxml2-dev, libxslt-dev
+# - cffi/argon2: libffi-dev
+# - cryptography: libssl-dev
+# - Pillow/reportlab: zlib1g-dev, libjpeg62-turbo-dev, libfreetype6-dev, libwebp-dev
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    pkg-config \
     libffi-dev \
     libssl-dev \
     libxml2-dev \
     libxslt-dev \
-    pkg-config \
+    zlib1g-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    libwebp-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy only the files needed for installation to cache them
 COPY pyproject.toml uv.lock ./
 
 # Install the project's dependencies using the lockfile and settings
-# --no-dev: Skip development dependencies
-# --no-install-project: Don't install the project itself yet
 RUN uv sync --frozen --no-dev --no-install-project
 
 # Stage 2: Final runtime stage
@@ -35,6 +41,18 @@ ENV PYTHONUNBUFFERED=1 \
 
 # Set the working directory
 WORKDIR /app
+
+# Install runtime libraries needed by the compiled extensions
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libxml2 \
+    libxslt1.1 \
+    libffi8 \
+    libssl3 \
+    zlib1g \
+    libjpeg62-turbo \
+    libfreetype6 \
+    libwebp7 \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy the environment from the builder
 COPY --from=builder /app/.venv /app/.venv
