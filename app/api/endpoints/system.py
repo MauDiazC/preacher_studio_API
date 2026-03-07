@@ -3,9 +3,11 @@ import time
 
 router = APIRouter(tags=["System"])
 
+
 @router.get("/ping")
 async def ping():
     return {"ping": "pong", "timestamp": time.time()}
+
 
 @router.get("/health")
 async def health_check():

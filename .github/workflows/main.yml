@@ -1,0 +1,42 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.14'
+
+    - name: Install uv
+      run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+    - name: Install dependencies
+      run: uv sync --dev
+
+    - name: Lint with Ruff
+      run: uv run ruff check .
+
+    - name: Check formatting with Ruff
+      run: uv run ruff format --check .
+
+    - name: Type check with Mypy
+      run: uv run mypy . --ignore-missing-imports
+
+    - name: Run tests with Pytest
+      env:
+        DYNACONF_SUPABASE_URL: http://dummy
+        DYNACONF_SUPABASE_KEY: dummy
+        DYNACONF_GEMINI_API_KEY: dummy
+        DYNACONF_SECRET_KEY: dummy
+        DYNACONF_ACCESS_TOKEN_EXPIRE_MINUTES: 30
+      run: uv run pytest --cov=app tests/
