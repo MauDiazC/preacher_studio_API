@@ -10,6 +10,8 @@ ENV UV_COMPILE_BYTECODE=1
 # Install build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    libxml2-dev \
+    libxslt-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy only the files needed for installation to cache them
