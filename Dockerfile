@@ -1,10 +1,16 @@
 # Stage 1: Build stage
 FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim AS builder
+
 # Set the working directory
 WORKDIR /app
 
 # Enable bytecode compilation
 ENV UV_COMPILE_BYTECODE=1
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy only the files needed for installation to cache them
 COPY pyproject.toml uv.lock ./
