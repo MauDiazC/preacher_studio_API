@@ -29,7 +29,7 @@ En la pestaña **Variables** del servicio de backend, configura lo siguiente:
 
 | Variable | Descripción |
 | :--- | :--- |
-| `ENV_FOR_DYNACONF` | `production` |
+| `ENV_FOR_DYNACONF` | `production` | 
 | `SUPABASE_URL` | URL de tu proyecto Supabase |
 | `SUPABASE_KEY` | Clave API de Supabase (Service Role recomendada) |
 | `GEMINI_API_KEY` | Tu API Key de Google Gemini |
