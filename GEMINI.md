@@ -27,7 +27,7 @@ A specialized homiletic mentoring platform designed to help pastors and preacher
 ## Building and Running
 
 ### Prerequisites
-- Python 3.14+ (as per `pyproject.toml`)
+- Python 3.13+ (as per `pyproject.toml`)
 - [uv](https://github.com/astral-sh/uv) package manager
 
 ### Installation

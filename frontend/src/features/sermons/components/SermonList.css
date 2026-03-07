@@ -1,0 +1,48 @@
+.sermon-list-container {
+  padding: var(--spacing-lg) 0;
+}
+
+.sermon-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-xl);
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: var(--spacing-md);
+}
+
+.sermon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.sermon-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--border-color);
+}
+
+.sermon-date {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.sermon-edit-link {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.875rem;
+  transition: var(--transition-fast);
+}
+
+.sermon-edit-link:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+}
