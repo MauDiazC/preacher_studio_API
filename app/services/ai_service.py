@@ -11,11 +11,9 @@ logger = logging.getLogger("ai_service")
 
 class AISermonService:
     def __init__(self):
-        # Forzamos v1 en el cliente para evitar el error de v1beta del SDK
-        self.client = genai.Client(
-            api_key=settings.GEMINI_API_KEY,
-            http_options={'api_version': 'v1'}
-        )
+        # El SDK google-genai maneja la versión v1beta por defecto para modelos flash
+        # No forzamos versión para dejar que el SDK decida la mejor ruta
+        self.client = genai.Client(api_key=settings.GEMINI_API_KEY)
         self.model_id = "gemini-1.5-flash"
         self.system_instruction = "Eres un mentor homilético. Generas estructuras en JSON con 'suggested_outline' y 'related_verses'."
 
@@ -36,38 +34,45 @@ class AISermonService:
         {self.system_instruction}
         Estilo: {style_instruction}
         
-        Título: {title}
+        Título del sermón: {title}
         Contenido: {content}
         
-        Genera un objeto JSON con esta estructura:
+        RESPONDE ÚNICAMENTE CON UN OBJETO JSON VÁLIDO.
+        Formato:
         {{
-            "suggested_outline": "...",
-            "related_verses": ["...", "..."]
+            "suggested_outline": "texto aqui",
+            "related_verses": ["cita 1", "cita 2"]
         }}
         """
 
         try:
+            # Configuración mínima recomendada por Google para el nuevo SDK
             response = self.client.models.generate_content(
                 model=self.model_id,
-                contents=prompt
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    temperature=0.7
+                )
             )
 
             latency = time.perf_counter() - start_time
-            logger.info(f"AI success in {latency:.2f}s")
+            logger.info(f"AI Success: {latency:.2f}s")
             
-            text_res = response.text.strip()
-            if "```" in text_res:
-                text_res = text_res.split("```")[1]
-                if text_res.startswith("json"):
-                    text_res = text_res[4:]
+            # Limpieza de respuesta (quitar ```json si existe)
+            text = response.text.strip()
+            if "```" in text:
+                text = text.split("```")[1]
+                if text.startswith("json"):
+                    text = text[4:]
             
-            return AISuggestionResponse.model_validate_json(text_res.strip())
+            return AISuggestionResponse.model_validate_json(text.strip())
 
         except Exception as e:
             logger.error(f"AI Error: {str(e)}")
+            # Fallback para no dejar la UI vacía
             return AISuggestionResponse(
-                suggested_outline=f"Error: {str(e)}. Intente de nuevo.",
-                related_verses=["Error técnico"]
+                suggested_outline=f"Hubo un problema al conectar con Gemini: {str(e)}. Por favor, intente de nuevo.",
+                related_verses=["Error de conexión"]
             )
 
 
