@@ -11,10 +11,11 @@ logger = logging.getLogger("ai_service")
 
 class AISermonService:
     def __init__(self):
-        # Usamos la configuración más básica para evitar errores de versión
+        # Inicialización limpia. El SDK elegirá la mejor versión de la API automáticamente.
         self.client = genai.Client(api_key=settings.GEMINI_API_KEY)
-        # Probamos con gemini-1.5-flash-002 que es más específico y suele estar en v1
-        self.model_id = "gemini-1.5-flash"
+        # Cambiamos al modelo 2.0 que es más moderno y evita problemas de 404
+        self.model_id = "gemini-2.0-flash"
+        self.system_instruction = "Eres un mentor homilético. Generas estructuras en JSON con 'suggested_outline' (lista), 'verses_found' (lista) y 'central_theme' (string)."
 
     async def get_suggestions(
         self, title: str, content: str, style: str = "encouraging"
@@ -29,49 +30,50 @@ class AISermonService:
 
         style_instruction = style_prompts.get(style, style_prompts["encouraging"])
         
-        # Ajustamos el prompt EXACTAMENTE a lo que espera AISuggestionResponse
+        # Incluimos toda la instrucción en el prompt para máxima compatibilidad
         prompt = f"""
-        Actúa como un mentor homilético profesional.
+        {self.system_instruction}
+        
         Estilo solicitado: {style_instruction}
         
         Título del sermón: {title}
         Contenido actual: {content}
         
-        RESPONDE ÚNICAMENTE CON UN OBJETO JSON VÁLIDO con esta estructura:
+        RESPONDE ÚNICAMENTE CON UN OBJETO JSON VÁLIDO CON ESTA ESTRUCTURA:
         {{
-            "suggested_outline": ["Punto 1", "Punto 2", "Punto 3"],
-            "verses_found": ["Cita Bíblica 1", "Cita Bíblica 2"],
-            "central_theme": "Breve resumen del tema central"
+            "suggested_outline": ["Punto 1", "Punto 2"],
+            "verses_found": ["Cita 1", "Cita 2"],
+            "central_theme": "Resumen del tema"
         }}
         """
 
         try:
-            # Llamada sin GenerateContentConfig para máxima compatibilidad con v1/v1beta
+            # Llamada sin config extra para evitar errores de "Unknown name responseMimeType"
             response = self.client.models.generate_content(
                 model=self.model_id,
                 contents=prompt
             )
 
             latency = time.perf_counter() - start_time
-            logger.info(f"AI success in {latency:.2f}s")
+            logger.info(f"AI Success with {self.model_id} in {latency:.2f}s")
             
-            text_res = response.text.strip()
+            text = response.text.strip()
             # Limpieza de markdown
-            if "```" in text_res:
-                text_res = text_res.split("```")[1]
-                if text_res.startswith("json"):
-                    text_res = text_res[4:]
+            if "```" in text:
+                parts = text.split("```")
+                for part in parts:
+                    if part.strip().startswith("{") or part.strip().startswith("json"):
+                        text = part.replace("json", "", 1).strip()
+                        break
             
-            # Validamos contra el esquema real de app/schemas/sermon.py
-            return AISuggestionResponse.model_validate_json(text_res.strip())
+            return AISuggestionResponse.model_validate_json(text)
 
         except Exception as e:
-            logger.error(f"AI Error: {str(e)}")
-            # Fallback que cumple con el esquema AISuggestionResponse
+            logger.error(f"AI Error ({self.model_id}): {str(e)}")
             return AISuggestionResponse(
-                suggested_outline=["Error al conectar con la IA"],
+                suggested_outline=["Error en el servicio de IA"],
                 verses_found=[f"Detalle: {str(e)}"],
-                central_theme="Servicio temporalmente no disponible"
+                central_theme="Por favor, verifique su API Key de Google Gemini."
             )
 
 
