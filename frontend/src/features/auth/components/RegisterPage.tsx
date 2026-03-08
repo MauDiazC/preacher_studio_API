@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import Card from '../../../components/common/Card';
 import Input from '../../../components/common/Input';
 import Button from '../../../components/common/Button';
+import { authService } from '../services/authService';
+import { useNotificationStore } from '../../../store/useNotificationStore';
 import './RegisterPage.css';
 
 const RegisterPage: React.FC = () => {
@@ -11,6 +14,9 @@ const RegisterPage: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const navigate = useNavigate();
+  const { addNotification } = useNotificationStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,17 +30,32 @@ const RegisterPage: React.FC = () => {
     setLoading(true);
     
     try {
-      // Logic for registration will be implemented here
-      console.log('Register attempt with:', email);
-      // simulate delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      // navigate('/login');
-    } catch (err) {
-      setError('Error al crear la cuenta. Intente de nuevo.');
+      await authService.register(email, password, fullName);
+      setIsSuccess(true);
+      addNotification('¡Cuenta creada con éxito!', 'success');
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.detail || err.message || 'Error al crear la cuenta. Intente de nuevo.';
+      setError(errorMessage);
+      addNotification('No se pudo crear la cuenta.', 'error');
     } finally {
       setLoading(false);
     }
   };
+
+  if (isSuccess) {
+    return (
+      <div className="register-container">
+        <Card className="register-card" style={{ textAlign: 'center' }}>
+          <h2 className="register-title">¡Casi listo! 🕊️</h2>
+          <p style={{ marginBottom: '2rem', color: 'var(--text-secondary)' }}>
+            Hemos enviado un enlace de confirmación a <strong>{email}</strong>. 
+            Por favor, revisa tu bandeja de entrada (y la carpeta de spam) para activar tu cuenta.
+          </p>
+          <Button onClick={() => navigate('/login')}>Ir al Inicio de Sesión</Button>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="register-container">
@@ -79,7 +100,7 @@ const RegisterPage: React.FC = () => {
           </Button>
         </form>
         <div className="register-footer">
-          ¿Ya tienes una cuenta? <a href="/login" className="register-link">Inicia Sesión</a>
+          ¿Ya tienes una cuenta? <Link to="/login" className="register-link">Inicia Sesión</Link>
         </div>
       </Card>
     </div>

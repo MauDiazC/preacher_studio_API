@@ -1,4 +1,5 @@
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 import time
 import logging
 from config.config import settings
@@ -9,12 +10,9 @@ logger = logging.getLogger("ai_service")
 
 class AISermonService:
     def __init__(self):
-        genai.configure(api_key=settings.GEMINI_API_KEY)
-        # Definimos el rol del mentor desde el inicio
-        self.model = genai.GenerativeModel(
-            model_name="gemini-1.5-flash",
-            system_instruction="Eres un mentor homilético que ayuda a pastores. Generas estructuras claras y bíblicas en formato JSON.",
-        )
+        self.client = genai.Client(api_key=settings.GEMINI_API_KEY)
+        self.model_name = "gemini-1.5-flash"
+        self.system_instruction = "Eres un mentor homilético que ayuda a pastores. Generas estructuras claras y bíblicas en formato JSON."
 
     async def get_suggestions(
         self, title: str, content: str, style: str = "encouraging"
@@ -33,12 +31,14 @@ class AISermonService:
         prompt = f"Título: {title}\nNotas: {content}\nEstilo de Mentoría: {style_instruction}"
 
         try:
-            response = self.model.generate_content(
-                prompt,
-                generation_config={
-                    "response_mime_type": "application/json",
-                    "temperature": 0.7,
-                },
+            response = self.client.models.generate_content(
+                model=self.model_name,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    system_instruction=self.system_instruction,
+                    response_mime_type="application/json",
+                    temperature=0.7,
+                ),
             )
 
             latency = time.perf_counter() - start_time
@@ -46,7 +46,7 @@ class AISermonService:
                 "AI suggestion generated successfully",
                 extra={
                     "latency": latency,
-                    "model": "gemini-1.5-flash",
+                    "model": self.model_name,
                     "status": "success",
                     "style": style,
                 },
@@ -59,7 +59,7 @@ class AISermonService:
                 f"AI suggestion generation failed: {str(e)}",
                 extra={
                     "latency": latency,
-                    "model": "gemini-1.5-flash",
+                    "model": self.model_name,
                     "status": "error",
                     "error_type": type(e).__name__,
                 },
