@@ -2,6 +2,7 @@ from google import genai
 from google.genai import types
 import time
 import logging
+import json
 from config.config import settings
 from app.schemas.sermon import AISuggestionResponse
 
@@ -10,11 +11,11 @@ logger = logging.getLogger("ai_service")
 
 class AISermonService:
     def __init__(self):
-        # El SDK de google-genai utiliza la API Key de forma directa
+        # El SDK google-genai maneja la versión v1beta por defecto para modelos flash
+        # No forzamos versión para dejar que el SDK decida la mejor ruta
         self.client = genai.Client(api_key=settings.GEMINI_API_KEY)
-        # Probamos con el prefijo models/ que es el estándar de Google
-        self.model_id = "models/gemini-1.5-flash"
-        self.system_instruction = "Eres un mentor homilético. Generas estructuras claras en JSON con 'suggested_outline' y 'related_verses'."
+        self.model_id = "gemini-1.5-flash"
+        self.system_instruction = "Eres un mentor homilético. Generas estructuras en JSON con 'suggested_outline' y 'related_verses'."
 
     async def get_suggestions(
         self, title: str, content: str, style: str = "encouraging"
@@ -29,32 +30,49 @@ class AISermonService:
 
         style_instruction = style_prompts.get(style, style_prompts["encouraging"])
         
-        # Combinamos la instrucción del sistema con el prompt para mayor compatibilidad
-        full_prompt = f"{self.system_instruction}\n\nEstilo: {style_instruction}\n\nTítulo: {title}\nContenido: {content}\n\nResponde SOLO en formato JSON."
+        prompt = f"""
+        {self.system_instruction}
+        Estilo: {style_instruction}
+        
+        Título del sermón: {title}
+        Contenido: {content}
+        
+        RESPONDE ÚNICAMENTE CON UN OBJETO JSON VÁLIDO.
+        Formato:
+        {{
+            "suggested_outline": "texto aqui",
+            "related_verses": ["cita 1", "cita 2"]
+        }}
+        """
 
         try:
-            # Versión simplificada de la llamada
+            # Configuración mínima recomendada por Google para el nuevo SDK
             response = self.client.models.generate_content(
                 model=self.model_id,
-                contents=full_prompt,
+                contents=prompt,
                 config=types.GenerateContentConfig(
-                    response_mime_type="application/json",
-                    temperature=0.7,
-                ),
+                    temperature=0.7
+                )
             )
 
             latency = time.perf_counter() - start_time
-            logger.info(f"AI Suggestion success in {latency:.2f}s")
+            logger.info(f"AI Success: {latency:.2f}s")
             
-            # El texto en el nuevo SDK está en response.text
-            return AISuggestionResponse.model_validate_json(response.text)
+            # Limpieza de respuesta (quitar ```json si existe)
+            text = response.text.strip()
+            if "```" in text:
+                text = text.split("```")[1]
+                if text.startswith("json"):
+                    text = text[4:]
+            
+            return AISuggestionResponse.model_validate_json(text.strip())
 
         except Exception as e:
             logger.error(f"AI Error: {str(e)}")
-            # Fallback en caso de error para no romper la UI
+            # Fallback para no dejar la UI vacía
             return AISuggestionResponse(
-                suggested_outline="Lo siento, hubo un error técnico al conectar con Gemini. Por favor, intente de nuevo en unos minutos.",
-                related_verses=["Error de conexión con el servicio de IA"]
+                suggested_outline=f"Hubo un problema al conectar con Gemini: {str(e)}. Por favor, intente de nuevo.",
+                related_verses=["Error de conexión"]
             )
 
 
