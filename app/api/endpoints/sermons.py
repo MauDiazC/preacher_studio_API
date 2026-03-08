@@ -76,6 +76,20 @@ async def create_sermon(
     return response.data[0]
 
 
+@router.get("/{sermon_id}", response_model=SermonRead, summary="Obtener un sermón por ID")
+async def get_sermon(
+    sermon_id: str,
+    user_id: str = Depends(get_current_user),
+):
+    """
+    Obtiene los detalles de un sermón específico.
+    """
+    res = sermon_repo.get_by_id(sermon_id, user_id)
+    if not res.data:
+        raise EntityNotFoundException(message=f"Sermón con ID {sermon_id} no encontrado.")
+    return res.data
+
+
 @router.patch(
     "/{sermon_id}",
     response_model=SermonRead,
