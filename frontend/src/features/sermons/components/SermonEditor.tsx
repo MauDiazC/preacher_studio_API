@@ -125,7 +125,7 @@ const SermonEditor: React.FC = () => {
                 Escriba algo, guarde y presione el botón para recibir consejos homiléticos.
               </p>
             )}
-            {loadingAI && <p>Analizando sermón con Gemini...</p>}
+            {loadingAI && <p>Analizando sermón con ChatGPT...</p>}
             
             {suggestions && (
               <div className="ai-suggestions-content" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
