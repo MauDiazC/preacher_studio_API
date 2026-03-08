@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
+  padding: var(--spacing-md) 0;
 }
 
 .sermon-editor-header {
@@ -10,6 +11,7 @@
   align-items: center;
   flex-wrap: wrap;
   gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
 }
 
 .sermon-editor-main {
@@ -26,32 +28,86 @@
 
 .editor-textarea {
   width: 100%;
-  min-height: 500px;
-  padding: var(--spacing-md);
+  min-height: 600px;
+  padding: var(--spacing-lg);
   border-radius: var(--border-radius-md);
   border: 1px solid var(--border-color);
   font-family: inherit;
-  font-size: var(--font-size-base);
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: var(--text-primary);
   resize: vertical;
+  background-color: var(--surface-color);
+  box-shadow: var(--shadow-sm);
 }
 
 .editor-textarea:focus {
   outline: none;
   border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(214, 140, 90, 0.1);
 }
 
 .ai-mentorship-panel {
-  background-color: #f1f5f9;
+  background-color: #f8fafc;
   border-radius: var(--border-radius-lg);
-  padding: var(--spacing-lg);
+  padding: var(--spacing-xl) var(--spacing-lg); /* Aumento de padding superior/inferior */
   border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.ai-mentorship-panel h3 {
+  margin-bottom: var(--spacing-md);
+  font-size: var(--font-size-lg);
+  color: var(--text-primary);
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 0.5rem;
+  display: inline-block;
+  width: fit-content;
+}
+
+.ai-suggestions-content {
+  margin-top: var(--spacing-md);
 }
 
 .ai-suggestion {
   background-color: white;
-  padding: var(--spacing-md);
+  padding: var(--spacing-lg);
   border-radius: var(--border-radius-md);
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
   border-left: 4px solid var(--primary-color);
-  font-size: var(--font-size-sm);
+  box-shadow: var(--shadow-sm);
+}
+
+.ai-suggestion strong {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+.ai-suggestion p, .ai-suggestion ul {
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.ai-suggestion ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.ai-suggestion li {
+  margin-bottom: 0.5rem;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.ai-suggestion li::before {
+  content: "•";
+  position: absolute;
+  left: 0.5rem;
+  color: var(--primary-color);
 }
