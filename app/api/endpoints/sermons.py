@@ -58,11 +58,21 @@ async def create_sermon(
     sermon: SermonCreate, db=Depends(get_db), user_id: str = Depends(get_current_user)
 ):
     """
-    Crea un nuevo sermón en estado inicial ('seed') para el pastor autenticado.
+    Crea un nuevo sermón. Si el perfil del pastor no existe, se crea automáticamente.
     """
+    # 1. Asegurar que el perfil existe para evitar error de FK
+    profile_res = db.table("profiles").select("id").eq("id", user_id).execute()
+    if not profile_res.data:
+        db.table("profiles").insert({"id": user_id}).execute()
+
+    # 2. Insertar el sermón
     data = sermon.model_dump()
     data["user_id"] = user_id
     response = db.table("sermons").insert(data).execute()
+    
+    if not response.data:
+        raise AppBaseException(status_code=500, message="Error al crear el sermón en la base de datos.")
+        
     return response.data[0]
 
 

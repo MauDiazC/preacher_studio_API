@@ -16,14 +16,15 @@ const SermonEditor: React.FC = () => {
   const [content, setContent] = useState('');
   const [suggestions, setSuggestions] = useState<any>(null);
   const [loadingAI, setLoadingAI] = useState(false);
-  const [loading, setLoading] = useState(id ? true : false);
+  const [loading, setLoading] = useState(id && id !== 'new' ? true : false);
 
   useEffect(() => {
     if (id && id !== 'new') {
       const fetchSermon = async () => {
         try {
           const data = await sermonService.getById(id);
-          setTitle(data.title);
+          // Mapeamos los campos del backend al estado del frontend
+          setTitle(data.title || '');
           setContent(data.content || '');
         } catch (error) {
           console.error('Error fetching sermon:', error);
@@ -33,13 +34,20 @@ const SermonEditor: React.FC = () => {
         }
       };
       fetchSermon();
+    } else {
+      // Limpiamos el estado si es un nuevo sermón
+      setTitle('');
+      setContent('');
+      setSuggestions(null);
     }
   }, [id]);
 
   const handleSave = async () => {
     try {
       if (id && id !== 'new') {
-        await sermonService.update(id, { title, content });
+        const updated = await sermonService.update(id, { title, content });
+        setTitle(updated.title || '');
+        setContent(updated.content || '');
         addNotification('Sermón actualizado.', 'success');
       } else {
         const newSermon = await sermonService.create({ title, content });
@@ -47,6 +55,7 @@ const SermonEditor: React.FC = () => {
         navigate(`/sermons/${newSermon.id}`);
       }
     } catch (error) {
+      console.error('Error saving sermon:', error);
       addNotification('Error al guardar.', 'error');
     }
   };
@@ -127,7 +136,7 @@ const SermonEditor: React.FC = () => {
                 <div className="ai-suggestion">
                   <strong>Versículos Relacionados:</strong>
                   <ul style={{ paddingLeft: '1.2rem', fontSize: '0.9rem' }}>
-                    {suggestions.related_verses.map((v: string, i: number) => <li key={i}>{v}</li>)}
+                    {suggestions.related_verses?.map((v: string, i: number) => <li key={i}>{v}</li>)}
                   </ul>
                 </div>
               </div>
