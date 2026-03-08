@@ -11,10 +11,10 @@ logger = logging.getLogger("ai_service")
 
 class AISermonService:
     def __init__(self):
-        # Inicialización limpia. El SDK elegirá la mejor versión de la API automáticamente.
+        # Inicialización totalmente vainilla según la doc oficial del nuevo SDK
         self.client = genai.Client(api_key=settings.GEMINI_API_KEY)
-        # Cambiamos al modelo 2.0 que es más moderno y evita problemas de 404
-        self.model_id = "gemini-2.0-flash"
+        # Usamos el nombre estándar sin prefijos
+        self.model_id = "gemini-1.5-flash"
         self.system_instruction = "Eres un mentor homilético. Generas estructuras en JSON con 'suggested_outline' (lista), 'verses_found' (lista) y 'central_theme' (string)."
 
     async def get_suggestions(
@@ -30,7 +30,6 @@ class AISermonService:
 
         style_instruction = style_prompts.get(style, style_prompts["encouraging"])
         
-        # Incluimos toda la instrucción en el prompt para máxima compatibilidad
         prompt = f"""
         {self.system_instruction}
         
@@ -48,7 +47,7 @@ class AISermonService:
         """
 
         try:
-            # Llamada sin config extra para evitar errores de "Unknown name responseMimeType"
+            # Llamada estándar
             response = self.client.models.generate_content(
                 model=self.model_id,
                 contents=prompt
@@ -58,11 +57,11 @@ class AISermonService:
             logger.info(f"AI Success with {self.model_id} in {latency:.2f}s")
             
             text = response.text.strip()
-            # Limpieza de markdown
+            # Limpieza de markdown por si acaso
             if "```" in text:
                 parts = text.split("```")
                 for part in parts:
-                    if part.strip().startswith("{") or part.strip().startswith("json"):
+                    if "{" in part:
                         text = part.replace("json", "", 1).strip()
                         break
             
@@ -73,7 +72,7 @@ class AISermonService:
             return AISuggestionResponse(
                 suggested_outline=["Error en el servicio de IA"],
                 verses_found=[f"Detalle: {str(e)}"],
-                central_theme="Por favor, verifique su API Key de Google Gemini."
+                central_theme="Verifique que la API de Gemini esté habilitada en su Google Cloud Console."
             )
 
 
