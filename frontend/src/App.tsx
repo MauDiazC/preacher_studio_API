@@ -1,16 +1,13 @@
-import { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import Layout from './components/common/Layout';
 import Button from './components/common/Button';
 import { useAuthStore } from './store/authStore';
 
-// Lazy loaded components
-const LoginPage = lazy(() => import('./features/auth/components/LoginPage'));
-const RegisterPage = lazy(() => import('./features/auth/components/RegisterPage'));
-const SermonList = lazy(() => import('./features/sermons/components/SermonList'));
-const SermonEditor = lazy(() => import('./features/sermons/components/SermonEditor'));
-
-const LoadingFallback = () => <div style={{ padding: '2rem', textAlign: 'center' }}>Cargando...</div>;
+// Direct imports to avoid resolution issues during build
+import LoginPage from './features/auth/components/LoginPage';
+import RegisterPage from './features/auth/components/RegisterPage';
+import SermonList from './features/sermons/components/SermonList';
+import SermonEditor from './features/sermons/components/SermonEditor';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -31,45 +28,43 @@ function App() {
   return (
     <Router>
       <Layout>
-        <Suspense fallback={<LoadingFallback />}>
-          <Routes>
-            <Route path="/login" element={!isAuthenticated ? <LoginPage /> : <Navigate to="/" />} />
-            <Route path="/register" element={!isAuthenticated ? <RegisterPage /> : <Navigate to="/" />} />
-            
-            <Route path="/" element={
-              isAuthenticated ? (
-                <HomePage />
-              ) : (
-                <Navigate to="/login" />
-              )
-            } />
-            <Route path="/sermons" element={
-              isAuthenticated ? (
-                <SermonList />
-              ) : (
-                <Navigate to="/login" />
-              )
-            } />
+        <Routes>
+          <Route path="/login" element={!isAuthenticated ? <LoginPage /> : <Navigate to="/" />} />
+          <Route path="/register" element={!isAuthenticated ? <RegisterPage /> : <Navigate to="/" />} />
+          
+          <Route path="/" element={
+            isAuthenticated ? (
+              <HomePage />
+            ) : (
+              <Navigate to="/login" />
+            )
+          } />
+          <Route path="/sermons" element={
+            isAuthenticated ? (
+              <SermonList />
+            ) : (
+              <Navigate to="/login" />
+            )
+          } />
 
-            <Route path="/sermons/new" element={
-              isAuthenticated ? (
-                <SermonEditor />
-              ) : (
-                <Navigate to="/login" />
-              )
-            } />
+          <Route path="/sermons/new" element={
+            isAuthenticated ? (
+              <SermonEditor />
+            ) : (
+              <Navigate to="/login" />
+            )
+          } />
 
-            <Route path="/sermons/:id" element={
-              isAuthenticated ? (
-                <SermonEditor />
-              ) : (
-                <Navigate to="/login" />
-              )
-            } />
+          <Route path="/sermons/:id" element={
+            isAuthenticated ? (
+              <SermonEditor />
+            ) : (
+              <Navigate to="/login" />
+            )
+          } />
 
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
-        </Suspense>
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
       </Layout>
     </Router>
   );
