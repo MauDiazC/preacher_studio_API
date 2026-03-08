@@ -11,8 +11,11 @@ logger = logging.getLogger("ai_service")
 
 class AISermonService:
     def __init__(self):
-        # El SDK nuevo de Google prefiere gemini-1.5-flash como ID
-        self.client = genai.Client(api_key=settings.GEMINI_API_KEY)
+        # Forzamos v1 en el cliente para evitar el error de v1beta del SDK
+        self.client = genai.Client(
+            api_key=settings.GEMINI_API_KEY,
+            http_options={'api_version': 'v1'}
+        )
         self.model_id = "gemini-1.5-flash"
         self.system_instruction = "Eres un mentor homilético. Generas estructuras en JSON con 'suggested_outline' y 'related_verses'."
 
@@ -44,7 +47,6 @@ class AISermonService:
         """
 
         try:
-            # Llamada mínima sin parámetros que puedan causar incompatibilidad de versión
             response = self.client.models.generate_content(
                 model=self.model_id,
                 contents=prompt
@@ -54,7 +56,6 @@ class AISermonService:
             logger.info(f"AI success in {latency:.2f}s")
             
             text_res = response.text.strip()
-            # Limpiar markdown si Gemini lo incluye
             if "```" in text_res:
                 text_res = text_res.split("```")[1]
                 if text_res.startswith("json"):
@@ -65,7 +66,7 @@ class AISermonService:
         except Exception as e:
             logger.error(f"AI Error: {str(e)}")
             return AISuggestionResponse(
-                suggested_outline=f"Error al conectar con Gemini: {str(e)}. Verifique su configuración de API.",
+                suggested_outline=f"Error: {str(e)}. Intente de nuevo.",
                 related_verses=["Error técnico"]
             )
 
