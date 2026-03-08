@@ -11,10 +11,13 @@ logger = logging.getLogger("ai_service")
 
 class AISermonService:
     def __init__(self):
-        # El SDK google-genai maneja la versión v1beta por defecto para modelos flash
-        # No forzamos versión para dejar que el SDK decida la mejor ruta
-        self.client = genai.Client(api_key=settings.GEMINI_API_KEY)
-        self.model_id = "gemini-1.5-flash"
+        # Usamos v1beta que es la versión que contiene los modelos Flash más recientes
+        self.client = genai.Client(
+            api_key=settings.GEMINI_API_KEY,
+            http_options={'api_version': 'v1beta'}
+        )
+        # Nombre de modelo completo según documentación oficial
+        self.model_id = "models/gemini-1.5-flash"
         self.system_instruction = "Eres un mentor homilético. Generas estructuras en JSON con 'suggested_outline' y 'related_verses'."
 
     async def get_suggestions(
@@ -35,7 +38,7 @@ class AISermonService:
         Estilo: {style_instruction}
         
         Título del sermón: {title}
-        Contenido: {content}
+        Contenido actual: {content}
         
         RESPONDE ÚNICAMENTE CON UN OBJETO JSON VÁLIDO.
         Formato:
