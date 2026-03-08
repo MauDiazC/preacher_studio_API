@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Card from '../../../components/common/Card';
 import Input from '../../../components/common/Input';
 import Button from '../../../components/common/Button';
+import { authService } from '../services/authService';
+import { useNotificationStore } from '../../../store/useNotificationStore';
 import './LoginPage.css';
 
 const LoginPage: React.FC = () => {
@@ -9,6 +12,8 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { addNotification } = useNotificationStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,13 +21,12 @@ const LoginPage: React.FC = () => {
     setLoading(true);
     
     try {
-      // Logic for login will be implemented here
-      console.log('Login attempt with:', email);
-      // simulate delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      // navigate('/sermons');
-    } catch (err) {
+      await authService.login(email, password);
+      addNotification('¡Bienvenido de nuevo!', 'success');
+      navigate('/');
+    } catch (err: any) {
       setError('Credenciales inválidas. Por favor intente de nuevo.');
+      addNotification('Error al iniciar sesión.', 'error');
     } finally {
       setLoading(false);
     }

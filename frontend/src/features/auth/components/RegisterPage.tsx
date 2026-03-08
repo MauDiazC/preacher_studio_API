@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Card from '../../../components/common/Card';
 import Input from '../../../components/common/Input';
 import Button from '../../../components/common/Button';
+import { authService } from '../services/authService';
+import { useNotificationStore } from '../../../store/useNotificationStore';
 import './RegisterPage.css';
 
 const RegisterPage: React.FC = () => {
@@ -11,6 +14,8 @@ const RegisterPage: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { addNotification } = useNotificationStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,13 +29,12 @@ const RegisterPage: React.FC = () => {
     setLoading(true);
     
     try {
-      // Logic for registration will be implemented here
-      console.log('Register attempt with:', email);
-      // simulate delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      // navigate('/login');
-    } catch (err) {
-      setError('Error al crear la cuenta. Intente de nuevo.');
+      await authService.register(email, password, fullName);
+      addNotification('¡Cuenta creada! Revisa tu correo para confirmar.', 'success');
+      navigate('/login');
+    } catch (err: any) {
+      setError(err.response?.data?.detail || 'Error al crear la cuenta. Intente de nuevo.');
+      addNotification('No se pudo crear la cuenta.', 'error');
     } finally {
       setLoading(false);
     }
