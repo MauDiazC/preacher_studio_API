@@ -11,7 +11,7 @@ logger = logging.getLogger("ai_service")
 
 class AISermonService:
     def __init__(self):
-        # El nuevo SDK utiliza v1 por defecto para estabilidad
+        # El SDK nuevo de Google prefiere gemini-1.5-flash como ID
         self.client = genai.Client(api_key=settings.GEMINI_API_KEY)
         self.model_id = "gemini-1.5-flash"
         self.system_instruction = "Eres un mentor homilético. Generas estructuras en JSON con 'suggested_outline' y 'related_verses'."
@@ -29,46 +29,44 @@ class AISermonService:
 
         style_instruction = style_prompts.get(style, style_prompts["encouraging"])
         
-        # Reforzamos la instrucción JSON en el prompt ya que quitamos response_mime_type
         prompt = f"""
-        Instrucción: {self.system_instruction}
+        {self.system_instruction}
         Estilo: {style_instruction}
         
-        Título del sermón: {title}
-        Contenido actual: {content}
+        Título: {title}
+        Contenido: {content}
         
-        RESPONDE EXCLUSIVAMENTE CON UN OBJETO JSON VÁLIDO.
-        Formato esperado:
+        Genera un objeto JSON con esta estructura:
         {{
-            "suggested_outline": "texto del bosquejo",
-            "related_verses": ["cita 1", "cita 2"]
+            "suggested_outline": "...",
+            "related_verses": ["...", "..."]
         }}
         """
 
         try:
+            # Llamada mínima sin parámetros que puedan causar incompatibilidad de versión
             response = self.client.models.generate_content(
                 model=self.model_id,
-                contents=prompt,
-                config=types.GenerateContentConfig(
-                    temperature=0.7,
-                ),
+                contents=prompt
             )
 
             latency = time.perf_counter() - start_time
-            logger.info(f"AI Suggestion success in {latency:.2f}s")
+            logger.info(f"AI success in {latency:.2f}s")
             
-            # Limpiar la respuesta por si Gemini añade bloques de código markdown
             text_res = response.text.strip()
-            if text_res.startswith("```json"):
-                text_res = text_res.replace("```json", "").replace("```", "").strip()
+            # Limpiar markdown si Gemini lo incluye
+            if "```" in text_res:
+                text_res = text_res.split("```")[1]
+                if text_res.startswith("json"):
+                    text_res = text_res[4:]
             
-            return AISuggestionResponse.model_validate_json(text_res)
+            return AISuggestionResponse.model_validate_json(text_res.strip())
 
         except Exception as e:
             logger.error(f"AI Error: {str(e)}")
             return AISuggestionResponse(
-                suggested_outline="Lo siento, hubo un error al procesar la respuesta de la IA. Por favor, intente de nuevo.",
-                related_verses=["Error en el formato de respuesta"]
+                suggested_outline=f"Error al conectar con Gemini: {str(e)}. Verifique su configuración de API.",
+                related_verses=["Error técnico"]
             )
 
 
