@@ -29,4 +29,7 @@ export default defineConfig({
       }
     })
   ],
+  preview: {
+    allowedHosts: true, // Allows all hosts in preview mode (Railway environments)
+  }
 })
