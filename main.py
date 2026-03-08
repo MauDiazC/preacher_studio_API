@@ -16,6 +16,8 @@ from config.config import settings
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.inmemory import InMemoryBackend
 
+print("🚀 DEPLOYMENT CONFIRMATION: VERSION 1.0.2 - MauDiaz")
+
 # Configuración de Sentry
 if settings.get("SENTRY_DSN"):
     sentry_sdk.init(
