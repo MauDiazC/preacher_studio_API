@@ -130,13 +130,19 @@ const SermonEditor: React.FC = () => {
             {suggestions && (
               <div className="ai-suggestions-content" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div className="ai-suggestion">
-                  <strong>Estructura Sugerida:</strong>
-                  <p style={{ whiteSpace: 'pre-wrap', fontSize: '0.9rem' }}>{suggestions.suggested_outline}</p>
+                  <strong>Tema Central:</strong>
+                  <p style={{ fontSize: '0.95rem', fontWeight: '600', color: 'var(--primary-color)' }}>{suggestions.central_theme}</p>
+                </div>
+                <div className="ai-suggestion">
+                  <strong>Bosquejo Sugerido:</strong>
+                  <ul style={{ paddingLeft: '1.2rem', fontSize: '0.9rem' }}>
+                    {suggestions.suggested_outline?.map((p: string, i: number) => <li key={i}>{p}</li>)}
+                  </ul>
                 </div>
                 <div className="ai-suggestion">
                   <strong>Versículos Relacionados:</strong>
                   <ul style={{ paddingLeft: '1.2rem', fontSize: '0.9rem' }}>
-                    {suggestions.related_verses?.map((v: string, i: number) => <li key={i}>{v}</li>)}
+                    {suggestions.verses_found?.map((v: string, i: number) => <li key={i}>{v}</li>)}
                   </ul>
                 </div>
               </div>
