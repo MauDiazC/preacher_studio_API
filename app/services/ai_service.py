@@ -10,10 +10,12 @@ logger = logging.getLogger("ai_service")
 
 class AISermonService:
     def __init__(self):
-        # El SDK de google-genai utiliza la API Key de forma directa
-        self.client = genai.Client(api_key=settings.GEMINI_API_KEY)
-        # Probamos con el prefijo models/ que es el estándar de Google
-        self.model_id = "models/gemini-1.5-flash"
+        # Forzamos la versión v1 de la API para mayor estabilidad
+        self.client = genai.Client(
+            api_key=settings.GEMINI_API_KEY,
+            http_options={'api_version': 'v1'}
+        )
+        self.model_id = "gemini-1.5-flash"
         self.system_instruction = "Eres un mentor homilético. Generas estructuras claras en JSON con 'suggested_outline' y 'related_verses'."
 
     async def get_suggestions(
@@ -29,11 +31,9 @@ class AISermonService:
 
         style_instruction = style_prompts.get(style, style_prompts["encouraging"])
         
-        # Combinamos la instrucción del sistema con el prompt para mayor compatibilidad
         full_prompt = f"{self.system_instruction}\n\nEstilo: {style_instruction}\n\nTítulo: {title}\nContenido: {content}\n\nResponde SOLO en formato JSON."
 
         try:
-            # Versión simplificada de la llamada
             response = self.client.models.generate_content(
                 model=self.model_id,
                 contents=full_prompt,
@@ -46,14 +46,13 @@ class AISermonService:
             latency = time.perf_counter() - start_time
             logger.info(f"AI Suggestion success in {latency:.2f}s")
             
-            # El texto en el nuevo SDK está en response.text
             return AISuggestionResponse.model_validate_json(response.text)
 
         except Exception as e:
             logger.error(f"AI Error: {str(e)}")
-            # Fallback en caso de error para no romper la UI
+            # Fallback amigable
             return AISuggestionResponse(
-                suggested_outline="Lo siento, hubo un error técnico al conectar con Gemini. Por favor, intente de nuevo en unos minutos.",
+                suggested_outline="Lo siento, hubo un error al conectar con Gemini. Por favor, asegúrese de que su API Key sea correcta y tenga cuota disponible.",
                 related_verses=["Error de conexión con el servicio de IA"]
             )
 
