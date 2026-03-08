@@ -22,12 +22,12 @@ def create_access_token(data: dict):
 
 async def get_current_user(token: str = Depends(oauth2_scheme)):
     try:
-        # Validamos contra la SECRET_KEY (que debe ser el JWT Secret de Supabase en producción)
-        # Ignoramos la audiencia si es necesario, ya que Supabase usa 'authenticated'
+        # Supabase puede usar HS256 o HS512 según la longitud del secreto.
+        # Permitimos ambos para máxima compatibilidad.
         payload = jwt.decode(
             token, 
             settings.SECRET_KEY, 
-            algorithms=["HS256"],
+            algorithms=["HS256", "HS512"],
             options={"verify_aud": False}
         )
         sub = payload.get("sub")
