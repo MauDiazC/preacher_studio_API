@@ -6,7 +6,7 @@ from fastapi import FastAPI, Request, APIRouter
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from rich.console import Console
-from app.api.endpoints import sermons, system, websocket_endpoints, export, profile
+from app.api.endpoints import sermons, system, websocket_endpoints, export, profile, auth
 from app.core.logger import setup_logging
 from app.core.exceptions import AppBaseException
 from slowapi import Limiter, _rate_limit_exceeded_handler
@@ -83,6 +83,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 # Inclusión de Rutas con Versionamiento v1
 api_v1_router = APIRouter(prefix="/api/v1")
+api_v1_router.include_router(auth.router)
 api_v1_router.include_router(sermons.router)
 api_v1_router.include_router(system.router)
 api_v1_router.include_router(export.router)
