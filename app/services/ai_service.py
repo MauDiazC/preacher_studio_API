@@ -10,31 +10,29 @@ logger = logging.getLogger("ai_service")
 
 class AISermonService:
     def __init__(self):
-        # El nuevo SDK usa gemini-1.5-flash como nombre estándar
+        # Inicialización simple del cliente
         self.client = genai.Client(api_key=settings.GEMINI_API_KEY)
-        self.model_name = "gemini-1.5-flash"
-        self.system_instruction = "Eres un mentor homilético que ayuda a pastores. Generas estructuras claras y bíblicas en formato JSON con los campos 'suggested_outline' (string) y 'related_verses' (lista de strings)."
+        self.model_id = "gemini-1.5-flash"
+        self.system_instruction = "Eres un mentor homilético profesional. Generas estructuras claras y bíblicas en formato JSON con los campos 'suggested_outline' (string) y 'related_verses' (lista de strings)."
 
     async def get_suggestions(
         self, title: str, content: str, style: str = "encouraging"
     ):
         start_time = time.perf_counter()
 
-        # Customize prompt based on style
         style_prompts = {
-            "encouraging": "Enfócate en un tono pastoral, alentador y lleno de esperanza.",
-            "academic": "Enfócate en un análisis exegético profundo, histórico y teológico.",
-            "practical": "Enfócate en aplicaciones prácticas para la vida diaria y desafíos contemporáneos.",
+            "encouraging": "Enfócate en un tono pastoral y alentador.",
+            "academic": "Enfócate en un análisis exegético profundo.",
+            "practical": "Enfócate en aplicaciones prácticas para la vida diaria.",
         }
 
         style_instruction = style_prompts.get(style, style_prompts["encouraging"])
-
-        prompt = f"Título: {title}\nNotas del sermón: {content}\n\nInstrucción de Estilo: {style_instruction}\n\nPor favor, genera una respuesta JSON válida."
+        prompt = f"Título: {title}\nContenido actual: {content}\nEstilo: {style_instruction}\n\nGenera una respuesta JSON."
 
         try:
-            # En el nuevo SDK, GenerateContentConfig acepta system_instruction directamente
+            # Llamada directa al modelo flash
             response = self.client.models.generate_content(
-                model=self.model_name,
+                model=self.model_id,
                 contents=prompt,
                 config=types.GenerateContentConfig(
                     system_instruction=self.system_instruction,
@@ -44,32 +42,12 @@ class AISermonService:
             )
 
             latency = time.perf_counter() - start_time
+            logger.info(f"AI suggestion generated in {latency:.2f}s")
             
-            # El SDK nuevo devuelve el texto en response.text
-            result_text = response.text
-            
-            logger.info(
-                "AI suggestion generated successfully",
-                extra={
-                    "latency": latency,
-                    "model": self.model_name,
-                    "status": "success",
-                },
-            )
-            
-            return AISuggestionResponse.model_validate_json(result_text)
+            return AISuggestionResponse.model_validate_json(response.text)
 
         except Exception as e:
-            latency = time.perf_counter() - start_time
-            logger.error(
-                f"AI suggestion generation failed: {str(e)}",
-                extra={
-                    "latency": latency,
-                    "model": self.model_name,
-                    "status": "error",
-                    "error_type": type(e).__name__,
-                },
-            )
+            logger.error(f"AI Error: {str(e)}")
             raise
 
 
