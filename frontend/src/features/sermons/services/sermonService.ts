@@ -14,19 +14,21 @@ export interface Sermon {
 
 export const sermonService = {
   getAll: async () => {
-    const response = await api.get<Sermon[]>('/sermons');
-    return response.data;
+    // El backend devuelve un objeto paginado con { data: Sermon[], total: number, ... }
+    const response = await api.get<any>('/sermons/');
+    return response.data.data;
   },
   getById: async (id: string) => {
     const response = await api.get<Sermon>(`/sermons/${id}`);
     return response.data;
   },
   create: async (sermon: Partial<Sermon>) => {
-    const response = await api.post<Sermon>('/sermons', sermon);
+    const response = await api.post<Sermon>('/sermons/', sermon);
     return response.data;
   },
   update: async (id: string, sermon: Partial<Sermon>) => {
-    const response = await api.put<Sermon>(`/sermons/${id}`, sermon);
+    // El backend usa PATCH para actualizaciones parciales (auto-save)
+    const response = await api.patch<Sermon>(`/sermons/${id}`, sermon);
     return response.data;
   },
   delete: async (id: string) => {
