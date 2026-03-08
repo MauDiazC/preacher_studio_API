@@ -12,8 +12,8 @@ class AISermonService:
     def __init__(self):
         # El SDK de google-genai utiliza la API Key de forma directa
         self.client = genai.Client(api_key=settings.GEMINI_API_KEY)
-        # Intentamos con el ID de modelo puro
-        self.model_id = "gemini-1.5-flash"
+        # Probamos con el prefijo models/ que es el estándar de Google
+        self.model_id = "models/gemini-1.5-flash"
         self.system_instruction = "Eres un mentor homilético. Generas estructuras claras en JSON con 'suggested_outline' y 'related_verses'."
 
     async def get_suggestions(
