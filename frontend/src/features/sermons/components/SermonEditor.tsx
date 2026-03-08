@@ -77,13 +77,13 @@ const SermonEditor: React.FC = () => {
     }
   };
 
-  const handleExport = async (format: 'pdf' | 'docx') => {
+  const handleExport = async (format: 'pdf' | 'keynote') => {
     if (!id || id === 'new') return;
     try {
       if (format === 'pdf') {
         await exportService.exportToPDF(id);
       } else {
-        await exportService.exportToWord(id);
+        await exportService.exportToKeynote(id);
       }
     } catch (error) {
       console.error('Error exporting sermon:', error);
@@ -163,7 +163,7 @@ const SermonEditor: React.FC = () => {
             <h3>Exportar</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
               <Button variant="outline" size="sm" onClick={() => handleExport('pdf')} disabled={!id || id === 'new'}>Descargar PDF</Button>
-              <Button variant="outline" size="sm" onClick={() => handleExport('docx')} disabled={!id || id === 'new'}>Descargar Word</Button>
+              <Button variant="outline" size="sm" onClick={() => handleExport('keynote')} disabled={!id || id === 'new'}>Descargar Keynote</Button>
             </div>
           </div>
         </div>

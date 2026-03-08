@@ -12,7 +12,7 @@ from app.core.security import get_current_user
 from app.core.db import get_db
 from app.services.ai_service import ai_service
 from app.repository.sermon_repository import sermon_repo
-from app.core.exceptions import EntityNotFoundException, AIServiceUnavailableException
+from app.core.exceptions import EntityNotFoundException, AIServiceUnavailableException, AppBaseException
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 
