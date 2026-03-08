@@ -22,6 +22,10 @@ def create_access_token(data: dict):
 
 async def get_current_user(token: str = Depends(oauth2_scheme)):
     try:
+        # Debug: Ver qué algoritmo trae el header del token sin validar la firma aún
+        header = jwt.get_unverified_header(token)
+        logger.info(f"JWT Header: {header}")
+
         # Supabase puede usar HS256 o HS512 según la longitud del secreto.
         # Permitimos ambos para máxima compatibilidad.
         payload = jwt.decode(
@@ -42,7 +46,8 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         logger.error("JWT validation failed: Invalid signature. Check if SECRET_KEY matches Supabase JWT Secret.")
         raise HTTPException(status_code=401, detail="Firma de token inválida")
     except jwt.PyJWTError as e:
-        logger.warning(f"JWT validation failed: {str(e)}")
+        header = jwt.get_unverified_header(token) if token else {}
+        logger.warning(f"JWT validation failed: {str(e)} | Alg in token: {header.get('alg')}")
         raise HTTPException(status_code=401, detail=f"Token inválido: {str(e)}")
 
 
