@@ -10,9 +10,10 @@ logger = logging.getLogger("ai_service")
 
 class AISermonService:
     def __init__(self):
+        # El nuevo SDK usa gemini-1.5-flash como nombre estándar
         self.client = genai.Client(api_key=settings.GEMINI_API_KEY)
         self.model_name = "gemini-1.5-flash"
-        self.system_instruction = "Eres un mentor homilético que ayuda a pastores. Generas estructuras claras y bíblicas en formato JSON."
+        self.system_instruction = "Eres un mentor homilético que ayuda a pastores. Generas estructuras claras y bíblicas en formato JSON con los campos 'suggested_outline' (string) y 'related_verses' (lista de strings)."
 
     async def get_suggestions(
         self, title: str, content: str, style: str = "encouraging"
@@ -28,9 +29,10 @@ class AISermonService:
 
         style_instruction = style_prompts.get(style, style_prompts["encouraging"])
 
-        prompt = f"Título: {title}\nNotas: {content}\nEstilo de Mentoría: {style_instruction}"
+        prompt = f"Título: {title}\nNotas del sermón: {content}\n\nInstrucción de Estilo: {style_instruction}\n\nPor favor, genera una respuesta JSON válida."
 
         try:
+            # En el nuevo SDK, GenerateContentConfig acepta system_instruction directamente
             response = self.client.models.generate_content(
                 model=self.model_name,
                 contents=prompt,
@@ -42,16 +44,20 @@ class AISermonService:
             )
 
             latency = time.perf_counter() - start_time
+            
+            # El SDK nuevo devuelve el texto en response.text
+            result_text = response.text
+            
             logger.info(
                 "AI suggestion generated successfully",
                 extra={
                     "latency": latency,
                     "model": self.model_name,
                     "status": "success",
-                    "style": style,
                 },
             )
-            return AISuggestionResponse.model_validate_json(response.text)
+            
+            return AISuggestionResponse.model_validate_json(result_text)
 
         except Exception as e:
             latency = time.perf_counter() - start_time
