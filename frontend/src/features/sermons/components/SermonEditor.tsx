@@ -4,7 +4,6 @@ import Button from '../../../components/common/Button';
 import Input from '../../../components/common/Input';
 import { aiService } from '../services/aiService';
 import { sermonService } from '../services/sermonService';
-import type { Sermon } from '../services/sermonService';
 import { exportService } from '../services/exportService';
 import { useNotificationStore } from '../../../store/useNotificationStore';
 import './SermonEditor.css';
