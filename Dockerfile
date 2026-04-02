@@ -67,4 +67,4 @@ COPY . .
 EXPOSE ${PORT}
 
 # Run the application
-CMD ["./start.sh"]
+CMD ./start.sh

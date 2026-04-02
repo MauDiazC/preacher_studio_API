@@ -1,10 +1,10 @@
 #!/bin/bash
 set -e
 
-# Run database migrations
+# Ejecutar migraciones de la base de datos
 echo "Running database migrations..."
 alembic upgrade head
 
-# Start the application
-echo "Starting application..."
-exec uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000} --proxy-headers
+# Iniciar la aplicación
+echo "Starting application on port ${PORT:-8000}..."
+exec uvicorn main:app --host 0.0.0.0 --port "${PORT:-8000}" --proxy-headers
