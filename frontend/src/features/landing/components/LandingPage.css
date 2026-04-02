@@ -12,29 +12,48 @@
   position: relative;
   overflow: hidden;
   padding: var(--spacing-2xl) 5%;
+  /* Baño púrpura ambiental sutil en el fondo */
+  background: radial-gradient(circle at center, rgba(125, 92, 255, 0.1) 0%, transparent 80%);
 }
 
 .hero-background-glow {
   position: absolute;
-  top: -10%;
+  top: -15%;
   left: -5%;
   width: 50%;
   height: 50%;
-  background: radial-gradient(circle, rgba(214, 140, 90, 0.15) 0%, rgba(125, 92, 255, 0.05) 50%, rgba(0, 0, 0, 0) 80%);
+  /* Dorado cálido en la esquina mucho más intenso */
+  background: radial-gradient(circle, rgba(255, 184, 120, 0.35) 0%, rgba(255, 184, 120, 0.1) 40%, transparent 75%);
   filter: blur(80px);
   z-index: 0;
+  pointer-events: none;
 }
 
-/* Resplandor secundario para el efecto dorado en la esquina */
+/* Segundo resplandor púrpura gigante para que predomine el morado */
 .hero-section::before {
   content: "";
   position: absolute;
-  top: -100px;
-  left: -100px;
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, rgba(255, 184, 120, 0.1) 0%, rgba(255, 184, 120, 0) 70%);
-  filter: blur(50px);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 70% 30%, rgba(125, 92, 255, 0.15) 0%, transparent 60%);
+  filter: blur(100px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Tercer resplandor puramente para el dorado intenso en la esquina */
+.hero-section::after {
+  content: "";
+  position: absolute;
+  top: -150px;
+  left: -150px;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(255, 184, 120, 0.25) 0%, transparent 60%);
+  filter: blur(60px);
   z-index: 0;
   pointer-events: none;
 }

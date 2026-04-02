@@ -1,10 +1,12 @@
 :root {
-  /* Colors from Mockup (Neo-Dark/Exegesis Theme) */
-  --bg-dark: #0B0B13;
-  --surface-dark: #151521;
+  /* Colors from Mockup (Vibrant Neo-Dark) */
+  --bg-dark: #0D0B1F; /* Un tono púrpura/azul muy profundo en lugar de negro */
+  --surface-dark: #16142C;
   --accent-purple: #7D5CFF;
-  --accent-purple-glow: rgba(125, 92, 255, 0.5);
+  --accent-purple-glow: rgba(125, 92, 255, 0.6);
   --accent-gradient: linear-gradient(135deg, #7D5CFF 0%, #3AB5FF 100%);
+  --accent-gold: #FFB878;
+  --accent-gold-glow: rgba(255, 184, 120, 0.3);
   --accent-gradient-text: linear-gradient(90deg, #FFFFFF 0%, #A1A1AA 100%);
   --secondary-color: #3AB5FF;
   
