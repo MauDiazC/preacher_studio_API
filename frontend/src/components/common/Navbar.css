@@ -2,52 +2,71 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 4rem;
-  background-color: #111827; /* Dark background from mockup */
-  color: #ffffff;
+  padding: var(--spacing-md) 5%;
+  background: rgba(11, 11, 19, 0.8);
+  backdrop-filter: blur(20px);
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid var(--border-color);
+  height: 80px;
 }
 
 .navbar-brand {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 800;
-  color: #ffffff;
+  color: var(--text-primary);
   text-decoration: none;
-  letter-spacing: -0.025em;
-}
-
-.navbar-links {
+  letter-spacing: 0.1em;
   display: flex;
   align-items: center;
-  gap: 2.5rem;
+  gap: 0.5rem;
+}
+
+.brand-icon {
+  font-size: 1.5rem;
+}
+
+.navbar-center {
+  display: flex;
+  gap: var(--spacing-xl);
 }
 
 .navbar-link {
-  color: #e5e7eb;
+  color: var(--text-secondary);
   text-decoration: none;
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition: color 0.2s ease;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: var(--transition-fast);
 }
 
 .navbar-link:hover {
-  color: var(--primary-color);
+  color: var(--accent-purple);
 }
 
-.navbar-actions {
+.navbar-right {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: var(--spacing-lg);
+}
+
+.user-badge {
+  background: rgba(125, 92, 255, 0.1);
+  color: var(--accent-purple);
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.logout-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
 @media (max-width: 768px) {
-  .navbar {
-    padding: 1rem 1.5rem;
-  }
-  .navbar-links {
+  .navbar-center {
     display: none;
   }
 }

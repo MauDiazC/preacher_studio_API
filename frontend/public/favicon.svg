@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <rect width="100" height="100" rx="20" fill="#0B0B13"/>
+  <text y=".9em" font-size="70" x="5">📖</text>
+  <circle cx="80" cy="20" r="15" fill="#7D5CFF" filter="blur(5px)" opacity="0.6"/>
+</svg>

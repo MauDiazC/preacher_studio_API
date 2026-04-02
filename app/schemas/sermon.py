@@ -117,6 +117,32 @@ class AISuggestionResponse(BaseModel):
     )
 
 
+class VerseExegesisRequest(BaseModel):
+    """Esquema de solicitud para el análisis exegético de un versículo."""
+    verse_reference: str = Field(
+        ...,
+        description="Referencia del versículo a analizar.",
+        examples=["Juan 3:16", "Romanos 8:28"],
+        min_length=3,
+        max_length=100,
+    )
+
+
+class VerseExegesisResponse(BaseModel):
+    """Esquema de respuesta detallada de la exégesis de un versículo."""
+    literary_type: str = Field(
+        ..., description="Tipo literario del texto (ej. poesía, carta, histórico, profético)."
+    )
+    author: str = Field(..., description="Autor histórico del versículo/libro.")
+    purpose: str = Field(..., description="Por qué se escribió (propósito original).")
+    historical_context: str = Field(
+        ..., description="Contexto histórico, usos y costumbres de la época en que se escribió."
+    )
+    significance_context: str = Field(
+        ..., description="Contexto de significancia, a qué se refería o hacía alusión."
+    )
+
+
 class ProfileBase(BaseModel):
     full_name: Optional[str] = Field(None, max_length=100)
     mentorship_style: Optional[str] = Field(

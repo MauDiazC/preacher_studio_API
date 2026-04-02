@@ -7,6 +7,8 @@ from app.schemas.sermon import (
     SermonRead,
     PaginatedSermons,
     AISuggestionResponse,
+    VerseExegesisRequest,
+    VerseExegesisResponse,
 )
 from app.core.security import get_current_user
 from app.core.db import get_db
@@ -209,3 +211,25 @@ async def create_snapshot(
     )
 
     return {"status": "Snapshot programado correctamente"}
+
+
+@router.post(
+    "/exegesis",
+    response_model=VerseExegesisResponse,
+    summary="Analizar exegéticamente un versículo",
+)
+@limiter.limit("10/minute")
+async def analyze_verse(
+    request: Request,
+    payload: VerseExegesisRequest,
+    user_id: str = Depends(get_current_user),
+):
+    """
+    Recibe la referencia de un versículo o pasaje y devuelve un análisis exegético
+    estructurado (tipo literario, autor, propósito, contexto histórico y significancia).
+    """
+    try:
+        exegesis = await ai_service.analyze_verse(payload.verse_reference)
+        return exegesis
+    except Exception as e:
+        raise AIServiceUnavailableException(details=str(e))

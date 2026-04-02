@@ -244,3 +244,32 @@ async def test_create_snapshot_not_found(client, mock_db):
     
     response = await client.post(f"/api/v1/sermons/{sermon_id}/snapshot?label=Test")
     assert response.status_code == 404
+
+@pytest.mark.asyncio
+async def test_analyze_verse_success(client, mock_db):
+    with patch("app.api.endpoints.sermons.ai_service") as mock_ai:
+        from unittest.mock import AsyncMock
+        mock_ai.analyze_verse = AsyncMock(return_value={
+            "literary_type": "Evangelio",
+            "author": "Juan",
+            "purpose": "Salvación",
+            "historical_context": "Israel s. I",
+            "significance_context": "Diálogo con Nicodemo"
+        })
+
+        payload = {"verse_reference": "Juan 3:16"}
+        response = await client.post("/api/v1/sermons/exegesis", json=payload)
+
+        assert response.status_code == 200
+        assert response.json()["author"] == "Juan"
+        mock_ai.analyze_verse.assert_called_once_with("Juan 3:16")
+
+@pytest.mark.asyncio
+async def test_analyze_verse_error(client, mock_db):
+    with patch("app.api.endpoints.sermons.ai_service") as mock_ai:
+        mock_ai.analyze_verse.side_effect = Exception("AI down")
+
+        payload = {"verse_reference": "Juan 3:16"}
+        response = await client.post("/api/v1/sermons/exegesis", json=payload)
+
+        assert response.status_code == 503

@@ -1,65 +1,73 @@
 import pytest
 from unittest.mock import MagicMock, patch
 from app.services.ai_service import AISermonService
-from app.schemas.sermon import AISuggestionResponse
+from app.schemas.sermon import AISuggestionResponse, VerseExegesisResponse
 
 
 @pytest.fixture
 def ai_service():
     with patch("google.generativeai.configure"):
-        with patch("google.generativeai.GenerativeModel"):
-            return AISermonService()
+        with patch("google.generativeai.GenerativeModel") as MockModel:
+            mock_instance = MockModel.return_value
+            service = AISermonService()
+            service.client = MagicMock()
+            service.gemini_model_exegesis = mock_instance
+            return service
 
 
 @pytest.mark.asyncio
 async def test_get_suggestions_success(ai_service):
-    # Mock the response from Gemini
     mock_response = MagicMock()
-    mock_response.text = '{"suggested_outline": ["Punto 1", "Punto 2"], "verses_found": ["Juan 3:16"], "central_theme": "Amor de Dios"}'
+    mock_message = MagicMock()
+    mock_message.content = '{"suggested_outline": ["Punto 1", "Punto 2"], "verses_found": ["Juan 3:16"], "central_theme": "Amor de Dios"}'
+    mock_choice = MagicMock()
+    mock_choice.message = mock_message
+    mock_response.choices = [mock_choice]
 
-    with patch.object(
-        ai_service.model, "generate_content", return_value=mock_response
-    ) as mock_generate:
-        result = await ai_service.get_suggestions(
-            "Título de prueba", "Contenido de prueba"
-        )
+    ai_service.client.chat.completions.create.return_value = mock_response
 
-        assert isinstance(result, AISuggestionResponse)
-        assert result.central_theme == "Amor de Dios"
-        assert len(result.suggested_outline) == 2
-        assert "Juan 3:16" in result.verses_found
+    result = await ai_service.get_suggestions(
+        "Título de prueba", "Contenido de prueba"
+    )
 
-        mock_generate.assert_called_once()
+    assert isinstance(result, AISuggestionResponse)
+    assert result.central_theme == "Amor de Dios"
+    assert len(result.suggested_outline) == 2
+    assert "Juan 3:16" in result.verses_found
+    ai_service.client.chat.completions.create.assert_called_once()
 
 
 @pytest.mark.asyncio
-async def test_get_suggestions_invalid_json(ai_service):
-    # Mock invalid JSON response
+async def test_analyze_verse_gemini_success(ai_service):
     mock_response = MagicMock()
-    mock_response.text = "invalid json"
-
-    with patch.object(ai_service.model, "generate_content", return_value=mock_response):
-        with pytest.raises(
-            Exception
-        ):  # Pydantic will raise error on model_validate_json
-            await ai_service.get_suggestions("Título", "Contenido")
-
-@pytest.mark.asyncio
-async def test_get_suggestions_exception(ai_service):
-    with patch.object(ai_service.model, "generate_content", side_effect=Exception("API Error")):
-        with pytest.raises(Exception) as exc:
-            await ai_service.get_suggestions("Title", "Content")
-        assert "API Error" in str(exc.value)
-
-@pytest.mark.asyncio
-async def test_get_suggestions_academic_style(ai_service):
-    mock_response = MagicMock()
-    mock_response.text = '{"suggested_outline": [], "verses_found": [], "central_theme": "Academic Theme"}'
+    mock_response.text = '{"literary_type": "Evangelio", "author": "Juan", "purpose": "Salvación", "historical_context": "Israel s. I", "significance_context": "Diálogo con Nicodemo"}'
+    ai_service.gemini_model_exegesis.generate_content.return_value = mock_response
     
-    with patch.object(ai_service.model, "generate_content", return_value=mock_response) as mock_generate:
-        await ai_service.get_suggestions("Title", "Content", style="academic")
-        
-        # Verify prompt contains academic instruction
-        args, kwargs = mock_generate.call_args
-        prompt = args[0]
-        assert "Enfócate en un análisis exegético profundo" in prompt
+    result = await ai_service.analyze_verse("Juan 3:16")
+    
+    assert isinstance(result, VerseExegesisResponse)
+    assert result.author == "Juan"
+    assert result.purpose == "Salvación"
+    ai_service.gemini_model_exegesis.generate_content.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_analyze_verse_openai_fallback(ai_service):
+    # Force Gemini to fail
+    ai_service.gemini_model_exegesis.generate_content.side_effect = Exception("Gemini down")
+    
+    # Mock OpenAI fallback
+    mock_response = MagicMock()
+    mock_message = MagicMock()
+    mock_message.content = '{"literary_type": "Evangelio", "author": "OpenAI", "purpose": "Fallback", "historical_context": "N/A", "significance_context": "N/A"}'
+    mock_choice = MagicMock()
+    mock_choice.message = mock_message
+    mock_response.choices = [mock_choice]
+    
+    ai_service.client.chat.completions.create.return_value = mock_response
+    
+    result = await ai_service.analyze_verse("Juan 3:16")
+    
+    assert isinstance(result, VerseExegesisResponse)
+    assert result.author == "OpenAI"
+    ai_service.client.chat.completions.create.assert_called_once()

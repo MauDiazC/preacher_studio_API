@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
+import Button from './Button';
 import './Navbar.css';
 
 const Navbar: React.FC = () => {
@@ -9,31 +10,45 @@ const Navbar: React.FC = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate('/');
   };
 
   return (
     <nav className="navbar">
-      <Link to="/" className="navbar-brand">PREACHER STUDIO</Link>
-      <div className="navbar-links">
-        {isAuthenticated && (
+      <div className="navbar-left">
+        <Link to="/" className="navbar-brand">
+          <span className="brand-icon">📖</span> PREACHER STUDIO
+        </Link>
+      </div>
+      
+      <div className="navbar-center">
+        {!isAuthenticated ? (
+          <>
+            <Link to="/" className="navbar-link">Inicio</Link>
+            <Link to="/pricing" className="navbar-link">Precios</Link>
+            <a href="#features" className="navbar-link">Funciones</a>
+          </>
+        ) : (
           <>
             <Link to="/sermons" className="navbar-link">Mis Sermones</Link>
-            <Link to="/profile" className="navbar-link">Perfil</Link>
+            <Link to="/sermons/new" className="navbar-link">Nuevo Estudio</Link>
           </>
         )}
       </div>
-      <div className="navbar-actions">
+
+      <div className="navbar-right">
         {isAuthenticated ? (
-          <button 
-            onClick={handleLogout} 
-            className="navbar-link" 
-            style={{ background: 'none', border: 'none', cursor: 'pointer' }}
-          >
-            Cerrar Sesión
-          </button>
+          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+            <span className="user-badge">Admin</span>
+            <button onClick={handleLogout} className="navbar-link logout-btn">
+              Salir
+            </button>
+          </div>
         ) : (
-          <Link to="/login" className="navbar-link">Iniciar Sesión</Link>
+          <>
+            <Link to="/login" className="navbar-link">Login</Link>
+            <Button size="sm" onClick={() => navigate('/register')}>Probar Gratis</Button>
+          </>
         )}
       </div>
     </nav>
