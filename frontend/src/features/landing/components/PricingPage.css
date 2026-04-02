@@ -2,7 +2,7 @@
   min-height: calc(100vh - 80px);
   background-color: var(--bg-dark);
   color: var(--text-primary);
-  padding: var(--spacing-lg) 5%;
+  padding: var(--spacing-md) 5%; /* Reducido de XL/LG a MD */
   position: relative;
   overflow: hidden;
   display: flex;

@@ -1,5 +1,5 @@
 .landing-container {
-  min-height: calc(100vh - 80px); /* Restamos la altura del navbar */
+  min-height: calc(100vh - 80px);
   background-color: var(--bg-dark);
   color: var(--text-primary);
   display: flex;
@@ -10,11 +10,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex: 1; /* Ocupa el espacio restante */
+  flex: 1;
   min-height: 80vh;
   position: relative;
   overflow: hidden;
-  padding: var(--spacing-lg) 5%; /* Padding reducido arriba/abajo */
+  padding: 0 5%; /* Eliminado el padding superior/inferior para pegar al navbar */
+  margin-top: 0;
   /* Baño púrpura ambiental sutil en el fondo */
   background: radial-gradient(circle at center, rgba(125, 92, 255, 0.1) 0%, transparent 80%);
 }
