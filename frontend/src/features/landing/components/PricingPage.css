@@ -1,8 +1,8 @@
 .pricing-container {
-  min-height: 100vh;
+  min-height: calc(100vh - 80px);
   background-color: var(--bg-dark);
   color: var(--text-primary);
-  padding: var(--spacing-2xl) 5%;
+  padding: var(--spacing-lg) 5%;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -26,7 +26,7 @@
   text-align: center;
   max-width: 800px;
   z-index: 1;
-  margin-bottom: var(--spacing-2xl);
+  margin-bottom: var(--spacing-xl);
 }
 
 .pricing-title {
@@ -41,8 +41,8 @@
 
 .pricing-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: var(--spacing-xl);
+  grid-template-columns: repeat(3, 1fr); /* Forzar 3 columnas */
+  gap: var(--spacing-lg);
   width: 100%;
   max-width: 1200px;
   z-index: 1;
@@ -51,7 +51,7 @@
 .pricing-card {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border-color);
-  padding: var(--spacing-xl);
+  padding: var(--spacing-lg); /* Padding interno reducido */
   border-radius: var(--border-radius-lg);
   display: flex;
   flex-direction: column;
@@ -87,41 +87,42 @@
 
 .plan-name {
   font-size: var(--font-size-xl);
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
 }
 
 .plan-price {
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
 }
 
 .plan-price .amount {
-  font-size: 3rem;
+  font-size: 2.5rem; /* Un poco más pequeño para caber bien */
   font-weight: 800;
 }
 
 .plan-price .period {
   color: var(--text-secondary);
-  font-size: 1rem;
+  font-size: 0.9rem;
 }
 
 .plan-description {
   color: var(--text-secondary);
-  margin-bottom: var(--spacing-xl);
-  font-size: 1rem;
+  margin-bottom: var(--spacing-lg);
+  font-size: 0.95rem;
+  min-height: 3em; /* Asegurar alineación */
 }
 
 .plan-features {
   list-style: none;
-  margin-bottom: var(--spacing-xl);
+  margin-bottom: var(--spacing-lg);
 }
 
 .plan-features li {
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
   color: var(--text-primary);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--spacing-sm);
-  font-size: 0.95rem;
+  font-size: 0.9rem;
 }
 
 .check-icon {
@@ -130,7 +131,7 @@
 }
 
 .pricing-footer {
-  margin-top: var(--spacing-2xl);
+  margin-top: var(--spacing-xl);
   text-align: center;
   color: var(--text-secondary);
   font-size: 0.85rem;
@@ -147,8 +148,8 @@
   text-decoration: underline;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .pricing-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   }
 }

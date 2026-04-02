@@ -1,10 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '../../../context/LanguageContext';
 import Button from '../../../components/common/Button';
 import './LandingPage.css';
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   return (
     <div className="landing-container">
@@ -12,21 +14,20 @@ const LandingPage: React.FC = () => {
       <section className="hero-section">
         <div className="hero-background-glow"></div>
         <div className="hero-content">
-          <div className="badge">Mentoría Exegética con IA</div>
+          <div className="badge">{t('hero.badge')}</div>
           <h1 className="hero-title">
-            Desbloquea la Profundidad <br /> 
-            <span className="text-gradient">de la Palabra</span>
+            {t('hero.title')} <br /> 
+            <span className="text-gradient">{t('hero.title_gradient')}</span>
           </h1>
           <p className="hero-description">
-            Obtén análisis históricos, literarios y de significancia en segundos. 
-            La herramienta definitiva para pastores y predicadores modernos.
+            {t('hero.description')}
           </p>
           <div className="hero-actions">
             <Button size="lg" onClick={() => navigate('/register')}>
-              Comenzar Ahora
+              {t('hero.start')}
             </Button>
             <Button variant="outline" size="lg" onClick={() => navigate('/login')}>
-              Iniciar Sesión
+              {t('hero.login')}
             </Button>
           </div>
         </div>
@@ -42,11 +43,11 @@ const LandingPage: React.FC = () => {
               <span className="node-icon">📖</span>
             </div>
             {/* Flotantes que representan los 5 puntos exegéticos */}
-            <div className="floating-tag tag-1">Tipo Literario</div>
-            <div className="floating-tag tag-2">Autoría</div>
-            <div className="floating-tag tag-3">Contexto Histórico</div>
-            <div className="floating-tag tag-4">Significancia</div>
-            <div className="floating-tag tag-5">Propósito</div>
+            <div className="floating-tag tag-1">{t('tag.literary')}</div>
+            <div className="floating-tag tag-2">{t('tag.authorship')}</div>
+            <div className="floating-tag tag-3">{t('tag.historical')}</div>
+            <div className="floating-tag tag-4">{t('tag.significance')}</div>
+            <div className="floating-tag tag-5">{t('tag.purpose')}</div>
           </div>
         </div>
       </section>

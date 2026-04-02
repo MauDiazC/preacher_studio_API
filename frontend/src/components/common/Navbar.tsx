@@ -1,11 +1,13 @@
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
+import { useLanguage } from '../../context/LanguageContext';
 import Button from './Button';
 import './Navbar.css';
 
 const Navbar: React.FC = () => {
   const { isAuthenticated, logout } = useAuthStore();
+  const { language, toggleLanguage, t } = useLanguage();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -24,30 +26,35 @@ const Navbar: React.FC = () => {
       <div className="navbar-center">
         {!isAuthenticated ? (
           <>
-            <Link to="/" className="navbar-link">Inicio</Link>
-            <Link to="/pricing" className="navbar-link">Precios</Link>
-            <a href="#features" className="navbar-link">Funciones</a>
+            <Link to="/" className="navbar-link">{t('nav.home')}</Link>
+            <Link to="/pricing" className="navbar-link">{t('nav.pricing')}</Link>
+            <a href="#features" className="navbar-link">{t('nav.features')}</a>
           </>
         ) : (
           <>
-            <Link to="/sermons" className="navbar-link">Mis Sermones</Link>
-            <Link to="/sermons/new" className="navbar-link">Nuevo Estudio</Link>
+            <Link to="/sermons" className="navbar-link">{t('nav.my_sermons')}</Link>
+            <Link to="/sermons/new" className="navbar-link">{t('nav.new_study')}</Link>
           </>
         )}
       </div>
 
       <div className="navbar-right">
+        {/* Toggle Language */}
+        <button className="lang-toggle" onClick={toggleLanguage}>
+          {language === 'es' ? '🇺🇸 EN' : '🇪🇸 ES'}
+        </button>
+
         {isAuthenticated ? (
           <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
             <span className="user-badge">Admin</span>
             <button onClick={handleLogout} className="navbar-link logout-btn">
-              Salir
+              {t('nav.logout')}
             </button>
           </div>
         ) : (
           <>
-            <Link to="/login" className="navbar-link">Login</Link>
-            <Button size="sm" onClick={() => navigate('/register')}>Probar Gratis</Button>
+            <Link to="/login" className="navbar-link">{t('nav.login')}</Link>
+            <Button size="sm" onClick={() => navigate('/register')}>{t('nav.try_free')}</Button>
           </>
         )}
       </div>

@@ -1,17 +1,20 @@
 .landing-container {
-  min-height: 100vh;
+  min-height: calc(100vh - 80px); /* Restamos la altura del navbar */
   background-color: var(--bg-dark);
   color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
 }
 
 .hero-section {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 90vh;
+  flex: 1; /* Ocupa el espacio restante */
+  min-height: 80vh;
   position: relative;
   overflow: hidden;
-  padding: var(--spacing-2xl) 5%;
+  padding: var(--spacing-lg) 5%; /* Padding reducido arriba/abajo */
   /* Baño púrpura ambiental sutil en el fondo */
   background: radial-gradient(circle at center, rgba(125, 92, 255, 0.1) 0%, transparent 80%);
 }
