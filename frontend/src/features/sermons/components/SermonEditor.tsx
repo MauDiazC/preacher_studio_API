@@ -16,7 +16,6 @@ const SermonEditor: React.FC = () => {
   const { t } = useLanguage();
   
   const [verse, setVerse] = useState('');
-  const [content, setContent] = useState('');
   const [loading, setLoading] = useState(id && id !== 'new' ? true : false);
   const [analyzing, setAnalyzing] = useState(false);
   const editorRef = useRef<HTMLDivElement>(null);
@@ -27,7 +26,6 @@ const SermonEditor: React.FC = () => {
         try {
           const data = await sermonService.getById(id);
           setVerse(data.title || '');
-          setContent(data.content || '');
           if (editorRef.current) {
             editorRef.current.innerText = data.content || '';
           }
@@ -86,7 +84,6 @@ Notas adicionales:
 `;
       if (editorRef.current) {
         editorRef.current.innerText = formattedResult;
-        setContent(formattedResult);
       }
       addNotification('Análisis listo.', 'success');
     } catch (error: any) {
@@ -124,7 +121,7 @@ Notas adicionales:
         </div>
         
         <div className="header-actions">
-          <Button variant="outline" onClick={() => navigate('/sermons')}>{t('nav.home')}</Button>
+          <Button variant="outline" onClick={() => navigate('/sermons')}>Estudios</Button>
           <Button onClick={handleSave}>Guardar</Button>
         </div>
       </div>
@@ -137,7 +134,6 @@ Notas adicionales:
             className="rich-editor" 
             contentEditable 
             suppressContentEditableWarning
-            onBlur={(e) => setContent(e.currentTarget.innerText)}
           />
         </div>
         
