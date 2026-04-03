@@ -12,12 +12,12 @@ const PricingPage: React.FC = () => {
     {
       name: t('plan.free'),
       price: t('plan.free_price'),
-      description: 'Ideal para probar la potencia de la IA en tus estudios.',
+      description: 'Ideal para la preparación básica del mensaje dominical.',
       features: [
-        '3 Consultas exegéticas/mes',
-        '1 Proyecto de sermón activo',
-        'Acceso a la comunidad',
-        'Soporte básico'
+        '3 Estudios exegéticos al mes',
+        'Análisis literario y de autores',
+        '1 Estudio guardado en la nube',
+        'Formato de lectura estándar'
       ],
       buttonText: t('btn.start_free'),
       isPopular: false
@@ -26,14 +26,14 @@ const PricingPage: React.FC = () => {
       name: t('plan.pro'),
       price: '$9.99',
       period: '/mes',
-      description: 'La herramienta diaria del pastor moderno.',
+      description: 'La herramienta diaria esencial para el pastor activo.',
       features: [
         t('plan.includes_all'),
-        '50 Consultas exegéticas/mes',
-        'Sermones ilimitados',
-        'Exportar a PDF profesional',
-        'Historial de snapshots',
-        'Mentoría homilética IA'
+        '25 Estudios exegéticos al mes',
+        'Contexto histórico y de significancia',
+        'Estudios guardados ilimitados',
+        'Exportación profesional a PDF',
+        'Historial de versiones (Snapshots)'
       ],
       buttonText: t('btn.choose'),
       isPopular: true
@@ -42,14 +42,14 @@ const PricingPage: React.FC = () => {
       name: t('plan.unlimited'),
       price: '$19.99',
       period: '/mes',
-      description: 'Para aquellos que profundizan sin límites.',
+      description: 'Profundidad académica total para predicadores veteranos.',
       features: [
         t('plan.includes_all'),
-        'Consultas ILIMITADAS*',
-        'Exportar a Keynote/PowerPoint',
-        'Personalización de estilo',
-        'Soporte prioritario 1-on-1',
-        'Acceso a funciones Beta'
+        'Estudios exegéticos ILIMITADOS',
+        'Exportación a Keynote y PowerPoint',
+        'Personalización de estilo ministerial',
+        'Mentoría homilética avanzada',
+        'Soporte ministerial prioritario'
       ],
       buttonText: t('btn.be_exegete'),
       isPopular: false
@@ -99,7 +99,7 @@ const PricingPage: React.FC = () => {
       </div>
 
       <div className="pricing-footer">
-        <p>*Sujeto a política de uso justo. Gemini 1.5 Flash garantiza alta disponibilidad.</p>
+        <p>*Sujeto a política de uso justo para garantizar alta disponibilidad a todos los ministerios.</p>
         <div className="admin-access-note">
           ¿Eres administrador? <span className="link" onClick={() => navigate('/login')}>Inicia sesión</span> para acceso bypass.
         </div>
