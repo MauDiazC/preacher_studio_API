@@ -12,10 +12,13 @@ async def get_profile(user=Depends(get_current_user)):
     user_id = str(user.id)
     res = supabase.table("profiles").select("*").eq("id", user_id).execute()
     
+    meta = user.user_metadata or {}
+    full_name = meta.get("full_name") or meta.get("name") or meta.get("display_name")
+    
     profile_data = {
         "id": user_id,
         "email": user.email,
-        "full_name": user.user_metadata.get("full_name") or user.user_metadata.get("name")
+        "full_name": full_name
     }
 
     if not res.data:

@@ -69,16 +69,23 @@ async def create_sermon(
     # 1. Asegurar que el perfil existe y está actualizado
     profile_res = db.table("profiles").select("id").eq("id", user_id).execute()
     
+    # Extraer nombre de forma robusta
+    meta = user.user_metadata or {}
+    full_name = meta.get("full_name") or meta.get("name") or meta.get("display_name")
+    
     profile_data = {
         "id": user_id,
         "email": user.email,
-        "full_name": user.user_metadata.get("full_name") or user.user_metadata.get("name")
+        "full_name": full_name
     }
     
+    print(f"🔍 DEBUG: Syncing profile for {user_id}. Meta: {meta}")
+    
     if not profile_res.data:
+        print(f"🆕 Creating new profile for {user_id}")
         db.table("profiles").insert(profile_data).execute()
     else:
-        # Actualizar si faltan datos
+        print(f"🔄 Updating existing profile for {user_id}")
         db.table("profiles").update(profile_data).eq("id", user_id).execute()
 
     # 2. Insertar el sermón

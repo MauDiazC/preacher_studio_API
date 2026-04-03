@@ -24,7 +24,8 @@ class AISermonService:
         if self.gemini_api_key:
             # Usamos el cliente con configuración por defecto
             self.gemini_client = genai.Client(api_key=self.gemini_api_key)
-
+        
+        self.gemini_model = "gemini-1.5-flash-latest"
         self.system_instruction = "Eres un mentor homilético experto. Ayudas a pastores a estructurar sermones bíblicos profundos y prácticos."
 
     async def get_suggestions(self, title: str, content: str, style: str = "encouraging"):
@@ -100,7 +101,7 @@ class AISermonService:
         if self.gemini_client:
             try:
                 response = self.gemini_client.models.generate_content(
-                    model="gemini-1.5-flash",
+                    model=self.gemini_model,
                     contents=user_prompt,
                     config=types.GenerateContentConfig(
                         response_mime_type="application/json",
