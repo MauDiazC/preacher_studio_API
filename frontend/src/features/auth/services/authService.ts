@@ -3,7 +3,8 @@ import { useAuthStore } from '../../../store/authStore';
 
 export const authService = {
   register: async (email: string, password: string, fullName: string) => {
-    const response = await api.post('/auth/register', {
+    // Quitamos la "/" inicial para que sea relativo al baseURL (.../api/v1)
+    const response = await api.post('auth/register', {
       email,
       password,
       full_name: fullName,
@@ -11,7 +12,7 @@ export const authService = {
     return response.data;
   },
   login: async (email: string, password: string) => {
-    const response = await api.post('/auth/login', {
+    const response = await api.post('auth/login', {
       email,
       password,
     });
