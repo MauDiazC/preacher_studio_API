@@ -3,6 +3,9 @@ from pydantic import BaseModel, EmailStr
 from app.core.security import create_access_token
 from app.core.db import supabase
 from typing import Optional
+import logging
+
+logger = logging.getLogger("fastapi")
 
 router = APIRouter(prefix="/auth", tags=["Autenticación"])
 
@@ -15,6 +18,7 @@ class AuthSchema(BaseModel):
 async def register(auth_data: AuthSchema):
     # Registro en Supabase Auth
     try:
+        logger.info(f"Attempting register for: {auth_data.email}")
         res = supabase.auth.sign_up({
             "email": auth_data.email,
             "password": auth_data.password,
@@ -26,10 +30,13 @@ async def register(auth_data: AuthSchema):
         })
         
         if not res.user:
+            logger.error("Supabase registration failed - no user returned")
             raise HTTPException(status_code=400, detail="Error al registrar usuario en Supabase")
         
+        logger.info(f"User registered successfully: {res.user.id}")
         return {"message": "Usuario registrado con éxito. Verifique su correo.", "user_id": res.user.id}
     except Exception as e:
+        logger.error(f"💥 Critical error during registration: {str(e)}")
         raise HTTPException(status_code=400, detail=f"Error en el registro: {str(e)}")
 
 @router.post("/login")

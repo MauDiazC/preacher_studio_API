@@ -48,11 +48,14 @@ setup_logging()
 logger = logging.getLogger("fastapi")
 
 # Middleware de CORS
+# Permitimos orígenes específicos para evitar conflictos de seguridad
 allowed_origins = [
     "https://preacher-studio-front-production.up.railway.app",
+    "https://preacherstudioapi-production.up.railway.app",
     "http://localhost:5173",
     "http://localhost:3000"
 ]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
@@ -60,6 +63,17 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    try:
+        logger.info(f"📩 Petición entrante: {request.method} {request.url}")
+        response = await call_next(request)
+        logger.info(f"📤 Respuesta enviada: {response.status_code}")
+        return response
+    except Exception as e:
+        logger.error(f"💥 Error en Middleware: {str(e)}")
+        return JSONResponse(status_code=500, content={"message": "Error interno en el middleware"})
 
 
 # Manejo de Excepciones de la Aplicación
