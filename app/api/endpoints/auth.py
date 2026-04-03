@@ -1,11 +1,11 @@
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel, EmailStr
-from app.core.security import create_access_token
 from app.core.db import supabase
 from typing import Optional
 import logging
 
-logger = logging.getLogger("fastapi")
+# Forzamos los logs a la consola de Railway
+print("--- AUTH ENDPOINT LOADED ---")
 
 router = APIRouter(prefix="/auth", tags=["Autenticación"])
 
@@ -16,9 +16,15 @@ class AuthSchema(BaseModel):
 
 @router.post("/register")
 async def register(auth_data: AuthSchema):
-    # Registro en Supabase Auth
+    print(f"📥 REGISTER REQUEST RECEIVED: {auth_data.email}")
+    
+    # 1. Verificar si el cliente de supabase existe
+    if supabase is None:
+        print("❌ ERROR: Supabase client is NONE")
+        raise HTTPException(status_code=500, detail="Backend configuration error: Supabase client missing")
+
     try:
-        logger.info(f"Attempting register for: {auth_data.email}")
+        print("🔍 Attempting Supabase Auth Sign Up...")
         res = supabase.auth.sign_up({
             "email": auth_data.email,
             "password": auth_data.password,
@@ -29,41 +35,33 @@ async def register(auth_data: AuthSchema):
             }
         })
         
-        if not res.user:
-            logger.error("Supabase registration failed - no user returned")
-            raise HTTPException(status_code=400, detail="Error al registrar usuario en Supabase")
+        print(f"✅ Supabase Auth response received for: {auth_data.email}")
         
-        logger.info(f"User registered successfully: {res.user.id}")
-        return {"message": "Usuario registrado con éxito. Verifique su correo.", "user_id": res.user.id}
+        if not res.user:
+            print("⚠️ WARNING: No user object in Supabase response")
+            raise HTTPException(status_code=400, detail="Supabase registration failed - no user returned")
+        
+        print(f"🎉 Registration SUCCESS for ID: {res.user.id}")
+        return {"message": "Success", "user_id": res.user.id}
+
     except Exception as e:
-        logger.error(f"💥 Critical error during registration: {str(e)}")
-        raise HTTPException(status_code=400, detail=f"Error en el registro: {str(e)}")
+        print(f"💥 EXCEPTION DURING REGISTER: {str(e)}")
+        raise HTTPException(status_code=400, detail=f"Error: {str(e)}")
 
 @router.post("/login")
 async def login(auth_data: AuthSchema):
-    # Login en Supabase Auth
+    print(f"📥 LOGIN ATTEMPT: {auth_data.email}")
     try:
         res = supabase.auth.sign_in_with_password({
             "email": auth_data.email,
             "password": auth_data.password
         })
-    except Exception as e:
-        # Extraer el mensaje de error real si es posible
-        error_msg = str(e)
-        if "Email not confirmed" in error_msg:
-            raise HTTPException(status_code=401, detail="El correo electrónico no ha sido confirmado.")
-        raise HTTPException(status_code=401, detail=f"Error de autenticación: {error_msg}")
-
-    if not res.session:
-        raise HTTPException(status_code=401, detail="No se pudo iniciar sesión")
-    
-    # Retornamos el access token de Supabase para que el front lo use
-    return {
-        "access_token": res.session.access_token,
-        "token_type": "bearer",
-        "user": {
-            "id": res.user.id,
-            "email": res.user.email,
-            "full_name": res.user.user_metadata.get("full_name") if res.user.user_metadata else None
+        print(f"✅ Login successful for: {auth_data.email}")
+        return {
+            "access_token": res.session.access_token,
+            "token_type": "bearer",
+            "user": {"id": res.user.id, "email": res.user.email}
         }
-    }
+    except Exception as e:
+        print(f"❌ LOGIN FAILED: {str(e)}")
+        raise HTTPException(status_code=401, detail=str(e))

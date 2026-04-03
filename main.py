@@ -31,7 +31,7 @@ if settings.get("SENTRY_DSN"):
 app = FastAPI(
     title="Preacher Studio API",
     version="1.0.2",
-    redirect_slashes=True,
+    redirect_slashes=False,
 )
 
 # CORS TOTALMENTE ABIERTO (Para debuguear el 502)
