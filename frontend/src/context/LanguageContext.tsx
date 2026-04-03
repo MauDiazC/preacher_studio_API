@@ -31,6 +31,10 @@ const translations = {
     'tag.historical': 'Contexto Histórico',
     'tag.significance': 'Significancia',
     'tag.purpose': 'Propósito',
+    // Trust Bar
+    'trust.advanced': 'EXÉGESIS AVANZADA',
+    'trust.ai': 'IA HOMILÉTICA',
+    'trust.bible': 'BIBLIA & HISTORIA',
     // Pricing
     'pricing.badge': 'Planes y Precios',
     'pricing.title': 'Invierte en tu',
@@ -45,6 +49,16 @@ const translations = {
     'btn.start_free': 'Empezar Gratis',
     'btn.choose': 'Elegir Plan',
     'btn.be_exegete': 'Ser un Exégeta',
+    // Editor Tools
+    'editor.exegesis_title': 'Herramientas de Exégesis',
+    'editor.verse_placeholder': 'Ej: Juan 3:16',
+    'editor.analyze_btn': 'Analizar Versículo',
+    'editor.literary': 'Tipo Literario',
+    'editor.author': 'Autor',
+    'editor.purpose': 'Propósito',
+    'editor.historical': 'Contexto Histórico',
+    'editor.significance': 'Significancia',
+    'editor.credits_left': 'Créditos restantes:',
   },
   en: {
     // Navbar
@@ -68,6 +82,10 @@ const translations = {
     'tag.historical': 'Historical Context',
     'tag.significance': 'Significance',
     'tag.purpose': 'Purpose',
+    // Trust Bar
+    'trust.advanced': 'ADVANCED EXEGESIS',
+    'trust.ai': 'HOMILETIC AI',
+    'trust.bible': 'BIBLE & HISTORY',
     // Pricing
     'pricing.badge': 'Plans & Pricing',
     'pricing.title': 'Invest in your',
@@ -82,6 +100,16 @@ const translations = {
     'btn.start_free': 'Start for Free',
     'btn.choose': 'Choose Plan',
     'btn.be_exegete': 'Become an Exegete',
+    // Editor Tools
+    'editor.exegesis_title': 'Exegesis Tools',
+    'editor.verse_placeholder': 'Ex: John 3:16',
+    'editor.analyze_btn': 'Analyze Verse',
+    'editor.literary': 'Literary Type',
+    'editor.author': 'Author',
+    'editor.purpose': 'Purpose',
+    'editor.historical': 'Historical Context',
+    'editor.significance': 'Significance',
+    'editor.credits_left': 'Credits remaining:',
   }
 };
 

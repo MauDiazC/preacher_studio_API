@@ -1,17 +1,29 @@
 import api from '../../../services/api';
 
 export interface AISuggestion {
-  suggestion: string;
-  type: 'illustration' | 'structure' | 'clarity' | 'application';
+  suggested_outline: string[];
+  verses_found: string[];
+  central_theme: string;
+}
+
+export interface VerseExegesis {
+  literary_type: string;
+  author: string;
+  purpose: string;
+  historical_context: string;
+  significance_context: string;
 }
 
 export const aiService = {
   getMentorship: async (sermonId: string) => {
-    // Apuntamos a la ruta real del backend: /sermons/{id}/ai-assist
     const response = await api.post<AISuggestion>(`/sermons/${sermonId}/ai-assist`);
-    
-    // El backend devuelve un objeto AISuggestionResponse, lo adaptamos si es necesario
-    // Por ahora, asumimos que el componente espera un array o el objeto directamente.
     return response.data;
   },
+
+  analyzeVerse: async (verseReference: string) => {
+    const response = await api.post<VerseExegesis>(`/sermons/exegesis`, {
+      verse_reference: verseReference
+    });
+    return response.data;
+  }
 };

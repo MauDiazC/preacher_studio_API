@@ -2,7 +2,7 @@
   min-height: calc(100vh - 80px);
   background-color: var(--bg-dark);
   color: var(--text-primary);
-  padding: var(--spacing-md) 5%; /* Reducido de XL/LG a MD */
+  padding: 0 5% var(--spacing-xl) 5%;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -26,12 +26,13 @@
   text-align: center;
   max-width: 800px;
   z-index: 1;
+  margin-top: var(--spacing-lg);
   margin-bottom: var(--spacing-xl);
 }
 
 .pricing-title {
   font-size: var(--font-size-2xl);
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: var(--spacing-sm); /* Reducido de LG */
 }
 
 .pricing-subtitle {
@@ -51,7 +52,7 @@
 .pricing-card {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border-color);
-  padding: var(--spacing-lg); /* Padding interno reducido */
+  padding: var(--spacing-lg);
   border-radius: var(--border-radius-lg);
   display: flex;
   flex-direction: column;
@@ -95,7 +96,7 @@
 }
 
 .plan-price .amount {
-  font-size: 2.5rem; /* Un poco más pequeño para caber bien */
+  font-size: 2.5rem;
   font-weight: 800;
 }
 
@@ -108,7 +109,7 @@
   color: var(--text-secondary);
   margin-bottom: var(--spacing-lg);
   font-size: 0.95rem;
-  min-height: 3em; /* Asegurar alineación */
+  min-height: 3em;
 }
 
 .plan-features {

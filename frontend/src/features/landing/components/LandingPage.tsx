@@ -56,11 +56,11 @@ const LandingPage: React.FC = () => {
       <div className="trust-bar">
         <span>PREACHER STUDIO</span>
         <span>•</span>
-        <span>EXÉGESIS AVANZADA</span>
+        <span>{t('trust.advanced')}</span>
         <span>•</span>
-        <span>IA HOMILÉTICA</span>
+        <span>{t('trust.ai')}</span>
         <span>•</span>
-        <span>BIBLIA & HISTORIA</span>
+        <span>{t('trust.bible')}</span>
       </div>
     </div>
   );
