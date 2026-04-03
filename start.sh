@@ -5,9 +5,9 @@ echo "--- DEPLOYMENT START ---"
 
 # Migraciones
 echo "Running Migrations..."
-alembic upgrade head || echo "Migration error, but continuing..."
+alembic upgrade head || echo "Migrations skipped."
 
 # Uvicorn
-echo "Launching Uvicorn on Port $PORT..."
-# Añadimos --log-level debug para ver TODO
-exec uvicorn main:app --host 0.0.0.0 --port ${PORT:-8080} --proxy-headers --log-level debug --timeout-keep-alive 75
+PORT_TO_USE=${PORT:-8000}
+echo "Launching Uvicorn on Port $PORT_TO_USE..."
+exec uvicorn main:app --host 0.0.0.0 --port "$PORT_TO_USE" --proxy-headers --log-level info

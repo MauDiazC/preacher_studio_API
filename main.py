@@ -1,31 +1,12 @@
 import logging
-import sentry_sdk
-from sentry_sdk.integrations.fastapi import FastApiIntegration
-from sentry_sdk.integrations.starlette import StarletteIntegration
 from fastapi import FastAPI, Request, APIRouter
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from rich.console import Console
 from app.api.endpoints import sermons, system, websocket_endpoints, export, profile, auth
-from app.core.logger import setup_logging
 from app.core.exceptions import AppBaseException
-from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.util import get_remote_address
-from slowapi.errors import RateLimitExceeded
 from config.config import settings
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.inmemory import InMemoryBackend
-
-# Configuración de Sentry
-if settings.get("SENTRY_DSN"):
-    sentry_sdk.init(
-        dsn=settings.SENTRY_DSN,
-        integrations=[
-            StarletteIntegration(transaction_style="endpoint"),
-            FastApiIntegration(transaction_style="endpoint"),
-        ],
-        traces_sample_rate=1.0,
-    )
 
 # Configuración de FastAPI
 app = FastAPI(
@@ -34,15 +15,28 @@ app = FastAPI(
     redirect_slashes=False,
 )
 
-# CORS TOTALMENTE ABIERTO (Para debuguear el 502)
-# Una vez que funcione el registro, lo volveremos a cerrar.
+# CORS CORREGIDO (No se puede usar "*" con credentials=True)
+allowed_origins = [
+    "https://preacher-studio-front-production.up.railway.app",
+    "https://preacherstudioapi-production.up.railway.app",
+    "http://localhost:5173",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], 
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Middleware de loggeo por PRINT (aparece sí o sí en Railway)
+@app.middleware("http")
+async def simple_log(request: Request, call_next):
+    print(f"DEBUG: >>> Recibida petición {request.method} en {request.url}")
+    response = await call_next(request)
+    print(f"DEBUG: <<< Respuesta enviada con status {response.status_code}")
+    return response
 
 # Manejo de Excepciones
 @app.exception_handler(AppBaseException)
@@ -70,4 +64,4 @@ async def health():
 @app.on_event("startup")
 async def startup_event():
     FastAPICache.init(InMemoryBackend(), prefix="fastapi-cache")
-    print("✅ Backend iniciado correctamente en modo estable")
+    print("🚀 API LISTA Y ESCUCHANDO")
