@@ -70,10 +70,17 @@ const SermonEditor: React.FC = () => {
     return `${formattedNum}${formattedBook} ${chapter}${formattedVerse ? ':' + formattedVerse : ''}`;
   };
 
-  const handleSave = async (forcedContent?: string) => {
+  const handleSave = async (forcedContent?: string, forcedTitle?: string) => {
     const currentContent = forcedContent !== undefined ? forcedContent : (editorRef.current?.innerText || '');
+    const currentTitle = forcedTitle !== undefined ? forcedTitle : verse;
+    
+    if (!currentTitle) {
+      addNotification('El título (pasaje) es requerido.', 'error');
+      return null;
+    }
+
     try {
-      const payload = { title: verse, content: currentContent };
+      const payload = { title: currentTitle, content: currentContent };
       if (id && id !== 'new') {
         await sermonService.update(id, payload);
         addNotification('Guardado.', 'success');
@@ -84,8 +91,10 @@ const SermonEditor: React.FC = () => {
         navigate(`/sermons/${newStudy.id}`, { replace: true });
         return newStudy.id;
       }
-    } catch (error) {
-      addNotification('Error al guardar.', 'error');
+    } catch (error: any) {
+      const msg = error.response?.data?.message || error.message || 'Error al guardar';
+      addNotification(msg, 'error');
+      console.error('Save Error:', error);
       return null;
     }
   };
@@ -128,8 +137,8 @@ Notas adicionales:
       }
       addNotification('Análisis listo.', 'success');
       
-      // Auto-guardar pasando el contenido directamente para evitar errores de lectura del DOM
-      await handleSave(analysisText);
+      // Enviamos el título validado directamente para evitar esperar al estado
+      await handleSave(analysisText, validatedVerse);
     } catch (error: any) {
       addNotification('Error en la consulta.', 'error');
     } finally {
