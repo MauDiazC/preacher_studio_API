@@ -14,20 +14,23 @@ class AuthSchema(BaseModel):
 @router.post("/register")
 async def register(auth_data: AuthSchema):
     # Registro en Supabase Auth
-    res = supabase.auth.sign_up({
-        "email": auth_data.email,
-        "password": auth_data.password,
-        "options": {
-            "data": {
-                "full_name": auth_data.full_name
+    try:
+        res = supabase.auth.sign_up({
+            "email": auth_data.email,
+            "password": auth_data.password,
+            "options": {
+                "data": {
+                    "full_name": auth_data.full_name
+                }
             }
-        }
-    })
-    
-    if not res.user:
-        raise HTTPException(status_code=400, detail="Error al registrar usuario")
-    
-    return {"message": "Usuario registrado con éxito. Verifique su correo.", "user_id": res.user.id}
+        })
+        
+        if not res.user:
+            raise HTTPException(status_code=400, detail="Error al registrar usuario en Supabase")
+        
+        return {"message": "Usuario registrado con éxito. Verifique su correo.", "user_id": res.user.id}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Error en el registro: {str(e)}")
 
 @router.post("/login")
 async def login(auth_data: AuthSchema):
