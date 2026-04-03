@@ -34,15 +34,21 @@ const SermonEditor: React.FC = () => {
         try {
           const data = await sermonService.getById(id);
           setVerse(data.title || '');
-          // Esperamos un pequeño frame para asegurar que el ref esté vinculado
-          setTimeout(() => {
+          
+          // Aseguramos que el componente esté renderizado antes de inyectar HTML
+          const checkExist = setInterval(() => {
             if (editorRef.current) {
               editorRef.current.innerHTML = formatAnalysisHtml(data.content || '');
+              clearInterval(checkExist);
+              setLoading(false);
             }
-          }, 100);
+          }, 50);
+          
+          // Limpieza de seguridad por si algo falla
+          setTimeout(() => clearInterval(checkExist), 2000);
+
         } catch (error) {
           addNotification('Error al cargar.', 'error');
-        } finally {
           setLoading(false);
         }
       } else {
@@ -188,7 +194,31 @@ Notas adicionales:
     }
   };
 
+  const getResourceLinks = (verseRef: string) => {
+    // Mapeo simple de libros comunes para BibleHub (Inglés)
+    const bookMap: { [key: string]: string } = {
+      'Juan': 'john', 'Mateo': 'matthew', 'Marcos': 'mark', 'Lucas': 'lucas',
+      'Romanos': 'romans', 'Génesis': 'genesis', 'Éxodo': 'exodus', 'Salmos': 'psalms',
+      'Proverbios': 'proverbs', 'Apocalipsis': 'revelation', 'Hechos': 'acts'
+    };
+
+    const cleanRef = verseRef.trim();
+    const parts = cleanRef.split(' ');
+    const book = parts[0];
+    const chapterVerse = parts[parts.length - 1] || '';
+    const formattedChapterVerse = chapterVerse.replace(':', '-');
+    
+    const englishBook = bookMap[book] || book.toLowerCase();
+    
+    return {
+      bibleHub: `https://biblehub.com/interlinear/${englishBook}/${formattedChapterVerse}.htm`,
+      blueLetter: `https://www.blueletterbible.org/search/preSearch.cfm?Criteria=${encodeURIComponent(cleanRef)}`
+    };
+  };
+
   if (loading) return <div className="loading-screen">Cargando...</div>;
+
+  const links = getResourceLinks(verse);
 
   return (
     <div className="sermon-editor-container">
@@ -229,7 +259,7 @@ Notas adicionales:
               <h3>Recursos: {verse}</h3>
               <div className="resource-links" style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
                 <a 
-                  href={`https://biblehub.com/interlinear/${verse.replace(/\s+/g, '_').toLowerCase()}.htm`}
+                  href={links.bibleHub}
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="resource-link"
@@ -245,7 +275,7 @@ Notas adicionales:
                   <span>🌐</span> Interlineal Griego/Hebreo
                 </a>
                 <a 
-                  href={`https://www.blueletterbible.org/search/preSearch.cfm?Criteria=${encodeURIComponent(verse)}`}
+                  href={links.blueLetter}
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="resource-link"

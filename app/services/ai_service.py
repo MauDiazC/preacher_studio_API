@@ -98,8 +98,8 @@ class AISermonService:
             "significance_context": "Significancia teológica profunda y alusiones culturales o religiosas.",
             "version_rv1960": "El texto exacto en la versión Reina Valera 1960.",
             "version_nvi": "El texto exacto en la versión Nueva Versión Internacional.",
-            "original_languages": "Análisis de términos clave en Hebreo (si es AT) o Griego (si es NT) proporcionado como una cadena de texto detallada, incluyendo transliteración, significado original y matices teológicos.",
-            "source_attribution": "Indica de qué fuentes, comentarios clásicos (ej. Matthew Henry, Spurgeon) o corrientes teológicas proviene este análisis."
+            "original_languages": "Análisis léxico-profesional. Para las 3 palabras más importantes del pasaje, incluye: 1) Palabra en original (Hebreo/Griego), 2) Transliteración, 3) Número de Strong, 4) Definición detallada basada en el Léxico de Thayer (si es NT) o Brown-Driver-Briggs (si es AT). Proporciona esto como una cadena de texto académica y estructurada.",
+            "source_attribution": "Indica de qué comentarios académicos clásicos y contemporáneos (ej. Matthew Henry, Barclay, Kittel) proviene este análisis."
         }}
         """
 
