@@ -9,9 +9,11 @@ class AppBaseException(Exception):
     status_code: int = status.HTTP_500_INTERNAL_SERVER_ERROR
     error_code: str = "ERR_INTERNAL_000"
 
-    def __init__(self, message: Optional[str] = None, details: Optional[Any] = None):
+    def __init__(self, message: Optional[str] = None, details: Optional[Any] = None, status_code: Optional[int] = None):
         if message:
             self.message = message
+        if status_code:
+            self.status_code = status_code
         self.details = details
         super().__init__(self.message)
 

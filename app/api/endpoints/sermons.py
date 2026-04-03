@@ -258,8 +258,9 @@ async def analyze_verse(
     estructurado. Valida créditos del usuario antes de proceder.
     """
     user_id = str(user.id)
+    user_email = str(user.email)
     # 1. Validar si tiene créditos o es admin
-    await subscription_service.check_usage_limit(user_id, "EXEGESIS")
+    await subscription_service.check_usage_limit(user_id, "EXEGESIS", email=user_email)
 
     try:
         # 2. Llamar a la IA

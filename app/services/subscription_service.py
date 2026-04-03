@@ -5,22 +5,28 @@ import uuid
 
 class SubscriptionService:
     @staticmethod
-    async def check_usage_limit(user_id: str, action_type: str = "EXEGESIS"):
+    async def check_usage_limit(user_id: str, action_type: str = "EXEGESIS", email: Optional[str] = None):
         """
         Verifica si el usuario tiene créditos o es admin. 
         Si el perfil no existe, lo crea automáticamente.
         """
-        # 1. Intentar obtener perfil (usamos execute en lugar de single para evitar el error si no hay filas)
+        # 1. Intentar obtener perfil
         res = supabase.table("profiles").select("is_admin, credits_remaining, plan_id").eq("id", user_id).execute()
         
         if not res.data:
-            print(f"🆕 Creating missing profile for user: {user_id}")
+            print(f"🆕 Creating missing profile for user: {user_id} ({email})")
             # Si no existe, lo creamos con el plan sembrador por defecto
+            # EXCEPCIÓN: Si es el email del desarrollador, darle admin
+            is_admin = False
+            if email == "mdiazcabr@gmail.com":
+                is_admin = True
+                
             new_profile = {
                 "id": user_id,
-                "plan_id": "plan_sembrador",
-                "credits_remaining": 3,
-                "is_admin": False
+                "email": email,
+                "plan_id": "plan_sembrador" if not is_admin else "plan_exegeta",
+                "credits_remaining": 3 if not is_admin else 9999,
+                "is_admin": is_admin
             }
             res = supabase.table("profiles").insert(new_profile).execute()
             profile = res.data[0]
