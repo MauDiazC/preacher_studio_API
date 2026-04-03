@@ -24,14 +24,13 @@ def create_access_token(data: dict):
 async def get_current_user(token: str = Depends(oauth2_scheme)):
     try:
         # Delegamos la validación a Supabase Auth
-        # Esto manejará automáticamente ES256, HS256 y la rotación de llaves.
         res = supabase.auth.get_user(token)
         
         if not res.user:
             logger.warning("Supabase Auth: No user found for this token")
             raise HTTPException(status_code=401, detail="Token inválido o usuario no encontrado")
             
-        return str(res.user.id)
+        return res.user
         
     except Exception as e:
         logger.warning(f"JWT validation failed via Supabase: {str(e)}")

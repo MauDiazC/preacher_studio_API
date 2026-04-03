@@ -31,11 +31,12 @@ async def list_sermons(
     from_date: str | None = Query(None, description="Filtrar desde esta fecha."),
     to_date: str | None = Query(None, description="Filtrar hasta esta fecha."),
     db=Depends(get_db),
-    user_id: str = Depends(get_current_user),
+    user=Depends(get_current_user),
 ):
     """
     Obtiene una lista paginada de sermones pertenecientes al pastor autenticado con soporte para filtros.
     """
+    user_id = str(user.id)
     response = sermon_repo.get_all(
         db=db,
         user_id=user_id,
@@ -59,15 +60,26 @@ async def list_sermons(
     "/", response_model=SermonRead, status_code=201, summary="Crear un nuevo sermón"
 )
 async def create_sermon(
-    sermon: SermonCreate, db=Depends(get_db), user_id: str = Depends(get_current_user)
+    sermon: SermonCreate, db=Depends(get_db), user=Depends(get_current_user)
 ):
     """
     Crea un nuevo sermón. Si el perfil del pastor no existe, se crea automáticamente.
     """
-    # 1. Asegurar que el perfil existe para evitar error de FK
+    user_id = str(user.id)
+    # 1. Asegurar que el perfil existe y está actualizado
     profile_res = db.table("profiles").select("id").eq("id", user_id).execute()
+    
+    profile_data = {
+        "id": user_id,
+        "email": user.email,
+        "full_name": user.user_metadata.get("full_name") or user.user_metadata.get("name")
+    }
+    
     if not profile_res.data:
-        db.table("profiles").insert({"id": user_id}).execute()
+        db.table("profiles").insert(profile_data).execute()
+    else:
+        # Actualizar si faltan datos
+        db.table("profiles").update(profile_data).eq("id", user_id).execute()
 
     # 2. Insertar el sermón
     data = sermon.model_dump()
@@ -83,11 +95,13 @@ async def create_sermon(
 @router.get("/{sermon_id}", response_model=SermonRead, summary="Obtener un sermón por ID")
 async def get_sermon(
     sermon_id: str,
-    user_id: str = Depends(get_current_user),
+    db=Depends(get_db),
+    user=Depends(get_current_user),
 ):
     """
     Obtiene los detalles de un sermón específico.
     """
+    user_id = str(user.id)
     res = sermon_repo.get_by_id(db, sermon_id, user_id)
     if not res.data:
         raise EntityNotFoundException(message=f"Sermón con ID {sermon_id} no encontrado.")
@@ -103,11 +117,12 @@ async def auto_save_sermon(
     sermon_id: str,
     sermon_update: SermonUpdate,
     db=Depends(get_db),
-    user_id: str = Depends(get_current_user),
+    user=Depends(get_current_user),
 ):
     """
     Actualiza parcialmente los campos de un sermón. Ideal para implementaciones de auto-guardado en el frontend.
     """
+    user_id = str(user.id)
     # Verificamos que el sermón pertenezca al usuario
     update_data = sermon_update.model_dump(exclude_unset=True)
     response = (
@@ -137,11 +152,12 @@ async def get_ai_assistance(
     sermon_id: str,
     background_tasks: BackgroundTasks,
     db=Depends(get_db),
-    user_id: str = Depends(get_current_user),
+    user=Depends(get_current_user),
 ):
     """
     Utiliza el motor de IA para generar un bosquejo sugerido y encontrar versículos basados en el título y notas actuales.
     """
+    user_id = str(user.id)
     # 1. Usar el repositorio para buscar el sermón
     res = sermon_repo.get_by_id(db, sermon_id, user_id)
     if not res.data:
@@ -188,11 +204,12 @@ async def create_snapshot(
         ..., description="Etiqueta descriptiva (ej: 'Antes de revisión')"
     ),
     db=Depends(get_db),
-    user_id: str = Depends(get_current_user),
+    user=Depends(get_current_user),
 ):
     """
     Guarda una versión inmutable del contenido actual del sermón en el historial.
     """
+    user_id = str(user.id)
     # Obtener contenido actual
     res = (
         db.table("sermons")
@@ -227,12 +244,13 @@ from app.services.subscription_service import subscription_service
 async def analyze_verse(
     request: Request,
     payload: VerseExegesisRequest,
-    user_id: str = Depends(get_current_user),
+    user=Depends(get_current_user),
 ):
     """
     Recibe la referencia de un versículo o pasaje y devuelve un análisis exegético
     estructurado. Valida créditos del usuario antes de proceder.
     """
+    user_id = str(user.id)
     # 1. Validar si tiene créditos o es admin
     await subscription_service.check_usage_limit(user_id, "EXEGESIS")
 

@@ -16,7 +16,8 @@ router = APIRouter(prefix="/export", tags=["Exportación"])
 
 
 @router.get("/{sermon_id}/pdf", summary="Exportar sermón a PDF")
-async def export_to_pdf(sermon_id: str, db=Depends(get_db), user_id: str = Depends(get_current_user)):
+async def export_to_pdf(sermon_id: str, db=Depends(get_db), user=Depends(get_current_user)):
+    user_id = str(user.id)
     res = sermon_repo.get_by_id(db, sermon_id, user_id)
     if not res.data:
         raise EntityNotFoundException(message="Sermón no encontrado para exportar.")
@@ -51,7 +52,8 @@ async def export_to_pdf(sermon_id: str, db=Depends(get_db), user_id: str = Depen
 
 
 @router.get("/{sermon_id}/pptx", summary="Exportar sermón a PowerPoint (Compatible con Keynote)")
-async def export_to_pptx(sermon_id: str, db=Depends(get_db), user_id: str = Depends(get_current_user)):
+async def export_to_pptx(sermon_id: str, db=Depends(get_db), user=Depends(get_current_user)):
+    user_id = str(user.id)
     res = sermon_repo.get_by_id(db, sermon_id, user_id)
     if not res.data:
         raise EntityNotFoundException(message="Sermón no encontrado para exportar.")
