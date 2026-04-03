@@ -3,6 +3,8 @@
   min-height: calc(100vh - 80px);
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
 .sermon-editor-header {
