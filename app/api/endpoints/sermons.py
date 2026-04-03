@@ -213,6 +213,8 @@ async def create_snapshot(
     return {"status": "Snapshot programado correctamente"}
 
 
+from app.services.subscription_service import subscription_service
+
 @router.post(
     "/exegesis",
     response_model=VerseExegesisResponse,
@@ -226,10 +228,22 @@ async def analyze_verse(
 ):
     """
     Recibe la referencia de un versículo o pasaje y devuelve un análisis exegético
-    estructurado (tipo literario, autor, propósito, contexto histórico y significancia).
+    estructurado. Valida créditos del usuario antes de proceder.
     """
+    # 1. Validar si tiene créditos o es admin
+    await subscription_service.check_usage_limit(user_id, "EXEGESIS")
+
     try:
+        # 2. Llamar a la IA
         exegesis = await ai_service.analyze_verse(payload.verse_reference)
+        
+        # 3. Registrar uso y descontar crédito (si no es admin)
+        await subscription_service.record_usage(
+            user_id=user_id, 
+            action_type="EXEGESIS", 
+            details=payload.verse_reference
+        )
+        
         return exegesis
     except Exception as e:
         raise AIServiceUnavailableException(details=str(e))

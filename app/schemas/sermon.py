@@ -145,6 +145,10 @@ class VerseExegesisResponse(BaseModel):
 
 class ProfileBase(BaseModel):
     full_name: Optional[str] = Field(None, max_length=100)
+    email: Optional[str] = None
+    is_admin: Optional[bool] = False
+    plan_id: Optional[str] = None
+    credits_remaining: Optional[int] = 3
     mentorship_style: Optional[str] = Field(
         "encouraging",
         description="Estilo de mentoría preferido (encouraging, academic, practical)",
@@ -152,8 +156,9 @@ class ProfileBase(BaseModel):
 
 
 class ProfileRead(ProfileBase):
-    id: UUID
-    updated_at: datetime
+    id: str
+    updated_at: Optional[datetime] = None
+    created_at: Optional[datetime] = None
     model_config = ConfigDict(from_attributes=True)
 
 
