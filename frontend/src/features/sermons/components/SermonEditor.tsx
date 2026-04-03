@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Button from '../../../components/common/Button';
 import Input from '../../../components/common/Input';
 import { aiService } from '../services/aiService';
-import type { VerseExegesis } from '../services/aiService';
 import { sermonService } from '../services/sermonService';
 import { exportService } from '../services/exportService';
 import { useNotificationStore } from '../../../store/useNotificationStore';
@@ -16,86 +15,84 @@ const SermonEditor: React.FC = () => {
   const { addNotification } = useNotificationStore();
   const { t } = useLanguage();
   
-  const [title, setTitle] = useState('');
+  // Repurposing 'title' as 'verse' for the database
+  const [verse, setVerse] = useState('');
   const [content, setContent] = useState('');
-  const [suggestions, setSuggestions] = useState<any>(null);
-  const [loadingAI, setLoadingAI] = useState(false);
   const [loading, setLoading] = useState(id && id !== 'new' ? true : false);
-
-  // New Exegesis State
-  const [verseRef, setVerseRef] = useState('');
-  const [exegesisResult, setExegesisResult] = useState<VerseExegesis | null>(null);
-  const [loadingExegesis, setLoadingExegesis] = useState(false);
+  const [analyzing, setAnalyzing] = useState(false);
 
   useEffect(() => {
     if (id && id !== 'new') {
       const fetchSermon = async () => {
         try {
           const data = await sermonService.getById(id);
-          setTitle(data.title || '');
+          setVerse(data.title || ''); // Usamos el campo title para el versículo
           setContent(data.content || '');
         } catch (error) {
-          console.error('Error fetching sermon:', error);
-          addNotification('No se pudo cargar el sermón.', 'error');
+          console.error('Error fetching study:', error);
+          addNotification('No se pudo cargar el estudio.', 'error');
         } finally {
           setLoading(false);
         }
       };
       fetchSermon();
-    } else {
-      setTitle('');
-      setContent('');
-      setSuggestions(null);
     }
   }, [id]);
 
   const handleSave = async () => {
     try {
+      const payload = { title: verse, content }; // Guardamos el versículo como título
       if (id && id !== 'new') {
-        const updated = await sermonService.update(id, { title, content });
-        setTitle(updated.title || '');
-        setContent(updated.content || '');
-        addNotification('Sermón actualizado.', 'success');
+        await sermonService.update(id, payload);
+        addNotification('Estudio guardado.', 'success');
       } else {
-        const newSermon = await sermonService.create({ title, content });
-        addNotification('Sermón creado.', 'success');
-        navigate(`/sermons/${newSermon.id}`);
+        const newStudy = await sermonService.create(payload);
+        addNotification('Estudio creado.', 'success');
+        navigate(`/sermons/${newStudy.id}`);
       }
     } catch (error) {
-      console.error('Error saving sermon:', error);
       addNotification('Error al guardar.', 'error');
     }
   };
 
-  const handleGetExegesis = async () => {
-    if (!verseRef) return;
-    setLoadingExegesis(true);
-    try {
-      const data = await aiService.analyzeVerse(verseRef);
-      setExegesisResult(data);
-      addNotification('Análisis exegético completado.', 'success');
-    } catch (error: any) {
-      const msg = error.response?.data?.message || 'Error al conectar con la IA.';
-      addNotification(msg, 'error');
-    } finally {
-      setLoadingExegesis(false);
-    }
-  };
-
-  const handleGetMentorship = async () => {
-    if (!id || id === 'new') {
-      addNotification('Guarde el sermón primero para usar la IA.', 'error');
+  const handleAnalyze = async () => {
+    if (!verse) {
+      addNotification('Por favor, ingrese un pasaje primero.', 'error');
       return;
     }
-    setLoadingAI(true);
+    setAnalyzing(true);
     try {
-      const data = await aiService.getMentorship(id);
-      setSuggestions(data);
-    } catch (error) {
-      console.error('Error getting AI mentorship:', error);
-      addNotification('Error al conectar con la IA.', 'error');
+      const data = await aiService.analyzeVerse(verse);
+      
+      // Formateamos el resultado para el cuadro de texto principal
+      const formattedResult = `
+--- ANÁLISIS EXEGÉTICO: ${verse} ---
+
+1. TIPO LITERARIO:
+${data.literary_type}
+
+2. AUTORÍA:
+${data.author}
+
+3. PROPÓSITO ORIGINAL:
+${data.purpose}
+
+4. CONTEXTO HISTÓRICO (USOS Y COSTUMBRES):
+${data.historical_context}
+
+5. CONTEXTO DE SIGNIFICANCIA (APLICACIÓN ORIGINAL):
+${data.significance_context}
+
+-------------------------------------------
+Notas adicionales del estudio:
+`;
+      setContent(formattedResult);
+      addNotification('Análisis completado con éxito.', 'success');
+    } catch (error: any) {
+      const msg = error.response?.data?.message || 'Error en el servicio de consulta.';
+      addNotification(msg, 'error');
     } finally {
-      setLoadingAI(false);
+      setAnalyzing(false);
     }
   };
 
@@ -108,23 +105,33 @@ const SermonEditor: React.FC = () => {
         await exportService.exportToKeynote(id);
       }
     } catch (error) {
-      console.error('Error exporting sermon:', error);
+      console.error('Error exporting:', error);
     }
   };
 
-  if (loading) return <div style={{ padding: '2rem', textAlign: 'center' }}>Cargando sermón...</div>;
+  if (loading) return <div className="loading-screen">Cargando estudio...</div>;
 
   return (
     <div className="sermon-editor-container">
       <div className="sermon-editor-header">
-        <Input 
-          placeholder="Título del Sermón" 
-          value={title} 
-          onChange={(e) => setTitle(e.target.value)}
-          style={{ fontSize: '1.5rem', fontWeight: 'bold', border: 'none', borderBottom: '2px solid var(--border-color)', borderRadius: 0, width: '400px', background: 'transparent' }}
-        />
-        <div style={{ display: 'flex', gap: 'var(--spacing-md)' }}>
-          <Button variant="outline" onClick={() => navigate('/sermons')}>Volver</Button>
+        <div className="header-left">
+          <Input 
+            placeholder={t('editor.verse_placeholder')}
+            value={verse} 
+            onChange={(e) => setVerse(e.target.value)}
+            className="verse-input-main"
+          />
+          <Button 
+            onClick={handleAnalyze} 
+            disabled={analyzing || !verse}
+            variant="primary"
+          >
+            {analyzing ? '...' : t('editor.analyze_btn')}
+          </Button>
+        </div>
+        
+        <div className="header-actions">
+          <Button variant="outline" onClick={() => navigate('/sermons')}>{t('nav.home')}</Button>
           <Button onClick={handleSave}>Guardar</Button>
         </div>
       </div>
@@ -133,79 +140,23 @@ const SermonEditor: React.FC = () => {
         <div className="editor-pane">
           <textarea 
             className="editor-textarea" 
-            placeholder="Comienza a escribir tu sermón aquí..."
+            placeholder="El resultado del análisis aparecerá aquí. También puedes escribir tus propias notas..."
             value={content}
             onChange={(e) => setContent(e.target.value)}
           />
         </div>
         
-        <div className="sidebar-pane" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-lg)' }}>
-          
-          {/* Exegesis Panel */}
-          <div className="ai-mentorship-panel exegesis-panel">
-            <h3>{t('editor.exegesis_title')}</h3>
-            <div className="verse-input-group">
-              <Input 
-                placeholder={t('editor.verse_placeholder')}
-                value={verseRef}
-                onChange={(e) => setVerseRef(e.target.value)}
-              />
-              <Button 
-                size="sm" 
-                onClick={handleGetExegesis} 
-                disabled={loadingExegesis || !verseRef}
-                style={{ width: '100%', marginTop: '0.5rem' }}
-              >
-                {loadingExegesis ? '...' : t('editor.analyze_btn')}
-              </Button>
+        <div className="sidebar-pane">
+          <div className="export-panel">
+            <h3>Exportar Estudio</h3>
+            <div className="export-buttons">
+              <Button variant="outline" size="sm" onClick={() => handleExport('pdf')} disabled={!id || id === 'new'}>PDF Profesional</Button>
+              <Button variant="outline" size="sm" onClick={() => handleExport('keynote')} disabled={!id || id === 'new'}>Presentación Keynote</Button>
             </div>
-
-            {exegesisResult && (
-              <div className="exegesis-results">
-                <div className="ex-item"><strong>{t('editor.literary')}:</strong> <p>{exegesisResult.literary_type}</p></div>
-                <div className="ex-item"><strong>{t('editor.author')}:</strong> <p>{exegesisResult.author}</p></div>
-                <div className="ex-item"><strong>{t('editor.purpose')}:</strong> <p>{exegesisResult.purpose}</p></div>
-                <div className="ex-item"><strong>{t('editor.historical')}:</strong> <p>{exegesisResult.historical_context}</p></div>
-                <div className="ex-item"><strong>{t('editor.significance')}:</strong> <p>{exegesisResult.significance_context}</p></div>
-              </div>
-            )}
           </div>
 
-          <div className="ai-mentorship-panel">
-            <h3>Mentoría IA</h3>
-            {!suggestions && !loadingAI && (
-              <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)' }}>
-                Escriba algo, guarde y presione el botón para recibir consejos homiléticos.
-              </p>
-            )}
-            {loadingAI && <p>Analizando...</p>}
-            
-            {suggestions && (
-              <div className="ai-suggestions-content">
-                <div className="ai-suggestion">
-                  <strong>Tema Central:</strong>
-                  <p>{suggestions.central_theme}</p>
-                </div>
-              </div>
-            )}
-
-            <Button 
-              variant="secondary" 
-              size="sm" 
-              style={{ width: '100%', marginTop: '1rem' }} 
-              onClick={handleGetMentorship}
-              disabled={loadingAI || !id || id === 'new'}
-            >
-              Pedir Revisión IA
-            </Button>
-          </div>
-
-          <div className="export-panel ai-mentorship-panel">
-            <h3>Exportar</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
-              <Button variant="outline" size="sm" onClick={() => handleExport('pdf')} disabled={!id || id === 'new'}>PDF</Button>
-              <Button variant="outline" size="sm" onClick={() => handleExport('keynote')} disabled={!id || id === 'new'}>Keynote</Button>
-            </div>
+          <div className="help-panel">
+            <p><strong>Tip:</strong> Una vez generado el análisis, puedes editar el texto directamente para añadir tus propias revelaciones y apuntes para el mensaje.</p>
           </div>
         </div>
       </div>

@@ -11,6 +11,33 @@
   align-items: center;
   padding: var(--spacing-md) 0;
   border-bottom: 1px solid var(--border-color);
+  gap: 2rem;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.verse-input-main {
+  margin-bottom: 0 !important;
+  flex: 1;
+  max-width: 400px;
+}
+
+.verse-input-main .input-field {
+  font-size: 1.25rem !important;
+  font-weight: 700;
+  border: none !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  padding: 0.8rem 1.2rem !important;
+}
+
+.header-actions {
+  display: flex;
+  gap: var(--spacing-md);
 }
 
 .sermon-editor-main {
@@ -21,89 +48,90 @@
 }
 
 .editor-pane {
-  flex: 2;
+  flex: 3;
 }
 
 .editor-textarea {
   width: 100%;
   height: 100%;
-  min-height: 500px;
-  background: transparent;
-  border: none;
+  min-height: 600px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
   color: var(--text-primary);
-  font-family: inherit;
+  font-family: 'Inter', sans-serif;
   font-size: 1.1rem;
   line-height: 1.8;
+  padding: 2rem;
   resize: none;
   outline: none;
+  transition: var(--transition-normal);
+}
+
+.editor-textarea:focus {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--accent-purple);
 }
 
 .sidebar-pane {
   flex: 1;
-  max-width: 400px;
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
 }
 
-.ai-mentorship-panel {
+.export-panel, .help-panel {
   background: var(--surface-dark);
   border: 1px solid var(--border-color);
   padding: var(--spacing-lg);
   border-radius: var(--border-radius-md);
-  margin-bottom: var(--spacing-lg);
 }
 
-.ai-mentorship-panel h3 {
-  font-size: 1rem;
+.export-panel h3 {
+  font-size: 0.9rem;
   margin-bottom: var(--spacing-md);
   color: var(--accent-purple);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
-/* Exegesis Styles */
-.exegesis-results {
-  margin-top: var(--spacing-lg);
+.export-buttons {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: 0.75rem;
 }
 
-.ex-item {
-  font-size: 0.9rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  padding-bottom: 0.5rem;
+.help-panel {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  border-left: 4px solid var(--accent-purple);
 }
 
-.ex-item strong {
-  color: var(--secondary-color);
-  display: block;
-  margin-bottom: 0.2rem;
-  font-size: 0.75rem;
-  text-transform: uppercase;
-}
-
-.ex-item p {
-  color: var(--text-primary);
-  line-height: 1.4;
+.loading-screen {
+  padding: 4rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 1.2rem;
 }
 
 @media (max-width: 1024px) {
+  .sermon-editor-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  .header-left {
+    width: 100%;
+  }
+  .verse-input-main {
+    max-width: 100%;
+  }
   .sermon-editor-main {
     flex-direction: column;
-    gap: var(--spacing-lg);
   }
   .sidebar-pane {
     max-width: 100%;
-    order: 2; /* El panel de IA va abajo del texto en móvil */
-  }
-  .editor-pane {
-    order: 1;
-  }
-  .sermon-editor-header {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: flex-start;
-  }
-  .sermon-editor-header input {
-    width: 100% !important;
   }
 }
