@@ -127,6 +127,11 @@
   gap: 0.75rem;
 }
 
+.resource-link:hover {
+  text-decoration: underline !important;
+  opacity: 0.8;
+}
+
 .loading-screen {
   padding: 4rem;
   text-align: center;
