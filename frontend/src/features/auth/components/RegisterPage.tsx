@@ -45,13 +45,13 @@ const RegisterPage: React.FC = () => {
   if (isSuccess) {
     return (
       <div className="register-container">
-        <Card className="register-card" style={{ textAlign: 'center' }}>
+        <Card className="register-card" style={{ textAlign: 'center', padding: 'var(--spacing-xl)' }}>
           <h2 className="register-title">¡Casi listo! 🕊️</h2>
-          <p style={{ marginBottom: '2rem', color: 'var(--text-secondary)' }}>
-            Hemos enviado un enlace de confirmación a <strong>{email}</strong>. 
-            Por favor, revisa tu bandeja de entrada (y la carpeta de spam) para activar tu cuenta.
+          <p style={{ marginBottom: '2rem', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
+            Hemos enviado un enlace de activación a <strong>{email}</strong>.<br /><br />
+            Por favor, revisa tu bandeja de entrada para confirmar tu cuenta y empezar a usar las herramientas de <strong>Preacher Studio</strong>.
           </p>
-          <Button onClick={() => navigate('/login')}>Ir al Inicio de Sesión</Button>
+          <Button style={{ width: '100%' }} onClick={() => navigate('/login')}>Ir al Inicio de Sesión</Button>
         </Card>
       </div>
     );
