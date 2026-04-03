@@ -30,6 +30,7 @@ async def list_sermons(
     status: str | None = Query(None, description="Filtrar por estado."),
     from_date: str | None = Query(None, description="Filtrar desde esta fecha."),
     to_date: str | None = Query(None, description="Filtrar hasta esta fecha."),
+    db=Depends(get_db),
     user_id: str = Depends(get_current_user),
 ):
     """

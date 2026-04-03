@@ -41,7 +41,8 @@
 }
 
 .sermon-editor-main {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
   gap: var(--spacing-xl);
   flex: 1;
   padding: var(--spacing-lg) 0;
@@ -50,9 +51,8 @@
 }
 
 .editor-pane {
-  flex: 1;
   min-width: 0;
-  max-width: calc(100% - 360px);
+  width: 100%;
 }
 
 /* El nuevo editor que permite estilos */
@@ -94,14 +94,14 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
-  background: var(--surface-dark);
+  background: #16142C;
   padding: 1.5rem;
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-md);
   position: sticky;
   top: 1rem;
-  z-index: 999;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  z-index: 1000;
+  box-shadow: -10px 0 30px rgba(0,0,0,0.5);
 }
 
 .export-panel {
