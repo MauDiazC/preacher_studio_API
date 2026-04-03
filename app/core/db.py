@@ -4,18 +4,18 @@ import logging
 
 logger = logging.getLogger("fastapi")
 
-url = settings.get("SUPABASE_URL")
-key = settings.get("SUPABASE_KEY")
+# Inicialización segura
+SUPABASE_URL = settings.get("SUPABASE_URL")
+SUPABASE_KEY = settings.get("SUPABASE_KEY")
 
-if not url or not key:
-    logger.error("❌ ERROR: SUPABASE_URL o SUPABASE_KEY no configuradas en settings/env")
-    # No levantamos excepción aquí para permitir que la app inicie y muestre el error en logs
-    supabase = None 
+if not SUPABASE_URL or not SUPABASE_KEY:
+    print("❌ CRITICAL ERROR: Supabase environment variables missing!")
+    supabase = None
 else:
-    supabase: Client = create_client(url, key)
-
+    # Creamos el cliente directamente
+    supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 def get_db():
     if supabase is None:
-        raise Exception("Cliente de Supabase no inicializado. Verifique variables de entorno.")
+        raise Exception("Supabase client not initialized")
     return supabase

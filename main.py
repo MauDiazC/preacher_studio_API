@@ -16,8 +16,6 @@ from config.config import settings
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.inmemory import InMemoryBackend
 
-print("🚀 DEPLOYMENT CONFIRMATION: VERSION 1.0.2 - MauDiaz")
-
 # Configuración de Sentry
 if settings.get("SENTRY_DSN"):
     sentry_sdk.init(
@@ -27,82 +25,34 @@ if settings.get("SENTRY_DSN"):
             FastApiIntegration(transaction_style="endpoint"),
         ],
         traces_sample_rate=1.0,
-        profiles_sample_rate=1.0,
     )
 
-# Configuración de Rate Limiting
-limiter = Limiter(key_func=get_remote_address)
+# Configuración de FastAPI
 app = FastAPI(
     title="Preacher Studio API",
-    description="Backend profesional para la gestión de sermones con mentoría por IA.",
-    version="1.0.0",
-    docs_url="/docs",
-    redoc_url="/redoc",
+    version="1.0.2",
     redirect_slashes=True,
 )
-app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)  # type: ignore
 
-console = Console()
-setup_logging()
-logger = logging.getLogger("fastapi")
-
-# Middleware de CORS
-# Permitimos orígenes específicos para evitar conflictos de seguridad
-allowed_origins = [
-    "https://preacher-studio-front-production.up.railway.app",
-    "https://preacherstudioapi-production.up.railway.app",
-    "http://localhost:5173",
-    "http://localhost:3000"
-]
-
+# CORS TOTALMENTE ABIERTO (Para debuguear el 502)
+# Una vez que funcione el registro, lo volveremos a cerrar.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
+    allow_origins=["*"], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-@app.middleware("http")
-async def log_requests(request: Request, call_next):
-    try:
-        logger.info(f"📩 Petición entrante: {request.method} {request.url}")
-        response = await call_next(request)
-        logger.info(f"📤 Respuesta enviada: {response.status_code}")
-        return response
-    except Exception as e:
-        logger.error(f"💥 Error en Middleware: {str(e)}")
-        return JSONResponse(status_code=500, content={"message": "Error interno en el middleware"})
-
-
-# Manejo de Excepciones de la Aplicación
+# Manejo de Excepciones
 @app.exception_handler(AppBaseException)
 async def app_exception_handler(request: Request, exc: AppBaseException):
     return JSONResponse(
         status_code=exc.status_code,
-        content={
-            "error_code": exc.error_code,
-            "message": exc.message,
-            "details": exc.details,
-        },
+        content={"message": exc.message, "details": exc.details},
     )
 
-
-# Manejo Global de Excepciones (Catch-all)
-@app.exception_handler(Exception)
-async def global_exception_handler(request: Request, exc: Exception):
-    logger.error(f"[bold red]Error Crítico:[/bold red] {exc}", exc_info=True)
-    return JSONResponse(
-        status_code=500,
-        content={
-            "error_code": "ERR_INTERNAL_000",
-            "message": "Error interno en el servidor homilético.",
-        },
-    )
-
-
-# Inclusión de Rutas con Versionamiento v1
+# Rutas
 api_v1_router = APIRouter(prefix="/api/v1")
 api_v1_router.include_router(auth.router)
 api_v1_router.include_router(sermons.router)
@@ -110,33 +60,14 @@ api_v1_router.include_router(system.router)
 api_v1_router.include_router(export.router)
 api_v1_router.include_router(profile.router)
 
-# Las rutas de websocket suelen no llevar prefijo de api o se manejan aparte,
-# pero las incluiremos para consistencia si es necesario.
 app.include_router(api_v1_router)
 app.include_router(websocket_endpoints.router)
 
-
-# Health check en raíz (fuera de v1 para monitoreo simple)
-@app.get("/health", tags=["System"])
-async def root_health():
-    return {"status": "online", "version": "1.0.0"}
-
+@app.get("/health")
+async def health():
+    return {"status": "ok", "version": "1.0.2"}
 
 @app.on_event("startup")
 async def startup_event():
-    # Inicialización de Caché
-    redis_url = settings.get("REDIS_URL")
-    if redis_url:
-        import redis.asyncio as redis
-        from fastapi_cache.backends.redis import RedisBackend
-
-        r = redis.from_url(redis_url, encoding="utf8", decode_responses=True)
-        FastAPICache.init(RedisBackend(r), prefix="fastapi-cache")
-        logger.info("🚀 Caché inicializada con Redis")
-    else:
-        FastAPICache.init(InMemoryBackend(), prefix="fastapi-cache")
-        logger.info("🚀 Caché inicializada en memoria (No se detectó Redis)")
-
-    console.print(
-        "[bold green]✅ Backend 'Zen Light' v1 iniciado con éxito[/bold green]"
-    )
+    FastAPICache.init(InMemoryBackend(), prefix="fastapi-cache")
+    print("✅ Backend iniciado correctamente en modo estable")

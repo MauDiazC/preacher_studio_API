@@ -1,19 +1,14 @@
 #!/bin/bash
 set -e
 
-echo "--- STARTING DEPLOYMENT SCRIPT ---"
+# Asegurar que estamos en el directorio correcto
+cd /app
 
-# Debug Port
-echo "Railway PORT: $PORT"
-ACTUAL_PORT=${PORT:-8080}
+# Ejecutar migraciones (silenciosas si no hay cambios)
+echo "--- Running Migrations ---"
+alembic upgrade head || echo "Migrations failed or not needed."
 
-# Run database migrations
-echo "Running database migrations..."
-# Si esto falla, el script se detiene (set -e) y Railway nos avisa
-alembic upgrade head
-
-echo "Database migrations handled."
-
-# Start the application
-echo "Starting uvicorn on port $ACTUAL_PORT..."
-exec uvicorn main:app --host 0.0.0.0 --port "$ACTUAL_PORT" --proxy-headers
+# Iniciar aplicación en puerto 8080 (que es el que Railway asignó en tus logs)
+# Usamos --timeout-keep-alive para evitar el 502 por desconexión prematura
+echo "--- Starting Server ---"
+exec uvicorn main:app --host 0.0.0.0 --port ${PORT:-8080} --proxy-headers --timeout-keep-alive 60
