@@ -29,22 +29,27 @@ const SermonEditor: React.FC = () => {
   };
 
   useEffect(() => {
-    if (id && id !== 'new') {
-      const fetchSermon = async () => {
+    const fetchSermon = async () => {
+      if (id && id !== 'new') {
         try {
           const data = await sermonService.getById(id);
           setVerse(data.title || '');
-          if (editorRef.current) {
-            editorRef.current.innerHTML = formatAnalysisHtml(data.content || '');
-          }
+          // Esperamos un pequeño frame para asegurar que el ref esté vinculado
+          setTimeout(() => {
+            if (editorRef.current) {
+              editorRef.current.innerHTML = formatAnalysisHtml(data.content || '');
+            }
+          }, 100);
         } catch (error) {
           addNotification('Error al cargar.', 'error');
         } finally {
           setLoading(false);
         }
-      };
-      fetchSermon();
-    }
+      } else {
+        setLoading(false);
+      }
+    };
+    fetchSermon();
   }, [id]);
 
   const validatePassage = (input: string) => {

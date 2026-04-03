@@ -98,7 +98,7 @@ class AISermonService:
             "significance_context": "Significancia teológica profunda y alusiones culturales o religiosas.",
             "version_rv1960": "El texto exacto en la versión Reina Valera 1960.",
             "version_nvi": "El texto exacto en la versión Nueva Versión Internacional.",
-            "original_languages": "Análisis de términos clave en Hebreo (si es AT) o Griego (si es NT), incluyendo transliteración, significado original y matices teológicos.",
+            "original_languages": "Análisis de términos clave en Hebreo (si es AT) o Griego (si es NT) proporcionado como una cadena de texto detallada, incluyendo transliteración, significado original y matices teológicos.",
             "source_attribution": "Indica de qué fuentes, comentarios clásicos (ej. Matthew Henry, Spurgeon) o corrientes teológicas proviene este análisis."
         }}
         """
