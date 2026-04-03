@@ -218,52 +218,52 @@ Notas adicionales:
         </div>
         
         <div className="sidebar-pane">
+          {/* Panel de Recursos - Solo visible si hay contenido (análisis listo) */}
+          {editorRef.current?.innerText.trim() && (
+            <div className="export-panel">
+              <h3>Recursos: {verse}</h3>
+              <div className="resource-links" style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                <a 
+                  href={`https://biblehub.com/interlinear/${verse.replace(/\s+/g, '_').toLowerCase()}.htm`}
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="resource-link"
+                  style={{ 
+                    color: 'var(--accent-purple)', 
+                    textDecoration: 'none', 
+                    fontSize: '0.9rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem'
+                  }}
+                >
+                  <span>🌐</span> Interlineal Griego/Hebreo
+                </a>
+                <a 
+                  href={`https://www.blueletterbible.org/search/preSearch.cfm?Criteria=${encodeURIComponent(verse)}`}
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="resource-link"
+                  style={{ 
+                    color: 'var(--accent-purple)', 
+                    textDecoration: 'none', 
+                    fontSize: '0.9rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem'
+                  }}
+                >
+                  <span>📖</span> Concordancia y Léxico
+                </a>
+              </div>
+            </div>
+          )}
+
           <div className="export-panel">
             <h3>Exportar</h3>
             <div className="export-buttons">
               <Button variant="outline" size="sm" onClick={() => handleExport('pdf')}>PDF</Button>
               <Button variant="outline" size="sm" onClick={() => handleExport('keynote')}>Keynote</Button>
-            </div>
-          </div>
-
-          <div className="export-panel">
-            <h3>Recursos Originales</h3>
-            <div className="resource-links" style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-              <a 
-                href={`https://biblehub.com/interlinear/${verse.replace(/\s+/g, '_').toLowerCase()}.htm`}
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="resource-link"
-                style={{ 
-                  color: 'var(--accent-purple)', 
-                  textDecoration: 'none', 
-                  fontSize: '0.9rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem'
-                }}
-              >
-                <span>🌐</span> Interlineal Griego/Hebreo
-              </a>
-              <a 
-                href={`https://www.blueletterbible.org/search/preSearch.cfm?Criteria=${encodeURIComponent(verse)}`}
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="resource-link"
-                style={{ 
-                  color: 'var(--accent-purple)', 
-                  textDecoration: 'none', 
-                  fontSize: '0.9rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem'
-                }}
-              >
-                <span>📖</span> Concordancia y Léxico
-              </a>
-              <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.5rem' }}>
-                *Enlaces externos a herramientas de estudio académico.
-              </p>
             </div>
           </div>
         </div>

@@ -45,11 +45,12 @@
 .sermon-editor-main {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 340px;
-  gap: var(--spacing-xl);
+  gap: var(--spacing-2xl); /* Incremento de espacio */
   flex: 1;
   padding: var(--spacing-lg) 0;
   align-items: start;
   width: 100%;
+  overflow-x: hidden;
 }
 
 .editor-pane {
