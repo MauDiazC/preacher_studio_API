@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Button from '../../../components/common/Button';
 import Input from '../../../components/common/Input';
@@ -15,22 +15,24 @@ const SermonEditor: React.FC = () => {
   const { addNotification } = useNotificationStore();
   const { t } = useLanguage();
   
-  // Repurposing 'title' as 'verse' for the database
   const [verse, setVerse] = useState('');
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(id && id !== 'new' ? true : false);
   const [analyzing, setAnalyzing] = useState(false);
+  const editorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (id && id !== 'new') {
       const fetchSermon = async () => {
         try {
           const data = await sermonService.getById(id);
-          setVerse(data.title || ''); // Usamos el campo title para el versículo
+          setVerse(data.title || '');
           setContent(data.content || '');
+          if (editorRef.current) {
+            editorRef.current.innerText = data.content || '';
+          }
         } catch (error) {
-          console.error('Error fetching study:', error);
-          addNotification('No se pudo cargar el estudio.', 'error');
+          addNotification('Error al cargar.', 'error');
         } finally {
           setLoading(false);
         }
@@ -40,14 +42,14 @@ const SermonEditor: React.FC = () => {
   }, [id]);
 
   const handleSave = async () => {
+    const currentContent = editorRef.current?.innerText || '';
     try {
-      const payload = { title: verse, content }; // Guardamos el versículo como título
+      const payload = { title: verse, content: currentContent };
       if (id && id !== 'new') {
         await sermonService.update(id, payload);
-        addNotification('Estudio guardado.', 'success');
+        addNotification('Guardado.', 'success');
       } else {
         const newStudy = await sermonService.create(payload);
-        addNotification('Estudio creado.', 'success');
         navigate(`/sermons/${newStudy.id}`);
       }
     } catch (error) {
@@ -56,17 +58,13 @@ const SermonEditor: React.FC = () => {
   };
 
   const handleAnalyze = async () => {
-    if (!verse) {
-      addNotification('Por favor, ingrese un pasaje primero.', 'error');
-      return;
-    }
+    if (!verse) return;
     setAnalyzing(true);
     try {
       const data = await aiService.analyzeVerse(verse);
       
-      // Formateamos el resultado para el cuadro de texto principal
       const formattedResult = `
---- ANÁLISIS EXEGÉTICO: ${verse} ---
+ANÁLISIS EXEGÉTICO: ${verse}
 
 1. TIPO LITERARIO:
 ${data.literary_type}
@@ -77,20 +75,22 @@ ${data.author}
 3. PROPÓSITO ORIGINAL:
 ${data.purpose}
 
-4. CONTEXTO HISTÓRICO (USOS Y COSTUMBRES):
+4. CONTEXTO HISTÓRICO:
 ${data.historical_context}
 
-5. CONTEXTO DE SIGNIFICANCIA (APLICACIÓN ORIGINAL):
+5. CONTEXTO DE SIGNIFICANCIA:
 ${data.significance_context}
 
 -------------------------------------------
-Notas adicionales del estudio:
+Notas adicionales:
 `;
-      setContent(formattedResult);
-      addNotification('Análisis completado con éxito.', 'success');
+      if (editorRef.current) {
+        editorRef.current.innerText = formattedResult;
+        setContent(formattedResult);
+      }
+      addNotification('Análisis listo.', 'success');
     } catch (error: any) {
-      const msg = error.response?.data?.message || 'Error en el servicio de consulta.';
-      addNotification(msg, 'error');
+      addNotification('Error en la consulta.', 'error');
     } finally {
       setAnalyzing(false);
     }
@@ -99,17 +99,14 @@ Notas adicionales del estudio:
   const handleExport = async (format: 'pdf' | 'keynote') => {
     if (!id || id === 'new') return;
     try {
-      if (format === 'pdf') {
-        await exportService.exportToPDF(id);
-      } else {
-        await exportService.exportToKeynote(id);
-      }
+      if (format === 'pdf') await exportService.exportToPDF(id);
+      else await exportService.exportToKeynote(id);
     } catch (error) {
-      console.error('Error exporting:', error);
+      console.error(error);
     }
   };
 
-  if (loading) return <div className="loading-screen">Cargando estudio...</div>;
+  if (loading) return <div className="loading-screen">Cargando...</div>;
 
   return (
     <div className="sermon-editor-container">
@@ -121,11 +118,7 @@ Notas adicionales del estudio:
             onChange={(e) => setVerse(e.target.value)}
             className="verse-input-main"
           />
-          <Button 
-            onClick={handleAnalyze} 
-            disabled={analyzing || !verse}
-            variant="primary"
-          >
+          <Button onClick={handleAnalyze} disabled={analyzing || !verse}>
             {analyzing ? '...' : t('editor.analyze_btn')}
           </Button>
         </div>
@@ -138,25 +131,23 @@ Notas adicionales del estudio:
 
       <div className="sermon-editor-main">
         <div className="editor-pane">
-          <textarea 
-            className="editor-textarea" 
-            placeholder="El resultado del análisis aparecerá aquí. También puedes escribir tus propias notas..."
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
+          {/* Editor Enriquecido usando contentEditable */}
+          <div 
+            ref={editorRef}
+            className="rich-editor" 
+            contentEditable 
+            suppressContentEditableWarning
+            onBlur={(e) => setContent(e.currentTarget.innerText)}
           />
         </div>
         
         <div className="sidebar-pane">
           <div className="export-panel">
-            <h3>Exportar Estudio</h3>
+            <h3>Exportar</h3>
             <div className="export-buttons">
-              <Button variant="outline" size="sm" onClick={() => handleExport('pdf')} disabled={!id || id === 'new'}>PDF Profesional</Button>
-              <Button variant="outline" size="sm" onClick={() => handleExport('keynote')} disabled={!id || id === 'new'}>Presentación Keynote</Button>
+              <Button variant="outline" size="sm" onClick={() => handleExport('pdf')}>PDF</Button>
+              <Button variant="outline" size="sm" onClick={() => handleExport('keynote')}>Keynote</Button>
             </div>
-          </div>
-
-          <div className="help-panel">
-            <p><strong>Tip:</strong> Una vez generado el análisis, puedes editar el texto directamente para añadir tus propias revelaciones y apuntes para el mensaje.</p>
           </div>
         </div>
       </div>

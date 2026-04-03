@@ -51,10 +51,10 @@
   flex: 3;
 }
 
-.editor-textarea {
+/* El nuevo editor que permite estilos */
+.rich-editor {
   width: 100%;
-  height: 100%;
-  min-height: 600px;
+  min-height: 650px;
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-md);
@@ -62,15 +62,24 @@
   font-family: 'Inter', sans-serif;
   font-size: 1.1rem;
   line-height: 1.8;
-  padding: 2rem;
-  resize: none;
+  padding: 2.5rem;
   outline: none;
   transition: var(--transition-normal);
+  white-space: pre-wrap; /* Mantener saltos de línea */
 }
 
-.editor-textarea:focus {
+.rich-editor:focus {
   background: rgba(255, 255, 255, 0.04);
   border-color: var(--accent-purple);
+  box-shadow: 0 0 20px rgba(125, 92, 255, 0.1);
+}
+
+/* Estilo para los títulos dentro del texto (Simulado por ahora con CSS inteligente) */
+/* Nota: En un editor real usaríamos HTML, aquí simulamos con selectores de texto */
+.rich-editor::first-line {
+  color: var(--secondary-color);
+  font-weight: 800;
+  font-size: 1.4rem;
 }
 
 .sidebar-pane {
@@ -81,7 +90,7 @@
   gap: var(--spacing-lg);
 }
 
-.export-panel, .help-panel {
+.export-panel {
   background: var(--surface-dark);
   border: 1px solid var(--border-color);
   padding: var(--spacing-lg);
@@ -102,18 +111,17 @@
   gap: 0.75rem;
 }
 
-.help-panel {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  line-height: 1.6;
-  border-left: 4px solid var(--accent-purple);
-}
-
 .loading-screen {
   padding: 4rem;
   text-align: center;
   color: var(--text-secondary);
   font-size: 1.2rem;
+}
+
+.empty-msg {
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 2rem;
 }
 
 @media (max-width: 1024px) {
