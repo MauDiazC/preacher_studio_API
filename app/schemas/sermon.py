@@ -156,7 +156,7 @@ class ProfileBase(BaseModel):
 
 
 class ProfileRead(ProfileBase):
-    id: str
+    id: UUID
     updated_at: Optional[datetime] = None
     created_at: Optional[datetime] = None
     model_config = ConfigDict(from_attributes=True)
