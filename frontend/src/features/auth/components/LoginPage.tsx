@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import Card from '../../../components/common/Card';
 import Input from '../../../components/common/Input';
 import Button from '../../../components/common/Button';
 import { authService } from '../services/authService';
 import { useNotificationStore } from '../../../store/useNotificationStore';
+import { useLanguage } from '../../../context/LanguageContext';
 import './LoginPage.css';
 
 const LoginPage: React.FC = () => {
@@ -14,6 +15,7 @@ const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { addNotification } = useNotificationStore();
+  const { t } = useLanguage();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,11 +24,11 @@ const LoginPage: React.FC = () => {
     
     try {
       await authService.login(email, password);
-      addNotification('¡Bienvenido de nuevo!', 'success');
-      navigate('/');
+      addNotification(t('auth.success_login') || 'Welcome back!', 'success');
+      navigate('/sermons');
     } catch (err: any) {
-      setError('Credenciales inválidas. Por favor intente de nuevo.');
-      addNotification('Error al iniciar sesión.', 'error');
+      setError(t('auth.error_login') || 'Invalid credentials');
+      addNotification(t('auth.error_notification') || 'Error', 'error');
     } finally {
       setLoading(false);
     }
@@ -35,10 +37,10 @@ const LoginPage: React.FC = () => {
   return (
     <div className="login-container">
       <Card className="login-card">
-        <h2 className="login-title">Iniciar Sesión</h2>
+        <h2 className="login-title">{t('auth.login_title')}</h2>
         <form className="login-form" onSubmit={handleSubmit}>
           <Input 
-            label="Correo Electrónico" 
+            label={t('auth.email')} 
             type="email" 
             placeholder="ejemplo@correo.com"
             value={email}
@@ -46,7 +48,7 @@ const LoginPage: React.FC = () => {
             required
           />
           <Input 
-            label="Contraseña" 
+            label={t('auth.password')} 
             type="password" 
             placeholder="••••••••"
             value={password}
@@ -55,11 +57,11 @@ const LoginPage: React.FC = () => {
           />
           {error && <p className="input-error" style={{ marginBottom: '1rem' }}>{error}</p>}
           <Button type="submit" disabled={loading}>
-            {loading ? 'Cargando...' : 'Entrar'}
+            {loading ? '...' : t('auth.login_btn')}
           </Button>
         </form>
         <div className="login-footer">
-          ¿No tienes una cuenta? <a href="/register" className="login-link">Regístrate</a>
+          {t('auth.no_account')} <Link to="/register" className="login-link">{t('auth.register_link')}</Link>
         </div>
       </Card>
     </div>

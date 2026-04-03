@@ -5,6 +5,7 @@ import Input from '../../../components/common/Input';
 import Button from '../../../components/common/Button';
 import { authService } from '../services/authService';
 import { useNotificationStore } from '../../../store/useNotificationStore';
+import { useLanguage } from '../../../context/LanguageContext';
 import './RegisterPage.css';
 
 const RegisterPage: React.FC = () => {
@@ -17,13 +18,14 @@ const RegisterPage: React.FC = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const navigate = useNavigate();
   const { addNotification } = useNotificationStore();
+  const { t } = useLanguage();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
     if (password !== confirmPassword) {
-      setError('Las contraseñas no coinciden.');
+      setError(t('auth.error_passwords_match') || 'Passwords do not match');
       return;
     }
 
@@ -32,11 +34,11 @@ const RegisterPage: React.FC = () => {
     try {
       await authService.register(email, password, fullName);
       setIsSuccess(true);
-      addNotification('¡Cuenta creada con éxito!', 'success');
+      addNotification(t('auth.success_notification') || 'Account created!', 'success');
     } catch (err: any) {
-      const errorMessage = err.response?.data?.detail || err.message || 'Error al crear la cuenta. Intente de nuevo.';
+      const errorMessage = err.response?.data?.detail || err.message || 'Error';
       setError(errorMessage);
-      addNotification('No se pudo crear la cuenta.', 'error');
+      addNotification(t('auth.error_notification') || 'Error', 'error');
     } finally {
       setLoading(false);
     }
@@ -46,12 +48,12 @@ const RegisterPage: React.FC = () => {
     return (
       <div className="register-container">
         <Card className="register-card" style={{ textAlign: 'center', padding: 'var(--spacing-xl)' }}>
-          <h2 className="register-title">¡Casi listo! 🕊️</h2>
+          <h2 className="register-title">{t('auth.success_title')}</h2>
           <p style={{ marginBottom: '2rem', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
-            Hemos enviado un enlace de activación a <strong>{email}</strong>.<br /><br />
-            Por favor, revisa tu bandeja de entrada para confirmar tu cuenta y empezar a usar las herramientas de <strong>Preacher Studio</strong>.
+            {t('auth.success_body')} <strong>{email}</strong>.<br /><br />
+            {t('auth.success_body_2')} <strong>Preacher Studio</strong>.
           </p>
-          <Button style={{ width: '100%' }} onClick={() => navigate('/login')}>Ir al Inicio de Sesión</Button>
+          <Button style={{ width: '100%' }} onClick={() => navigate('/login')}>{t('auth.go_login')}</Button>
         </Card>
       </div>
     );
@@ -60,10 +62,10 @@ const RegisterPage: React.FC = () => {
   return (
     <div className="register-container">
       <Card className="register-card">
-        <h2 className="register-title">Crear Cuenta</h2>
+        <h2 className="register-title">{t('auth.register_title')}</h2>
         <form className="register-form" onSubmit={handleSubmit}>
           <Input 
-            label="Nombre Completo" 
+            label={t('auth.full_name')} 
             type="text" 
             placeholder="Juan Pérez"
             value={fullName}
@@ -71,7 +73,7 @@ const RegisterPage: React.FC = () => {
             required
           />
           <Input 
-            label="Correo Electrónico" 
+            label={t('auth.email')} 
             type="email" 
             placeholder="ejemplo@correo.com"
             value={email}
@@ -79,7 +81,7 @@ const RegisterPage: React.FC = () => {
             required
           />
           <Input 
-            label="Contraseña" 
+            label={t('auth.password')} 
             type="password" 
             placeholder="••••••••"
             value={password}
@@ -87,7 +89,7 @@ const RegisterPage: React.FC = () => {
             required
           />
           <Input 
-            label="Confirmar Contraseña" 
+            label={t('auth.confirm_password')} 
             type="password" 
             placeholder="••••••••"
             value={confirmPassword}
@@ -96,11 +98,11 @@ const RegisterPage: React.FC = () => {
           />
           {error && <p className="input-error" style={{ marginBottom: '1rem' }}>{error}</p>}
           <Button type="submit" disabled={loading}>
-            {loading ? 'Cargando...' : 'Registrarse'}
+            {loading ? '...' : t('auth.register_btn')}
           </Button>
         </form>
         <div className="register-footer">
-          ¿Ya tienes una cuenta? <Link to="/login" className="register-link">Inicia Sesión</Link>
+          {t('auth.have_account')} <Link to="/login" className="register-link">{t('auth.login_link')}</Link>
         </div>
       </Card>
     </div>

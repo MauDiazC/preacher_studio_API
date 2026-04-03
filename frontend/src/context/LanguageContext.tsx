@@ -59,6 +59,23 @@ const translations = {
     'editor.historical': 'Contexto Histórico',
     'editor.significance': 'Significancia',
     'editor.credits_left': 'Créditos restantes:',
+    // Auth
+    'auth.login_title': 'Iniciar Sesión',
+    'auth.register_title': 'Crear Cuenta',
+    'auth.email': 'Correo Electrónico',
+    'auth.password': 'Contraseña',
+    'auth.confirm_password': 'Confirmar Contraseña',
+    'auth.full_name': 'Nombre Completo',
+    'auth.login_btn': 'Entrar',
+    'auth.register_btn': 'Registrarse',
+    'auth.no_account': '¿No tienes una cuenta?',
+    'auth.have_account': '¿Ya tienes una cuenta?',
+    'auth.login_link': 'Inicia Sesión',
+    'auth.register_link': 'Regístrate',
+    'auth.success_title': '¡Casi listo! 🕊️',
+    'auth.success_body': 'Hemos enviado un enlace de activación a',
+    'auth.success_body_2': 'Por favor, revisa tu bandeja de entrada para confirmar tu cuenta y empezar a usar las herramientas de',
+    'auth.go_login': 'Ir al Inicio de Sesión',
   },
   en: {
     // Navbar
@@ -110,6 +127,23 @@ const translations = {
     'editor.historical': 'Historical Context',
     'editor.significance': 'Significance',
     'editor.credits_left': 'Credits remaining:',
+    // Auth
+    'auth.login_title': 'Log In',
+    'auth.register_title': 'Create Account',
+    'auth.email': 'Email Address',
+    'auth.password': 'Password',
+    'auth.confirm_password': 'Confirm Password',
+    'auth.full_name': 'Full Name',
+    'auth.login_btn': 'Sign In',
+    'auth.register_btn': 'Sign Up',
+    'auth.no_account': "Don't have an account?",
+    'auth.have_account': 'Already have an account?',
+    'auth.login_link': 'Log In',
+    'auth.register_link': 'Register',
+    'auth.success_title': 'Almost ready! 🕊️',
+    'auth.success_body': 'We have sent an activation link to',
+    'auth.success_body_2': 'Please check your inbox to confirm your account and start using the tools from',
+    'auth.go_login': 'Go to Log In',
   }
 };
 
