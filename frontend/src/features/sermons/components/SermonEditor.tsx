@@ -20,6 +20,13 @@ const SermonEditor: React.FC = () => {
   const [analyzing, setAnalyzing] = useState(false);
   const editorRef = useRef<HTMLDivElement>(null);
 
+  const formatAnalysisHtml = (text: string) => {
+    // Reemplaza el título principal y los subtítulos con clases de estilo
+    return text
+      .replace(/ANÁLISIS EXEGÉTICO: (.*)/g, '<h1 class="editor-title" style="font-size: 1.5rem; margin-top: 0">ANÁLISIS EXEGÉTICO: $1</h1>')
+      .replace(/(\d+\.\s+[A-ZÁÉÍÓÚÑ\s]+:)/g, '<span class="editor-title">$1</span>');
+  };
+
   useEffect(() => {
     if (id && id !== 'new') {
       const fetchSermon = async () => {
@@ -27,7 +34,7 @@ const SermonEditor: React.FC = () => {
           const data = await sermonService.getById(id);
           setVerse(data.title || '');
           if (editorRef.current) {
-            editorRef.current.innerText = data.content || '';
+            editorRef.current.innerHTML = formatAnalysisHtml(data.content || '');
           }
         } catch (error) {
           addNotification('Error al cargar.', 'error');
@@ -39,6 +46,30 @@ const SermonEditor: React.FC = () => {
     }
   }, [id]);
 
+  const validatePassage = (input: string) => {
+    // 1. Limpieza inicial: quitar puntos y espacios extras
+    let cleanInput = input.trim().replace(/\./g, ' ').replace(/\s+/g, ' ');
+    
+    // 2. Corregir errores comunes (jan -> Juan)
+    if (cleanInput.toLowerCase().startsWith('jan')) {
+      cleanInput = cleanInput.replace(/jan/i, 'Juan');
+    }
+    
+    // 3. Regex para validar estructura: [Número opcional] [Libro] [Espacio/Punto] [Capítulo] [:] [Versículo]
+    const bibleRegex = /^(\d\s)?([a-zA-ZáéíóúÁÉÍÓÚñÑ]+)\s*(\d+)([:\s]*\d*)$/;
+    const match = cleanInput.match(bibleRegex);
+    
+    if (!match) return null;
+
+    // 4. Formatear estéticamente (Juan 3:16)
+    const [_, num, book, chapter, versePart] = match;
+    const formattedBook = book.charAt(0).toUpperCase() + book.slice(1).toLowerCase();
+    const formattedNum = num || '';
+    const formattedVerse = versePart.replace(/[:\s]/g, '').trim();
+    
+    return `${formattedNum}${formattedBook} ${chapter}${formattedVerse ? ':' + formattedVerse : ''}`;
+  };
+
   const handleSave = async () => {
     const currentContent = editorRef.current?.innerText || '';
     try {
@@ -46,23 +77,33 @@ const SermonEditor: React.FC = () => {
       if (id && id !== 'new') {
         await sermonService.update(id, payload);
         addNotification('Guardado.', 'success');
+        return id;
       } else {
         const newStudy = await sermonService.create(payload);
         navigate(`/sermons/${newStudy.id}`);
+        addNotification('Estudio guardado.', 'success');
+        return newStudy.id;
       }
     } catch (error) {
       addNotification('Error al guardar.', 'error');
+      return null;
     }
   };
 
   const handleAnalyze = async () => {
-    if (!verse) return;
+    const validatedVerse = validatePassage(verse);
+    if (!validatedVerse) {
+      addNotification('Por favor ingresa una cita válida (ej: Juan 3:16)', 'error');
+      return;
+    }
+    
+    setVerse(validatedVerse);
     setAnalyzing(true);
     try {
-      const data = await aiService.analyzeVerse(verse);
+      const data = await aiService.analyzeVerse(validatedVerse);
       
-      const formattedResult = `
-ANÁLISIS EXEGÉTICO: ${verse}
+      const analysisText = `
+ANÁLISIS EXEGÉTICO: ${validatedVerse}
 
 1. TIPO LITERARIO:
 ${data.literary_type}
@@ -83,9 +124,12 @@ ${data.significance_context}
 Notas adicionales:
 `;
       if (editorRef.current) {
-        editorRef.current.innerText = formattedResult;
+        editorRef.current.innerHTML = formatAnalysisHtml(analysisText);
       }
       addNotification('Análisis listo.', 'success');
+      
+      // Auto-guardar después del análisis para habilitar exportación inmediata
+      setTimeout(() => handleSave(), 500);
     } catch (error: any) {
       addNotification('Error en la consulta.', 'error');
     } finally {
@@ -94,11 +138,24 @@ Notas adicionales:
   };
 
   const handleExport = async (format: 'pdf' | 'keynote') => {
-    if (!id || id === 'new') return;
+    let currentId = id;
+    
+    if (!currentId || currentId === 'new') {
+      addNotification('Guardando para exportar...', 'info');
+      currentId = await handleSave();
+      if (!currentId) return;
+    }
+
     try {
-      if (format === 'pdf') await exportService.exportToPDF(id);
-      else await exportService.exportToKeynote(id);
+      if (format === 'pdf') {
+        addNotification('Generando PDF...', 'info');
+        await exportService.exportToPDF(currentId);
+      } else {
+        addNotification('Generando Keynote (PPTX)...', 'info');
+        await exportService.exportToKeynote(currentId);
+      }
     } catch (error) {
+      addNotification('Error al exportar.', 'error');
       console.error(error);
     }
   };

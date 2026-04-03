@@ -41,14 +41,16 @@
 }
 
 .sermon-editor-main {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 300px;
   gap: var(--spacing-xl);
   flex: 1;
   padding: var(--spacing-lg) 0;
+  align-items: start;
 }
 
 .editor-pane {
-  flex: 3;
+  min-width: 0; /* Evita que el flex/grid item se desborde */
 }
 
 /* El nuevo editor que permite estilos */
@@ -74,17 +76,17 @@
   box-shadow: 0 0 20px rgba(125, 92, 255, 0.1);
 }
 
-/* Estilo para los títulos dentro del texto (Simulado por ahora con CSS inteligente) */
-/* Nota: En un editor real usaríamos HTML, aquí simulamos con selectores de texto */
-.rich-editor::first-line {
+/* Estilo para los títulos dentro del texto */
+.editor-title {
   color: var(--secondary-color);
   font-weight: 800;
-  font-size: 1.4rem;
+  font-size: 1.3rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  display: block;
 }
 
 .sidebar-pane {
-  flex: 1;
-  max-width: 300px;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
@@ -137,9 +139,11 @@
     max-width: 100%;
   }
   .sermon-editor-main {
+    display: flex;
     flex-direction: column;
   }
   .sidebar-pane {
     max-width: 100%;
+    order: -1; /* Poner el panel de exportación arriba en móvil */
   }
 }
