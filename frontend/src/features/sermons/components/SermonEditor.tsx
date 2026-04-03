@@ -138,13 +138,14 @@ Notas adicionales:
   };
 
   const handleExport = async (format: 'pdf' | 'keynote') => {
-    let currentId = id;
+    let currentId: string | undefined | null = id;
     
     if (!currentId || currentId === 'new') {
       addNotification('Guardando para exportar...', 'info');
       currentId = await handleSave();
-      if (!currentId) return;
     }
+
+    if (!currentId) return;
 
     try {
       if (format === 'pdf') {
