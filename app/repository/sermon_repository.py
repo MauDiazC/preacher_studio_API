@@ -1,5 +1,4 @@
 from typing import Any, cast
-from app.core.db import supabase
 from app.schemas.sermon import SermonCreate, SermonUpdate
 
 
@@ -9,6 +8,7 @@ class SermonRepository:
 
     def get_all(
         self,
+        db: Any,
         user_id: str,
         limit: int,
         offset: int,
@@ -18,7 +18,7 @@ class SermonRepository:
         to_date: str | None = None,
     ):
         query = (
-            supabase.table(self.table)
+            db.table(self.table)
             .select("*", count=cast(Any, "exact"))
             .eq("user_id", user_id)
         )
@@ -44,9 +44,9 @@ class SermonRepository:
             .execute()
         )
 
-    def get_by_id(self, sermon_id: str, user_id: str):
+    def get_by_id(self, db: Any, sermon_id: str, user_id: str):
         return (
-            supabase.table(self.table)
+            db.table(self.table)
             .select("*")
             .eq("id", sermon_id)
             .eq("user_id", user_id)
@@ -54,24 +54,24 @@ class SermonRepository:
             .execute()
         )
 
-    def create(self, user_id: str, sermon: SermonCreate):
+    def create(self, db: Any, user_id: str, sermon: SermonCreate):
         data = sermon.model_dump()
         data["user_id"] = user_id
-        return supabase.table(self.table).insert(data).execute()
+        return db.table(self.table).insert(data).execute()
 
-    def update(self, sermon_id: str, user_id: str, sermon_update: SermonUpdate):
+    def update(self, db: Any, sermon_id: str, user_id: str, sermon_update: SermonUpdate):
         update_data = sermon_update.model_dump(exclude_unset=True)
         return (
-            supabase.table(self.table)
+            db.table(self.table)
             .update(update_data)
             .eq("id", sermon_id)
             .eq("user_id", user_id)
             .execute()
         )
 
-    def delete(self, sermon_id: str, user_id: str):
+    def delete(self, db: Any, sermon_id: str, user_id: str):
         return (
-            supabase.table(self.table)
+            db.table(self.table)
             .delete()
             .eq("id", sermon_id)
             .eq("user_id", user_id)
@@ -79,9 +79,9 @@ class SermonRepository:
         )
 
     # Para la traza/historial
-    def save_history_snapshot(self, sermon_id: str, content: str, label: str):
+    def save_history_snapshot(self, db: Any, sermon_id: str, content: str, label: str):
         return (
-            supabase.table("sermon_history")
+            db.table("sermon_history")
             .insert(
                 {
                     "sermon_id": sermon_id,

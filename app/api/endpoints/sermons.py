@@ -36,6 +36,7 @@ async def list_sermons(
     Obtiene una lista paginada de sermones pertenecientes al pastor autenticado con soporte para filtros.
     """
     response = sermon_repo.get_all(
+        db=db,
         user_id=user_id,
         limit=limit,
         offset=offset,
@@ -86,7 +87,7 @@ async def get_sermon(
     """
     Obtiene los detalles de un sermón específico.
     """
-    res = sermon_repo.get_by_id(sermon_id, user_id)
+    res = sermon_repo.get_by_id(db, sermon_id, user_id)
     if not res.data:
         raise EntityNotFoundException(message=f"Sermón con ID {sermon_id} no encontrado.")
     return res.data
@@ -141,7 +142,7 @@ async def get_ai_assistance(
     Utiliza el motor de IA para generar un bosquejo sugerido y encontrar versículos basados en el título y notas actuales.
     """
     # 1. Usar el repositorio para buscar el sermón
-    res = sermon_repo.get_by_id(sermon_id, user_id)
+    res = sermon_repo.get_by_id(db, sermon_id, user_id)
     if not res.data:
         raise EntityNotFoundException(message="Sermón no encontrado para asistencia.")
 
@@ -169,9 +170,10 @@ async def get_ai_assistance(
     except Exception as e:
         raise AIServiceUnavailableException(details=str(e))
 
+    suggestion_str = str(suggestion.model_dump())
     # 4. Guardar log de IA en segundo plano
     background_tasks.add_task(
-        sermon_repo.save_history_snapshot, sermon_id, str(suggestion), "AI_LOG"
+        sermon_repo.save_history_snapshot, db, sermon_id, suggestion_str, "AI_LOG"
     )
 
     return suggestion
@@ -207,7 +209,7 @@ async def create_snapshot(
 
     # Insertar en el historial en segundo plano
     background_tasks.add_task(
-        sermon_repo.save_history_snapshot, sermon_id, res.data["content"], label
+        sermon_repo.save_history_snapshot, db, sermon_id, res.data["content"], label
     )
 
     return {"status": "Snapshot programado correctamente"}

@@ -10,12 +10,14 @@ from pptx import Presentation
 from pptx.util import Inches, Pt
 import io
 
+from app.core.db import get_db
+
 router = APIRouter(prefix="/export", tags=["Exportación"])
 
 
 @router.get("/{sermon_id}/pdf", summary="Exportar sermón a PDF")
-async def export_to_pdf(sermon_id: str, user_id: str = Depends(get_current_user)):
-    res = sermon_repo.get_by_id(sermon_id, user_id)
+async def export_to_pdf(sermon_id: str, db=Depends(get_db), user_id: str = Depends(get_current_user)):
+    res = sermon_repo.get_by_id(db, sermon_id, user_id)
     if not res.data:
         raise EntityNotFoundException(message="Sermón no encontrado para exportar.")
 
@@ -49,8 +51,8 @@ async def export_to_pdf(sermon_id: str, user_id: str = Depends(get_current_user)
 
 
 @router.get("/{sermon_id}/pptx", summary="Exportar sermón a PowerPoint (Compatible con Keynote)")
-async def export_to_pptx(sermon_id: str, user_id: str = Depends(get_current_user)):
-    res = sermon_repo.get_by_id(sermon_id, user_id)
+async def export_to_pptx(sermon_id: str, db=Depends(get_db), user_id: str = Depends(get_current_user)):
+    res = sermon_repo.get_by_id(db, sermon_id, user_id)
     if not res.data:
         raise EntityNotFoundException(message="Sermón no encontrado para exportar.")
 
