@@ -70,8 +70,8 @@ const SermonEditor: React.FC = () => {
     return `${formattedNum}${formattedBook} ${chapter}${formattedVerse ? ':' + formattedVerse : ''}`;
   };
 
-  const handleSave = async () => {
-    const currentContent = editorRef.current?.innerText || '';
+  const handleSave = async (forcedContent?: string) => {
+    const currentContent = forcedContent !== undefined ? forcedContent : (editorRef.current?.innerText || '');
     try {
       const payload = { title: verse, content: currentContent };
       if (id && id !== 'new') {
@@ -80,8 +80,8 @@ const SermonEditor: React.FC = () => {
         return id;
       } else {
         const newStudy = await sermonService.create(payload);
-        navigate(`/sermons/${newStudy.id}`);
         addNotification('Estudio guardado.', 'success');
+        navigate(`/sermons/${newStudy.id}`, { replace: true });
         return newStudy.id;
       }
     } catch (error) {
@@ -128,8 +128,8 @@ Notas adicionales:
       }
       addNotification('Análisis listo.', 'success');
       
-      // Auto-guardar después del análisis para habilitar exportación inmediata
-      setTimeout(() => handleSave(), 500);
+      // Auto-guardar pasando el contenido directamente para evitar errores de lectura del DOM
+      await handleSave(analysisText);
     } catch (error: any) {
       addNotification('Error en la consulta.', 'error');
     } finally {
