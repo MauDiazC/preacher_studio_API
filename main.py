@@ -8,43 +8,29 @@ from config.config import settings
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.inmemory import InMemoryBackend
 
-# Configuración de FastAPI
+print("--- BACKEND BOOTING UP ---")
+
 app = FastAPI(
     title="Preacher Studio API",
-    version="1.0.2",
+    version="1.0.3",
     redirect_slashes=False,
 )
 
-# CORS CORREGIDO (No se puede usar "*" con credentials=True)
-allowed_origins = [
-    "https://preacher-studio-front-production.up.railway.app",
-    "https://preacherstudioapi-production.up.railway.app",
-    "http://localhost:5173",
-]
-
+# CORS TOTALMENTE ABIERTO (Sin credentials para permitir "*")
+# Esto es solo para diagnosticar el 502
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
-    allow_credentials=True,
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Middleware de loggeo por PRINT (aparece sí o sí en Railway)
 @app.middleware("http")
 async def simple_log(request: Request, call_next):
-    print(f"DEBUG: >>> Recibida petición {request.method} en {request.url}")
+    print(f"DEBUG: >>> PETICION: {request.method} {request.url}")
     response = await call_next(request)
-    print(f"DEBUG: <<< Respuesta enviada con status {response.status_code}")
+    print(f"DEBUG: <<< RESPUESTA: {response.status_code}")
     return response
-
-# Manejo de Excepciones
-@app.exception_handler(AppBaseException)
-async def app_exception_handler(request: Request, exc: AppBaseException):
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"message": exc.message, "details": exc.details},
-    )
 
 # Rutas
 api_v1_router = APIRouter(prefix="/api/v1")
@@ -59,9 +45,9 @@ app.include_router(websocket_endpoints.router)
 
 @app.get("/health")
 async def health():
-    return {"status": "ok", "version": "1.0.2"}
+    return {"status": "ok", "version": "1.0.3"}
 
 @app.on_event("startup")
 async def startup_event():
     FastAPICache.init(InMemoryBackend(), prefix="fastapi-cache")
-    print("🚀 API LISTA Y ESCUCHANDO")
+    print("🚀 SERVIDOR LISTO PARA RECIBIR DATOS")
