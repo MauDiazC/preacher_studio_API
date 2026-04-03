@@ -1,5 +1,6 @@
 from openai import OpenAI
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 import time
 import logging
 import json
@@ -16,21 +17,12 @@ class AISermonService:
         self.client = OpenAI(api_key=openai_key)
         self.model_id = "gpt-4o-mini"
         
-        # Gemini 1.5 Flash
+        # Gemini 1.5 Flash (Nuevo SDK google-genai)
         self.gemini_api_key = settings.get("GEMINI_API_KEY")
-        self.gemini_model_mentor = None
-        self.gemini_model_exegesis = None
+        self.gemini_client = None
         
         if self.gemini_api_key:
-            genai.configure(api_key=self.gemini_api_key)
-            self.gemini_model_mentor = genai.GenerativeModel(
-                model_name="gemini-1.5-flash",
-                system_instruction="Eres un mentor homilético experto. Ayudas a pastores a estructurar sermones bíblicos profundos y prácticos."
-            )
-            self.gemini_model_exegesis = genai.GenerativeModel(
-                model_name="gemini-1.5-flash",
-                system_instruction="Eres un experto en exégesis bíblica, historia y teología."
-            )
+            self.gemini_client = genai.Client(api_key=self.gemini_api_key)
 
         self.system_instruction = "Eres un mentor homilético experto. Ayudas a pastores a estructurar sermones bíblicos profundos y prácticos."
 
@@ -59,7 +51,6 @@ class AISermonService:
             Responde únicamente el objeto JSON.
         """
 
-        # Se mantiene OpenAI para sugerencias por consistencia, como se pidió.
         try:
             response = self.client.chat.completions.create(
                 model=self.model_id,
@@ -104,24 +95,25 @@ class AISermonService:
         }}
         """
 
-        # Intento primario con Gemini 1.5 Flash
-        if self.gemini_model_exegesis:
+        # Intento primario con Gemini 1.5 Flash (Nuevo SDK)
+        if self.gemini_client:
             try:
-                response = self.gemini_model_exegesis.generate_content(
+                response = self.gemini_client.models.generate_content(
+                    model="gemini-1.5-flash",
                     contents=user_prompt,
-                    generation_config=genai.GenerationConfig(
+                    config=types.GenerateContentConfig(
                         response_mime_type="application/json",
-                        temperature=0.3
+                        temperature=0.3,
+                        system_instruction="Eres un experto en exégesis bíblica, historia y teología."
                     )
                 )
                 latency = time.perf_counter() - start_time
                 logger.info(f"AI Success with Gemini 1.5 Flash in {latency:.2f}s")
                 
-                result_text = response.text
-                return VerseExegesisResponse.model_validate_json(result_text)
+                return VerseExegesisResponse.model_validate_json(response.text)
             except Exception as e:
                 logger.warning(f"AI Error (Gemini): {str(e)}. Falling back to OpenAI...")
-                start_time = time.perf_counter() # Reset para medir el fallback
+                start_time = time.perf_counter()
 
         # Fallback a OpenAI
         try:
@@ -139,9 +131,6 @@ class AISermonService:
             logger.info(f"AI Success with OpenAI {self.model_id} (Exegesis) in {latency:.2f}s")
             
             result_text = response.choices[0].message.content
-            if not result_text:
-                raise ValueError("Respuesta vacía de OpenAI")
-
             return VerseExegesisResponse.model_validate_json(result_text)
 
         except Exception as e:
