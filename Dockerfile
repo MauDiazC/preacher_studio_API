@@ -63,8 +63,11 @@ ENV PATH="/app/.venv/bin:$PATH"
 # Copy the rest of the application code
 COPY . .
 
+# Dar permisos explícitos al script de inicio
+RUN chmod +x start.sh
+
 # Expose the port the app runs on
 EXPOSE ${PORT}
 
 # Run the application
-CMD ./start.sh
+CMD ["/bin/bash", "./start.sh"]

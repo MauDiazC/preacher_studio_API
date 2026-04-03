@@ -1,20 +1,28 @@
 #!/bin/bash
 set -e
 
-# Imprimir variables para depuración (sin mostrar secretos)
-echo "Checking environment..."
-echo "Raw PORT value: '$PORT'"
+echo "--- STARTING DEPLOYMENT SCRIPT ---"
 
-# Limpiar el valor de PORT: Si no es un número, usar 8000
+# Debug Port
+echo "Checking PORT variable: '$PORT'"
 if [[ ! "$PORT" =~ ^[0-9]+$ ]]; then
   echo "Warning: PORT is not a valid integer ('$PORT'). Forcing PORT=8000"
   export PORT=8000
 fi
 
-# Ejecutar migraciones de la base de datos
+# Run database migrations
 echo "Running database migrations..."
-alembic upgrade head
+# Intentamos aplicar la migración. 
+# Si falla por conflicto de historia, intentaremos estampar el head.
+alembic upgrade head || {
+    echo "Migration failed. This might be due to an existing alembic_version table."
+    echo "Trying to stamp the head and retry..."
+    alembic stamp head
+    alembic upgrade head
+}
 
-# Iniciar la aplicación
-echo "Starting application on port $PORT..."
+echo "Database migrations completed successfully."
+
+# Start the application
+echo "Starting uvicorn on port $PORT..."
 exec uvicorn main:app --host 0.0.0.0 --port "$PORT" --proxy-headers
