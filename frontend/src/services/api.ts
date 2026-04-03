@@ -1,7 +1,11 @@
 import axios from 'axios';
 import { useAuthStore } from '../store/authStore';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
+// Aseguramos que la URL sea la de Railway o localhost
+const rawUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
+const API_URL = rawUrl.replace(/\/$/, "");
+
+console.log('📡 API Base URL configurada:', API_URL);
 
 const api = axios.create({
   baseURL: API_URL,
@@ -10,22 +14,29 @@ const api = axios.create({
   },
 });
 
-// Request interceptor to add the token
 api.interceptors.request.use(
   (config) => {
     const token = useAuthStore.getState().token;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    
+    // Log detallado de la petición
+    console.log(`🚀 Petición: ${config.method?.toUpperCase()} ${config.baseURL}/${config.url}`);
+    
     return config;
   },
   (error) => Promise.reject(error)
 );
 
-// Response interceptor to handle errors (e.g., 401 Unauthorized)
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    console.error('❌ Error de API:', {
+      url: error.config?.url,
+      status: error.response?.status,
+      data: error.response?.data
+    });
     if (error.response?.status === 401) {
       useAuthStore.getState().logout();
     }

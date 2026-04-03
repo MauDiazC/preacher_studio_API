@@ -67,7 +67,7 @@ const RegisterPage: React.FC = () => {
           <Input 
             label={t('auth.full_name')} 
             type="text" 
-            placeholder="Juan Pérez"
+            placeholder={t('auth.full_name_placeholder')}
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             required
@@ -75,7 +75,7 @@ const RegisterPage: React.FC = () => {
           <Input 
             label={t('auth.email')} 
             type="email" 
-            placeholder="ejemplo@correo.com"
+            placeholder={t('auth.email_placeholder')}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
