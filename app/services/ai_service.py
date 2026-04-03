@@ -85,15 +85,21 @@ class AISermonService:
         start_time = time.perf_counter()
         
         user_prompt = f"""
-        Realiza un análisis exegético del siguiente versículo o pasaje: "{verse_reference}"
+        Realiza un análisis exegético profundo y académico del siguiente pasaje bíblico: "{verse_reference}"
+        
+        Tu análisis debe ser exhaustivo y teológicamente sólido.
         
         Debes devolver UNICAMENTE un objeto JSON con la siguiente estructura exacta:
         {{
-            "literary_type": "string - Tipo literario del texto (ej. poesía, carta, histórico, profético)",
-            "author": "string - Quién lo escribió (históricamente)",
-            "purpose": "string - Por qué lo escribió o el propósito original del libro/pasaje",
-            "historical_context": "string - Contexto histórico, usos y costumbres de la época",
-            "significance_context": "string - Contexto de significancia, a qué se refería específicamente en esa circunstancia"
+            "literary_type": "Análisis detallado del género literario y su impacto en la interpretación.",
+            "author": "Información histórica y académica sobre la autoría.",
+            "purpose": "El propósito teológico y pastoral original del pasaje.",
+            "historical_context": "Contexto sociocultural, político y geográfico detallado de la época.",
+            "significance_context": "Significancia teológica profunda y alusiones culturales o religiosas.",
+            "version_rv1960": "El texto exacto en la versión Reina Valera 1960.",
+            "version_nvi": "El texto exacto en la versión Nueva Versión Internacional.",
+            "original_languages": "Análisis de términos clave en Hebreo (si es AT) o Griego (si es NT), incluyendo transliteración, significado original y matices teológicos.",
+            "source_attribution": "Indica de qué fuentes, comentarios clásicos (ej. Matthew Henry, Spurgeon) o corrientes teológicas proviene este análisis."
         }}
         """
 
@@ -106,15 +112,15 @@ class AISermonService:
                     config=types.GenerateContentConfig(
                         response_mime_type="application/json",
                         temperature=0.3,
-                        system_instruction="Eres un experto en exégesis bíblica, historia y teología."
+                        system_instruction="Eres un erudito en exégesis bíblica, lenguajes originales (hebreo/griego) e historia teológica. Proporcionas análisis profundos y precisos para pastores."
                     )
                 )
                 latency = time.perf_counter() - start_time
-                logger.info(f"AI Success with Gemini 1.5 Flash in {latency:.2f}s")
+                logger.info(f"AI PROVIDER: GOOGLE GEMINI | Status: Success | Latency: {latency:.2f}s")
                 
                 return VerseExegesisResponse.model_validate_json(response.text)
             except Exception as e:
-                logger.warning(f"AI Error (Gemini): {str(e)}. Falling back to OpenAI...")
+                logger.warning(f"AI PROVIDER: GOOGLE GEMINI | Status: Failed | Error: {str(e)}. Falling back to OpenAI...")
                 start_time = time.perf_counter()
 
         # Fallback a OpenAI
@@ -122,7 +128,7 @@ class AISermonService:
             response = self.client.chat.completions.create(
                 model=self.model_id,
                 messages=[
-                    {"role": "system", "content": "Eres un experto en exégesis bíblica, historia y teología."},
+                    {"role": "system", "content": "Eres un erudito en exégesis bíblica, lenguajes originales (hebreo/griego) e historia teológica. Proporcionas análisis profundos y precisos para pastores."},
                     {"role": "user", "content": user_prompt}
                 ],
                 response_format={"type": "json_object"},
@@ -130,13 +136,13 @@ class AISermonService:
             )
 
             latency = time.perf_counter() - start_time
-            logger.info(f"AI Success with OpenAI {self.model_id} (Exegesis) in {latency:.2f}s")
+            logger.info(f"AI PROVIDER: OPENAI (gpt-4o-mini) | Status: Success | Latency: {latency:.2f}s")
             
             result_text = response.choices[0].message.content
             return VerseExegesisResponse.model_validate_json(result_text)
 
         except Exception as e:
-            logger.error(f"AI Error (OpenAI Exegesis): {str(e)}")
-            raise ValueError(f"Error al analizar el versículo: {str(e)}")
+            logger.error(f"AI PROVIDER: BOTH | Status: Critical Failure | Error: {str(e)}")
+            raise ValueError(f"Error crítico al analizar el pasaje: {str(e)}")
 
 ai_service = AISermonService()

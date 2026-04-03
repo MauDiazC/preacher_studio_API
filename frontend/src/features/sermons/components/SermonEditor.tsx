@@ -21,10 +21,11 @@ const SermonEditor: React.FC = () => {
   const editorRef = useRef<HTMLDivElement>(null);
 
   const formatAnalysisHtml = (text: string) => {
-    // Reemplaza el título principal y los subtítulos con clases de estilo
+    // Reemplaza el título principal, los subtítulos numerados y los títulos de versión con clases de estilo
     return text
       .replace(/ANÁLISIS EXEGÉTICO: (.*)/g, '<h1 class="editor-title" style="font-size: 1.5rem; margin-top: 0">ANÁLISIS EXEGÉTICO: $1</h1>')
-      .replace(/(\d+\.\s+[A-ZÁÉÍÓÚÑ\s]+:)/g, '<span class="editor-title">$1</span>');
+      .replace(/(\d+\.\s+[A-ZÁÉÍÓÚÑ\s\(\)]+:)/g, '<span class="editor-title">$1</span>')
+      .replace(/(VERSIÓN [A-Z0-9\s]+:)/g, '<span class="editor-title" style="opacity: 0.8; font-size: 1.1rem">$1</span>');
   };
 
   useEffect(() => {
@@ -114,6 +115,12 @@ const SermonEditor: React.FC = () => {
       const analysisText = `
 ANÁLISIS EXEGÉTICO: ${validatedVerse}
 
+VERSIÓN RVR1960:
+${data.version_rv1960}
+
+VERSIÓN NVI:
+${data.version_nvi}
+
 1. TIPO LITERARIO:
 ${data.literary_type}
 
@@ -128,6 +135,12 @@ ${data.historical_context}
 
 5. CONTEXTO DE SIGNIFICANCIA:
 ${data.significance_context}
+
+6. IDIOMAS ORIGINALES (GRIEGO/HEBREO):
+${data.original_languages}
+
+7. ATRIBUCIÓN Y FUENTES:
+${data.source_attribution}
 
 -------------------------------------------
 Notas adicionales:

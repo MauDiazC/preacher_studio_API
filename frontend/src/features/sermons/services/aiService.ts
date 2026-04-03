@@ -12,6 +12,10 @@ export interface VerseExegesis {
   purpose: string;
   historical_context: string;
   significance_context: string;
+  version_rv1960: string;
+  version_nvi: string;
+  original_languages: string;
+  source_attribution: string;
 }
 
 export const aiService = {

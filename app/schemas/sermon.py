@@ -141,6 +141,14 @@ class VerseExegesisResponse(BaseModel):
     significance_context: str = Field(
         ..., description="Contexto de significancia, a qué se refería o hacía alusión."
     )
+    version_rv1960: str = Field(..., description="Texto en versión Reina Valera 1960.")
+    version_nvi: str = Field(..., description="Texto en versión Nueva Versión Internacional.")
+    original_languages: str = Field(
+        ..., description="Análisis detallado en Griego (NT) o Hebreo (AT) de términos clave."
+    )
+    source_attribution: str = Field(
+        ..., description="Detalle de dónde proviene el análisis (comentarios, tradición teológica)."
+    )
 
 
 class ProfileBase(BaseModel):
