@@ -211,15 +211,47 @@
   .hero-section {
     flex-direction: column;
     text-align: center;
+    padding-top: var(--spacing-xl);
+    justify-content: flex-start;
+    min-height: auto;
   }
   .hero-content {
     text-align: center;
     margin-bottom: var(--spacing-2xl);
+    max-width: 100%;
   }
   .hero-actions {
     justify-content: center;
+    flex-wrap: wrap; /* Para que los botones no se corten */
   }
   .hero-visual {
-    transform: scale(0.8);
+    transform: scale(0.7);
+    margin-top: -50px;
+    min-height: 400px;
+  }
+  .hero-title {
+    line-height: 1.2;
+  }
+  .trust-bar {
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-visual {
+    transform: scale(0.5);
+    min-height: 300px;
+  }
+  .hero-title {
+    font-size: 2.2rem;
+  }
+  .badge {
+    font-size: 0.75rem;
+  }
+  .floating-tag {
+    font-size: 0.7rem;
+    padding: 0.4rem 0.8rem;
   }
 }

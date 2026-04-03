@@ -45,7 +45,17 @@
   --font-size-2xl: 3rem;
   --font-size-hero: 4.5rem;
 
-  /* Transitions */
+  /* Media Queries para tipografía base */
+}
+
+@media (max-width: 768px) {
+  :root {
+    --font-size-hero: 2.5rem;
+    --font-size-2xl: 2rem;
+    --font-size-xl: 1.5rem;
+    --font-size-lg: 1.1rem;
+  }
+}
   --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 

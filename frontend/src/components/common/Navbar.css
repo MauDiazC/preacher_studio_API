@@ -83,7 +83,21 @@
 }
 
 @media (max-width: 768px) {
+  .navbar {
+    padding: 0 4%;
+    height: 70px;
+  }
   .navbar-center {
-    display: none;
+    display: none; /* Ocultamos links centrales en móvil */
+  }
+  .navbar-brand {
+    font-size: 1rem;
+  }
+  .lang-toggle {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.75rem;
+  }
+  .navbar-right {
+    gap: 0.5rem;
   }
 }

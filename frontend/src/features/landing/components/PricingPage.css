@@ -152,5 +152,18 @@
 @media (max-width: 1024px) {
   .pricing-grid {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--spacing-md);
+  }
+  .pricing-title {
+    font-size: 2.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .pricing-container {
+    padding: 0 4% var(--spacing-xl) 4%;
+  }
+  .plan-price .amount {
+    font-size: 2rem;
   }
 }

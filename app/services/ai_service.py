@@ -22,6 +22,7 @@ class AISermonService:
         self.gemini_client = None
         
         if self.gemini_api_key:
+            # Usamos el cliente con configuración por defecto
             self.gemini_client = genai.Client(api_key=self.gemini_api_key)
 
         self.system_instruction = "Eres un mentor homilético experto. Ayudas a pastores a estructurar sermones bíblicos profundos y prácticos."
