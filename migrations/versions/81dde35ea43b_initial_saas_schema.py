@@ -20,29 +20,24 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     """Upgrade schema."""
-    # 1. Limpieza de tablas obsoletas (si existen)
+    # 1. ELIMINAR RESTRICCIONES EXISTENTES (Paso crítico para evitar DatatypeMismatch)
+    # Eliminamos las FKs que bloquean el cambio de tipo de UUID a VARCHAR
+    op.execute("ALTER TABLE sermons DROP CONSTRAINT IF EXISTS sermons_user_id_fkey")
+    op.execute("ALTER TABLE profiles DROP CONSTRAINT IF EXISTS profiles_id_fkey")
+    
+    # 2. Limpieza de tablas obsoletas
     op.execute("DROP TABLE IF EXISTS ai_metrics")
     op.execute("DROP TABLE IF EXISTS sermon_history")
     op.execute("DROP TABLE IF EXISTS llm_logs")
 
-    # 2. Cambiar tipos de datos de UUID a String en tablas existentes
-    # Primero en profiles (la tabla principal)
-    op.alter_column('profiles', 'id',
-               existing_type=sa.UUID(),
-               type_=sa.String(),
-               existing_nullable=False)
-    
-    # Luego en sermons (que depende de profiles)
-    op.alter_column('sermons', 'id',
-               existing_type=sa.UUID(),
-               type_=sa.String(),
-               existing_nullable=False)
-    op.alter_column('sermons', 'user_id',
-               existing_type=sa.UUID(),
-               type_=sa.String(),
-               nullable=False)
+    # 3. CAMBIAR TIPOS DE DATOS (Ahora que no hay FKs que lo impidan)
+    # En profiles
+    op.execute("ALTER TABLE profiles ALTER COLUMN id TYPE VARCHAR USING id::varchar")
+    # En sermons
+    op.execute("ALTER TABLE sermons ALTER COLUMN id TYPE VARCHAR USING id::varchar")
+    op.execute("ALTER TABLE sermons ALTER COLUMN user_id TYPE VARCHAR USING user_id::varchar")
 
-    # 3. Crear tabla de Planes
+    # 4. CREAR TABLA DE PLANES
     op.create_table('plans',
         sa.Column('id', sa.String(), nullable=False),
         sa.Column('name', sa.String(), nullable=False),
@@ -55,7 +50,7 @@ def upgrade() -> None:
         sa.UniqueConstraint('name')
     )
 
-    # 4. Actualizar columnas de profiles para el SaaS
+    # 5. ACTUALIZAR COLUMNAS DE PROFILES
     op.add_column('profiles', sa.Column('email', sa.String(), nullable=True))
     op.add_column('profiles', sa.Column('is_admin', sa.Boolean(), nullable=True, server_default='false'))
     op.add_column('profiles', sa.Column('plan_id', sa.String(), nullable=True))
@@ -68,7 +63,7 @@ def upgrade() -> None:
     op.create_unique_constraint(None, 'profiles', ['email'])
     op.create_foreign_key(None, 'profiles', 'plans', ['plan_id'], ['id'])
 
-    # 5. Crear tabla de Logs de Uso (ahora sí los tipos coinciden)
+    # 6. CREAR TABLA DE LOGS DE USO
     op.create_table('usage_logs',
         sa.Column('id', sa.String(), nullable=False),
         sa.Column('user_id', sa.String(), nullable=False),
@@ -80,7 +75,10 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint('id')
     )
 
-    # 6. SEED DATA: Planes y Admin
+    # 7. RE-ESTABLECER FK DE SERMONS (Con el nuevo tipo VARCHAR)
+    op.create_foreign_key(None, 'sermons', 'profiles', ['user_id'], ['id'])
+
+    # 8. SEED DATA: Planes y Admin
     plans_table = sa.table('plans',
         sa.column('id', sa.String),
         sa.column('name', sa.String),
@@ -113,7 +111,7 @@ def upgrade() -> None:
         }
     ])
 
-    # Configurar Admin Bypass
+    # Forzar Admin
     op.execute("UPDATE profiles SET is_admin = true, plan_id = 'plan_exegeta' WHERE email = 'mdiazcabr@gmail.com'")
 
 
@@ -121,7 +119,4 @@ def downgrade() -> None:
     """Downgrade schema."""
     op.drop_table('usage_logs')
     op.drop_constraint(None, 'profiles', type_='foreignkey')
-    op.drop_column('profiles', 'email')
-    op.drop_column('profiles', 'is_admin')
-    op.drop_column('profiles', 'plan_id')
     op.drop_table('plans')
