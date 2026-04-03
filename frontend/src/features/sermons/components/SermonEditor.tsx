@@ -180,7 +180,7 @@ Notas adicionales:
         
         <div className="header-actions">
           <Button variant="outline" onClick={() => navigate('/sermons')}>Estudios</Button>
-          <Button onClick={handleSave}>Guardar</Button>
+          <Button onClick={() => handleSave()}>Guardar</Button>
         </div>
       </div>
 
