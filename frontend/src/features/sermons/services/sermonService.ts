@@ -12,11 +12,17 @@ export interface Sermon {
   updated_at: string;
 }
 
+export interface PaginatedSermons {
+  total: int;
+  limit: int;
+  offset: int;
+  data: Sermon[];
+}
+
 export const sermonService = {
-  getAll: async () => {
-    // El backend devuelve un objeto paginado con { data: Sermon[], total: number, ... }
-    const response = await api.get<any>('/sermons/');
-    return response.data.data;
+  getAll: async (limit: number = 10, offset: number = 0) => {
+    const response = await api.get<any>(`/sermons/?limit=${limit}&offset=${offset}`);
+    return response.data; // Retornamos { data, total, limit, offset }
   },
   getById: async (id: string) => {
     const response = await api.get<Sermon>(`/sermons/${id}`);
