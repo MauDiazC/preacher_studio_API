@@ -14,7 +14,7 @@ app = FastAPI(
     redirect_slashes=False,
 )
 
-# 1. Endpoint de Salud (Primero para Railway)
+# 1. Endpoint de Salud (Prioridad para Railway)
 @app.get("/health")
 async def health():
     return {"status": "ok", "version": "1.0.3"}
@@ -32,7 +32,6 @@ async def simple_log(request: Request, call_next):
     if request.url.path == "/health":
         return await call_next(request)
     
-    # Log simplificado para evitar latencia
     method = request.method
     path = request.url.path
     print(f"REQ: {method} {path}")
@@ -61,5 +60,8 @@ async def app_exception_handler(request: Request, exc: AppBaseException):
 
 @app.on_event("startup")
 async def startup_event():
-    FastAPICache.init(InMemoryBackend(), prefix="fastapi-cache")
-    print("🚀 SERVIDOR LISTO")
+    try:
+        FastAPICache.init(InMemoryBackend(), prefix="fastapi-cache")
+        print("🚀 SERVIDOR LISTO")
+    except Exception as e:
+        print(f"❌ Error en startup: {e}")

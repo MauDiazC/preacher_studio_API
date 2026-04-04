@@ -3,13 +3,13 @@ set -e
 
 echo "--- DEPLOYMENT START ---"
 
-# Migraciones en segundo plano o con timeout para no bloquear healthcheck si tardan
+# Migraciones (Si fallan, el servidor intenta arrancar de todos modos)
 echo "Running Migrations..."
-alembic upgrade head || echo "Migrations warning: Check DB connection."
+alembic upgrade head || echo "Migrations warning: Check DB connection but continuing..."
 
-# Puerto dinámico para Railway
+# Railway usa PORT, si no existe usamos 8080
 PORT_TO_USE=${PORT:-8080}
 echo "Launching Uvicorn on Port $PORT_TO_USE..."
 
-# Ejecutar uvicorn
+# Ejecutar uvicorn con host 0.0.0.0
 exec uvicorn main:app --host 0.0.0.0 --port "$PORT_TO_USE" --proxy-headers --log-level info
