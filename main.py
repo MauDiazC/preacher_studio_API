@@ -27,6 +27,8 @@ app.add_middleware(
 
 @app.middleware("http")
 async def simple_log(request: Request, call_next):
+    if request.url.path == "/health":
+        return await call_next(request)
     print(f"DEBUG: >>> PETICION: {request.method} {request.url}")
     response = await call_next(request)
     print(f"DEBUG: <<< RESPUESTA: {response.status_code}")

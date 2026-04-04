@@ -13,9 +13,9 @@ export interface Sermon {
 }
 
 export interface PaginatedSermons {
-  total: int;
-  limit: int;
-  offset: int;
+  total: number;
+  limit: number;
+  offset: number;
   data: Sermon[];
 }
 
