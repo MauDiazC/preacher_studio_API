@@ -149,6 +149,9 @@ class VerseExegesisResponse(BaseModel):
     source_attribution: str = Field(
         ..., description="Detalle de dónde proviene el análisis (comentarios, tradición teológica)."
     )
+    key_locations: List[str] = Field(
+        default_factory=list, description="Lista de lugares geográficos clave mencionados en el pasaje o su contexto."
+    )
 
 
 class ProfileBase(BaseModel):

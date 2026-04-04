@@ -16,6 +16,7 @@ export interface VerseExegesis {
   version_nvi: string;
   original_languages: string;
   source_attribution: string;
+  key_locations: string[];
 }
 
 export const aiService = {

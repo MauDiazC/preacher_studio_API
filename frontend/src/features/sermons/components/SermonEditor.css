@@ -23,6 +23,19 @@
   flex: 1;
 }
 
+.saving-indicator {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-style: italic;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
+}
+
 .verse-input-main {
   margin-bottom: 0 !important;
   flex: 1;

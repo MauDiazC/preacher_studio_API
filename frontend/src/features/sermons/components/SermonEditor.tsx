@@ -18,7 +18,10 @@ const SermonEditor: React.FC = () => {
   const [verse, setVerse] = useState('');
   const [loading, setLoading] = useState(id && id !== 'new' ? true : false);
   const [analyzing, setAnalyzing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [currentLocations, setCurrentLocations] = useState<string[]>([]);
   const editorRef = useRef<HTMLDivElement>(null);
+  const autoSaveTimerRef = useRef<any>(null);
 
   const formatAnalysisHtml = (text: string) => {
     // Reemplaza el título principal, los subtítulos numerados y los títulos de versión con clases de estilo
@@ -82,33 +85,49 @@ const SermonEditor: React.FC = () => {
     return `${formattedNum}${formattedBook} ${chapter}${formattedVerse ? ':' + formattedVerse : ''}`;
   };
 
-  const handleSave = async (forcedContent?: string, forcedTitle?: string) => {
+  const handleSave = async (forcedContent?: string, forcedTitle?: string, silent: boolean = false) => {
     const currentContent = forcedContent !== undefined ? forcedContent : (editorRef.current?.innerText || '');
     const currentTitle = forcedTitle !== undefined ? forcedTitle : verse;
     
     if (!currentTitle) {
-      addNotification('El título (pasaje) es requerido.', 'error');
+      if (!silent) addNotification('El título (pasaje) es requerido.', 'error');
       return null;
     }
+
+    if (silent) setIsSaving(true);
 
     try {
       const payload = { title: currentTitle, content: currentContent };
       if (id && id !== 'new') {
         await sermonService.update(id, payload);
-        addNotification('Guardado.', 'success');
+        if (!silent) addNotification('Guardado.', 'success');
         return id;
       } else {
         const newStudy = await sermonService.create(payload);
-        addNotification('Estudio guardado.', 'success');
+        if (!silent) addNotification('Estudio guardado.', 'success');
         navigate(`/sermons/${newStudy.id}`, { replace: true });
         return newStudy.id;
       }
     } catch (error: any) {
-      const msg = error.response?.data?.message || error.message || 'Error al guardar';
-      addNotification(msg, 'error');
+      if (!silent) {
+        const msg = error.response?.data?.message || error.message || 'Error al guardar';
+        addNotification(msg, 'error');
+      }
       console.error('Save Error:', error);
       return null;
+    } finally {
+      if (silent) {
+        setTimeout(() => setIsSaving(false), 1000);
+      }
     }
+  };
+
+  const handleAutoSaveTrigger = () => {
+    if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
+    
+    autoSaveTimerRef.current = setTimeout(() => {
+      handleSave(undefined, undefined, true);
+    }, 3000); // 3 segundos de inactividad
   };
 
   const handleAnalyze = async () => {
@@ -122,6 +141,7 @@ const SermonEditor: React.FC = () => {
     setAnalyzing(true);
     try {
       const data = await aiService.analyzeVerse(validatedVerse);
+      setCurrentLocations(data.key_locations || []);
       
       const analysisText = `
 ANÁLISIS EXEGÉTICO: ${validatedVerse}
@@ -233,6 +253,7 @@ Notas adicionales:
           <Button onClick={handleAnalyze} disabled={analyzing || !verse}>
             {analyzing ? '...' : t('editor.analyze_btn')}
           </Button>
+          {isSaving && <span className="saving-indicator">Guardando...</span>}
         </div>
         
         <div className="header-actions">
@@ -249,6 +270,7 @@ Notas adicionales:
             className="rich-editor" 
             contentEditable 
             suppressContentEditableWarning
+            onInput={handleAutoSaveTrigger}
           />
         </div>
         
@@ -290,6 +312,32 @@ Notas adicionales:
                 >
                   <span>📖</span> Concordancia y Léxico
                 </a>
+
+                {currentLocations.length > 0 && (
+                  <div style={{ marginTop: '0.5rem', borderTop: '1px solid var(--border-color)', paddingTop: '0.5rem' }}>
+                    <p style={{ fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.4rem', color: 'var(--text-secondary)' }}>Mapas Geográficos:</p>
+                    {currentLocations.map((loc, i) => (
+                      <a 
+                        key={i}
+                        href={`https://biblehub.com/maps/${loc.toLowerCase().replace(/\s+/g, '_')}.htm`}
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="resource-link"
+                        style={{ 
+                          color: 'var(--accent-gold)', 
+                          textDecoration: 'none', 
+                          fontSize: '0.85rem',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.5rem',
+                          marginBottom: '0.3rem'
+                        }}
+                      >
+                        <span>📍</span> {loc}
+                      </a>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           )}
