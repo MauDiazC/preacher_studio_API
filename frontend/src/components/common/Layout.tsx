@@ -15,9 +15,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <main className="main-content">
         {children}
       </main>
-      <footer className="footer">
-        &copy; {new Date().getFullYear()} Preacher Studio - MauDiaz WebDevMx
-      </footer>
     </div>
   );
 };

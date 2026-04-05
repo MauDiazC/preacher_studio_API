@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Preacher Studio | Potencia tu Mensaje</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;family=Inter:wght@600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary": "#2979FF",
+                      "primary-container": "#2979FF",
+                      "on-primary": "#FFFFFF",
+                      "on-primary-container": "#FFFFFF",
+                      "secondary": "#c2c1ff",
+                      "secondary-container": "#362fb8",
+                      "on-secondary": "#1c04a3",
+                      "on-secondary-container": "#aeadff",
+                      "tertiary": "#c6c6c6",
+                      "tertiary-container": "#909191",
+                      "on-tertiary": "#2f3131",
+                      "on-tertiary-container": "#282a2a",
+                      "error": "#ffb4ab",
+                      "error-container": "#93000a",
+                      "on-error": "#690005",
+                      "on-error-container": "#ffdad6",
+                      "background": "#111127",
+                      "on-background": "#e2dfff",
+                      "surface": "#111127",
+                      "on-surface": "#e2dfff",
+                      "surface-variant": "#33324b",
+                      "on-surface-variant": "#c2c6d7",
+                      "outline": "#8c90a0",
+                      "outline-variant": "#424655",
+                      "surface-container-lowest": "#0c0c22",
+                      "surface-container-low": "#191930",
+                      "surface-container": "#1d1d34",
+                      "surface-container-high": "#28283f",
+                      "surface-container-highest": "#33324b",
+                      "inverse-surface": "#e2dfff",
+                      "inverse-on-surface": "#2e2e46",
+                      "inverse-primary": "#0058ca"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.5rem",
+                      "lg": "0.5rem",
+                      "xl": "1rem",
+                      "full": "9999px"
+              },
+              "fontFamily": {
+                      "headline": ["Noto Serif"],
+                      "body": ["Plus Jakarta Sans"],
+                      "label": ["Inter"]
+              }
+            },
+          }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .celestial-orbit {
+            background: radial-gradient(circle at center, rgba(41, 121, 255, 0.05) 0%, transparent 70%);
+        }
+        .shimmer-button:hover {
+            box-shadow: 0 0 15px rgba(41, 121, 255, 0.4);
+        }
+        .glass-card {
+            background: rgba(40, 40, 63, 0.7);
+            backdrop-filter: blur(24px);
+        }
+        .image-mask {
+            mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+            -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+        }
+        @media (min-width: 1024px) {
+            .image-mask {
+                mask-image: radial-gradient(circle at center, black 40%, transparent 95%);
+                -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 95%);
+            }
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary/30">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-[#111127]/70 backdrop-blur-3xl border-b border-outline-variant/10">
+<div class="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
+<div class="text-xl font-bold tracking-tight font-headline text-primary">PREACHER STUDIO</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-primary font-medium border-b-2 border-primary pb-1" href="#">Inicio</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Precios</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Recursos</a>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary cursor-pointer hover:bg-primary/10 p-2 rounded-lg transition-all">language</span>
+<button class="hidden sm:block text-on-surface-variant hover:text-primary px-4 py-2 transition-colors">Login</button>
+<button class="bg-primary text-on-primary font-semibold px-6 py-2 rounded-lg transition-all shimmer-button">Probar Gratis</button>
+</div>
+</div>
+</nav>
+<main class="pt-24">
+<!-- Hero Section -->
+<section class="relative min-h-[90vh] flex items-center overflow-hidden px-6 lg:px-12 py-20">
+<div class="absolute inset-0 celestial-orbit pointer-events-none"></div>
+<div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center z-10">
+<!-- Left Column: Content -->
+<div class="text-left order-2 lg:order-1">
+<h1 class="text-4xl md:text-6xl lg:text-7xl font-headline font-bold leading-tight mb-6 bg-clip-text text-transparent bg-gradient-to-br from-on-surface to-primary/80">
+                    Potencia tu Mensaje, Simplifica tu Ministerio
+                </h1>
+<p class="text-lg md:text-xl text-on-surface-variant max-w-xl mb-10 leading-relaxed">
+                    La herramienta definitiva para preparar sermones inspiradores y organizar tu estudio bíblico en un solo lugar. Sin distracciones, solo enfoque.
+                </p>
+<div class="flex flex-wrap gap-4">
+<button class="bg-primary text-on-primary font-bold px-10 py-4 rounded-lg text-lg shimmer-button transform hover:scale-105 transition-all shadow-lg shadow-primary/20">
+                        Empieza Gratis Ahora
+                    </button>
+</div>
+</div>
+<!-- Right Column: Mockup/Visual -->
+<div class="order-1 lg:order-2 relative group">
+<div class="absolute inset-0 bg-primary/20 blur-[120px] rounded-full opacity-50 transition-opacity group-hover:opacity-70"></div>
+<div class="relative rounded-2xl overflow-hidden image-mask">
+<img alt="Professional and spiritual abstract visualization of celestial orbits with a glowing central pulpit icon." class="w-full h-auto object-cover transform transition-transform duration-700 hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuALFG_fDfcSfQWj-N7SyM7m4ZcXId595KPldM_8vRM33O48f1F-07XzNsBT5DGMHL0ay9uGoHW2cuXcbQSW3E_jJxEi5hJafbkWyGLF0fe4OSJ0R7ndX3ktS7CCgiv0vrgL-d0gJSRl1tmbNsGJl2ojmKAMopM6JnkJQJwLfV002v4DAJy0gOEqQyP39Lxc8msTgCTH8bS6c7KVJXHW6K6-4GOfdC-EHgNjQU5Wb1eKWxlKe74BNnKFJ3zbIm1FqLihmIeCK4Z20Yk"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Trusted By & Social Proof -->
+<section class="bg-surface-container-low py-16 px-6">
+<div class="max-w-7xl mx-auto text-center">
+<p class="font-label text-xs uppercase tracking-widest text-on-surface-variant/60 mb-10">Ministerios que confían en nosotros</p>
+<div class="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-40 grayscale mb-16">
+<div class="text-2xl font-headline font-bold">ALPHA CHURCH</div>
+<div class="text-2xl font-headline font-bold">REDEEMER GLOBAL</div>
+<div class="text-2xl font-headline font-bold">GRACE FELLOWSHIP</div>
+<div class="text-2xl font-headline font-bold">LIVING WATER</div>
+<div class="text-2xl font-headline font-bold">THE SANCTUARY</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 py-12 bg-surface-container-high/30 rounded-xl backdrop-blur-sm border border-outline-variant/10">
+<div>
+<div class="text-4xl font-bold text-primary mb-2">+10,000</div>
+<div class="text-on-surface-variant font-label text-sm uppercase">Pastores Semanales</div>
+</div>
+<div>
+<div class="text-4xl font-bold text-primary mb-2">150k</div>
+<div class="text-on-surface-variant font-label text-sm uppercase">Sermones Creados</div>
+</div>
+<div>
+<div class="text-4xl font-bold text-primary mb-2">45+</div>
+<div class="text-on-surface-variant font-label text-sm uppercase">Denominaciones</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Features -->
+<section class="py-32 px-6 max-w-7xl mx-auto">
+<div class="text-center mb-20">
+<h2 class="text-4xl font-headline font-bold mb-4">Preparación Inspirada</h2>
+<div class="w-24 h-1 bg-primary mx-auto rounded-full"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Feature 1 -->
+<div class="glass-card p-10 rounded-xl group hover:bg-surface-container-high transition-all duration-300 border border-outline-variant/5">
+<div class="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-8 group-hover:bg-primary/20 transition-all">
+<span class="material-symbols-outlined text-4xl text-primary">auto_stories</span>
+</div>
+<h3 class="text-2xl font-headline font-semibold mb-4 text-primary">Estudio Bíblico Profundo</h3>
+<p class="text-on-surface-variant leading-relaxed">
+                    Conecta pasajes, estudia léxicos y organiza tus referencias teológicas en una biblioteca personal intuitiva diseñada para el estudio serio.
+                </p>
+</div>
+<!-- Feature 2 -->
+<div class="glass-card p-10 rounded-xl group hover:bg-surface-container-high transition-all duration-300 border border-outline-variant/5">
+<div class="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-8 group-hover:bg-primary/20 transition-all">
+<span class="material-symbols-outlined text-4xl text-primary">edit_note</span>
+</div>
+<h3 class="text-2xl font-headline font-semibold mb-4 text-primary">Generación de Bosquejos</h3>
+<p class="text-on-surface-variant leading-relaxed">
+                    Transforma tus reflexiones en estructuras de mensaje coherentes. Herramientas de organización que fluyen con tu proceso creativo.
+                </p>
+</div>
+<!-- Feature 3 -->
+<div class="glass-card p-10 rounded-xl group hover:bg-surface-container-high transition-all duration-300 border border-outline-variant/5">
+<div class="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-8 group-hover:bg-primary/20 transition-all">
+<span class="material-symbols-outlined text-4xl text-primary">calendar_month</span>
+</div>
+<h3 class="text-2xl font-headline font-semibold mb-4 text-primary">Gestión de Mensajes</h3>
+<p class="text-on-surface-variant leading-relaxed">
+                    Planifica series de sermones anuales y gestiona tu calendario ministerial con facilidad. Nunca pierdas el hilo de tus enseñanzas.
+                </p>
+</div>
+</div>
+</section>
+<!-- Use Cases / Roles -->
+<section class="bg-surface-container-lowest py-32 px-6">
+<div class="max-w-7xl mx-auto">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+<div>
+<h2 class="text-4xl font-headline font-bold mb-12">Diseñado para cada Líder</h2>
+<div class="space-y-8">
+<div class="flex gap-6 items-start">
+<div class="mt-1 flex-shrink-0 w-8 h-8 rounded-full border border-primary/30 flex items-center justify-center text-primary font-bold">1</div>
+<div>
+<h4 class="text-xl font-headline font-semibold mb-2">Pastores de tiempo completo</h4>
+<p class="text-on-surface-variant">Centraliza tu ministerio de enseñanza y reduce las horas de administración técnica.</p>
+</div>
+</div>
+<div class="flex gap-6 items-start">
+<div class="mt-1 flex-shrink-0 w-8 h-8 rounded-full border border-primary/30 flex items-center justify-center text-primary font-bold">2</div>
+<div>
+<h4 class="text-xl font-headline font-semibold mb-2">Líderes de Jóvenes</h4>
+<p class="text-on-surface-variant">Crea contenido dinámico y relevante con herramientas que facilitan la comunicación visual.</p>
+</div>
+</div>
+<div class="flex gap-6 items-start">
+<div class="mt-1 flex-shrink-0 w-8 h-8 rounded-full border border-primary/30 flex items-center justify-center text-primary font-bold">3</div>
+<div>
+<h4 class="text-xl font-headline font-semibold mb-2">Estudiantes de Teología</h4>
+<p class="text-on-surface-variant">Organiza tus notas de clase y proyectos de investigación en un entorno libre de distracciones.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="relative">
+<div class="absolute inset-0 bg-primary/10 blur-[100px] rounded-full"></div>
+<img alt="Study Environment" class="relative z-10 rounded-xl shadow-2xl w-full h-[500px] object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqSYZNgwHXRZr-epXQuFf127h7ewU22wEqq2J18eo4uL2Rl5IT5aPOnY2Zyg8PDJN4TTanQyG_lbdOELe9W3ZCN4evCruk7QD4N9vWLPvgJ6czDB2bEdKsQtWQnYtuAmHlcJyEzBHgHrde2kv9cAt4snD0pCGTfnnWzi_HLLBu-piJhdlDF_A8LXDKhblOKC0YnKdyoqJO1aS_U9pjFk81kGf4cs3LYlUS423bqQd7AlL3yD86uuyzdlNWjvEVkuGTQwlob1o69uM"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Testimonials -->
+<section class="py-32 px-6">
+<div class="max-w-7xl mx-auto">
+<h2 class="text-4xl font-headline font-bold text-center mb-20 italic">"Palabras desde el Púlpito"</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Testimonial 1 -->
+<div class="bg-surface-container-high p-8 rounded-xl border border-outline-variant/10">
+<p class="text-lg italic text-on-surface mb-8 leading-relaxed">
+                        "Preacher Studio ha transformado mis sábados. Lo que antes me tomaba 8 horas de organización, ahora fluye de manera natural en 3. Me permite enfocarme en la oración y no en el software."
+                    </p>
+<div class="flex items-center gap-4">
+<img alt="Pastor Marcos" class="w-12 h-12 rounded-full border-2 border-primary/30" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5ZkaC4bFVROhWj6_QR3yEjl754IWUhjqST_uZ71myGm7s39rdiro6uh4T27qM2ZdvbTqoEuZ1SFFspGEuf9TG2mjlNNABCCSBojIV4uoFiox7nVJw1UZDimScfRfmTQPc_UOFK2aB_NqPHCL9so4YMfHDKNyjecBewsCe9Tq0vZKOvPCWG2vp49M_CzZd5qIrLVVhu92dL2M1Q-DvDHn3Dxio42PKleC_uaUdO-D4aP8gGCNQ0Rioz8EL-3Kp9EUJrhjKUDCMVFs"/>
+<div>
+<div class="font-bold">Pastor Marcos Rivera</div>
+<div class="text-xs font-label text-primary uppercase">Iglesia Vida Nueva</div>
+</div>
+</div>
+</div>
+<!-- Testimonial 2 -->
+<div class="bg-surface-container-high p-8 rounded-xl border border-outline-variant/10">
+<p class="text-lg italic text-on-surface mb-8 leading-relaxed">
+                        "Como líder de jóvenes, necesitaba algo visual y rápido. Los bosquejos estructurados de Preacher Studio son la mejor herramienta que he usado en 10 años de ministerio."
+                    </p>
+<div class="flex items-center gap-4">
+<img alt="David Espinoza" class="w-12 h-12 rounded-full border-2 border-primary/30" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-EuUCyMAB3G1o-V8tXehbCFRAQqcZ5UIANoIHtOl9CzwvxKul_6KpOT5zvLktjKkPnvmU1VYL5mIIlniAAi8EWZ2Yhh0TZaOdST66tUpHONYByt0JPONAa3_zg_X16xTFlFUgBy1Q_muQX7exQN6K2hYfzawu787Os13t4AscJyzzTMm3lC3wTvTKc7Hpcz0lCpkxzVw7DXKcoCyCz9PGKDAWxNmLibHlZg8eABHLArZffuAKjwkhEU4f35_9vB2mJazy3IdI-G0"/>
+<div>
+<div class="font-bold">David Espinoza</div>
+<div class="text-xs font-label text-primary uppercase">Generación Radical</div>
+</div>
+</div>
+</div>
+<!-- Testimonial 3 -->
+<div class="bg-surface-container-high p-8 rounded-xl border border-outline-variant/10">
+<p class="text-lg italic text-on-surface mb-8 leading-relaxed">
+                        "La profundidad del estudio bíblico es impresionante. Tener mis referencias teológicas cruzadas con mi bosquejo en una sola pantalla es simplemente liberador."
+                    </p>
+<div class="flex items-center gap-4">
+<img alt="Dr. Roberto Peña" class="w-12 h-12 rounded-full border-2 border-primary/30" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCl_qUqNidn3819gOYd|6jvjSe-tnnX8xQ5-esTitglTe7IQm73vnpGJ2KjL2cMokScxpTv7fXcW81a0HX80CPHM_1A2dJ07ZJB6BXUF8-smuzIK-8k-stat8kfV7895yll5v3nXQCnp53IR_ht5z_es5G5KefRm9eQVt8MDz_LzU_6LL3Z5yPr_agPLk-O034fvq6MuJAZj_Alyg9lFPXMLPpaykfef1fceGR0mKk2hH7V0Z9ImEKj_u5ovb_J-22GayU12JAFapCA"/>
+<div>
+<div class="font-bold">Dr. Roberto Peña</div>
+<div class="text-xs font-label text-primary uppercase">Seminario Bíblico Central</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- FAQ Section -->
+<section class="bg-surface-container-low py-32 px-6">
+<div class="max-w-3xl mx-auto">
+<h2 class="text-3xl font-headline font-bold text-center mb-16">Preguntas Comunes</h2>
+<div class="space-y-4">
+<div class="bg-surface-container-high rounded-lg p-6 cursor-pointer border border-outline-variant/10">
+<div class="flex justify-between items-center">
+<h4 class="font-semibold">¿Qué tan seguros están mis datos y sermones?</h4>
+<span class="material-symbols-outlined text-primary">expand_more</span>
+</div>
+<div class="mt-4 text-on-surface-variant text-sm">Utilizamos encriptación de grado bancario para asegurar que tu propiedad intelectual y notas personales estén siempre protegidas y solo accesibles para ti.</div>
+</div>
+<div class="bg-surface-container-high rounded-lg p-6 cursor-pointer border border-outline-variant/10">
+<div class="flex justify-between items-center">
+<h4 class="font-semibold">¿Qué traducciones de la Biblia están incluidas?</h4>
+<span class="material-symbols-outlined text-primary">expand_more</span>
+</div>
+</div>
+<div class="bg-surface-container-high rounded-lg p-6 cursor-pointer border border-outline-variant/10">
+<div class="flex justify-between items-center">
+<h4 class="font-semibold">¿Ofrecen planes para equipos pastorales de iglesias?</h4>
+<span class="material-symbols-outlined text-primary">expand_more</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Final CTA -->
+<section class="py-32 px-6 text-center relative overflow-hidden">
+<div class="absolute inset-0 bg-primary/5 rounded-full blur-[120px] -z-10 transform scale-150"></div>
+<div class="max-w-3xl mx-auto">
+<h2 class="text-4xl md:text-5xl font-headline font-bold mb-8">Comienza tu viaje hacia una preparación más profunda</h2>
+<p class="text-xl text-on-surface-variant mb-12">Únete a miles de pastores que han redescubierto el gozo de preparar el mensaje.</p>
+<button class="bg-primary text-on-primary font-bold px-12 py-5 rounded-lg text-xl transform hover:scale-110 transition-all shadow-xl shadow-primary/20">
+                Probar Gratis por 14 días
+            </button>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface w-full py-12 border-t border-outline-variant/15">
+<div class="flex flex-col md:flex-row justify-between items-center px-8 space-y-6 md:space-y-0 max-w-7xl mx-auto">
+<div class="flex flex-col items-center md:items-start gap-4">
+<div class="text-lg font-headline text-primary">PREACHER STUDIO</div>
+<p class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant/60">© 2024 Preacher Studio. Inspired Preparation.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-8 text-sm">
+<a class="text-on-surface-variant/60 hover:text-primary transition-colors" href="#">Privacidad</a>
+<a class="text-on-surface-variant/60 hover:text-primary transition-colors" href="#">Términos</a>
+<a class="text-on-surface-variant/60 hover:text-primary transition-colors" href="#">Contacto</a>
+<div class="flex items-center gap-4 ml-4">
+<span class="text-primary font-bold">ES</span>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface-variant/40 cursor-pointer hover:text-primary">EN</span>
+</div>
+</div>
+<div class="flex gap-6">
+<a class="text-on-surface-variant/60 hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">public</span></a>
+<a class="text-on-surface-variant/60 hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">video_library</span></a>
+</div>
+</div>
+</footer>
+</body></html>
