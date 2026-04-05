@@ -48,6 +48,14 @@ const LandingPage: React.FC = () => {
                     className="hero-main-img"
                   />
                 </div>
+                {/* Floating Tags (Pills) orbiting the vortex */}
+                <div className="floating-pills-container">
+                  <div className="floating-pill pill-1">{t('tag.significance')}</div>
+                  <div className="floating-pill pill-2">{t('tag.historical')}</div>
+                  <div className="floating-pill pill-3">{t('tag.authorship')}</div>
+                  <div className="floating-pill pill-4">{t('tag.literary')}</div>
+                  <div className="floating-pill pill-5">{t('tag.purpose')}</div>
+                </div>
               </div>
             </div>
           </div>

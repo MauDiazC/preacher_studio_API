@@ -119,6 +119,47 @@
   transform: scale(1.03);
 }
 
+/* Floating Pills / Orbiting Tags */
+.floating-pills-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.floating-pill {
+  position: absolute;
+  background: rgba(25, 25, 48, 0.7);
+  backdrop-filter: blur(12px);
+  padding: 0.6rem 1.2rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(176, 198, 255, 0.2);
+  color: #b0c6ff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+  animation: orbit-float 6s ease-in-out infinite;
+}
+
+@keyframes orbit-float {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(0, -15px); }
+}
+
+.pill-1 { top: 15%; right: -5%; animation-delay: 0s; }
+.pill-2 { bottom: 20%; left: -10%; animation-delay: 1s; }
+.pill-3 { top: 50%; left: -15%; animation-delay: 2s; }
+.pill-4 { top: 10%; left: 10%; animation-delay: 0.5s; }
+.pill-5 { bottom: 5%; right: 10%; animation-delay: 1.5s; }
+
+@media (max-width: 768px) {
+  .floating-pill {
+    font-size: 0.7rem;
+    padding: 0.4rem 0.8rem;
+  }
+}
+
 /* Proof Section */
 .proof-section {
   background-color: #191930;

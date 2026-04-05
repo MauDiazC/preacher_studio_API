@@ -1,4 +1,5 @@
 import logging
+import sys
 from fastapi import FastAPI, Request, APIRouter
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -8,15 +9,26 @@ from config.config import settings
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.inmemory import InMemoryBackend
 
+# Configuración de logs inmediata a stdout
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    stream=sys.stdout
+)
+logger = logging.getLogger("preacher-studio")
+
+logger.info("--- INICIANDO APLICACIÓN ---")
+
 app = FastAPI(
     title="Preacher Studio API",
     version="1.0.3",
     redirect_slashes=False,
 )
 
-# 1. Endpoint de Salud (Prioridad para Railway)
+# 1. Endpoint de Salud (Prioridad absoluta)
 @app.get("/health")
 async def health():
+    logger.info("HEALTHCHECK CALLED - Status OK")
     return {"status": "ok", "version": "1.0.3"}
 
 # 2. Middlewares
@@ -32,11 +44,9 @@ async def simple_log(request: Request, call_next):
     if request.url.path == "/health":
         return await call_next(request)
     
-    method = request.method
-    path = request.url.path
-    print(f"REQ: {method} {path}")
-    
+    logger.info(f"REQ: {request.method} {request.url.path}")
     response = await call_next(request)
+    logger.info(f"RES: {response.status_code}")
     return response
 
 # 3. Rutas
@@ -61,7 +71,8 @@ async def app_exception_handler(request: Request, exc: AppBaseException):
 @app.on_event("startup")
 async def startup_event():
     try:
+        logger.info("Iniciando caché en memoria...")
         FastAPICache.init(InMemoryBackend(), prefix="fastapi-cache")
-        print("🚀 SERVIDOR LISTO")
+        logger.info("🚀 SERVIDOR LISTO PARA RECIBIR PETICIONES")
     except Exception as e:
-        print(f"❌ Error en startup: {e}")
+        logger.error(f"❌ Error en startup: {e}", exc_info=True)
