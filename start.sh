@@ -7,7 +7,7 @@ echo "--- DEPLOYMENT START ---"
 echo "Running Migrations..."
 alembic upgrade head || echo "Migrations warning: Check DB connection but continuing..."
 
-# Railway usa PORT, si no existe usamos 8080
+# Railway usa PORT, si no existe usamos 8080 (según settings del usuario)
 PORT_TO_USE=${PORT:-8080}
 echo "Launching Uvicorn on Port $PORT_TO_USE..."
 

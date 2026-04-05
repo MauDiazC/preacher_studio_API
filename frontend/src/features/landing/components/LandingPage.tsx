@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../../context/LanguageContext';
 import Button from '../../../components/common/Button';
 import './LandingPage.css';
-import landingHeroImg from '../../../assets/landing_hero.png';
+import landingHeroImg from '../../../assets/vortice.png';
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
