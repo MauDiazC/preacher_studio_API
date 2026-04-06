@@ -146,5 +146,3 @@ async def export_to_pptx(sermon_id: str, db=Depends(get_db), user=Depends(get_cu
             "Content-Disposition": f"attachment; filename=sermon_{sermon_id}.pptx"
         },
     )
-
-    )
