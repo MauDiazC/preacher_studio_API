@@ -175,7 +175,8 @@
   background: none;
   border: none;
   cursor: pointer;
-  opacity: 0.5;
+  color: #b0c6ff;
+  opacity: 1;
 }
 
 .delete-btn-icon-small:hover {

@@ -54,8 +54,8 @@ const Navbar: React.FC = () => {
               ✨ {credits}
             </span>
             <div className="v-divider"></div>
-            <button onClick={handleLogout} className="logout-icon-btn" title={t('nav.logout')}>
-              🚪
+            <button onClick={handleLogout} className="logout-text-btn">
+              {t('nav.logout').toUpperCase()}
             </button>
           </div>
         )}

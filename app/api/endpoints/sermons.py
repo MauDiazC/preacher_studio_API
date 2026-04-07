@@ -240,6 +240,27 @@ async def create_snapshot(
     return {"status": "Snapshot programado correctamente"}
 
 
+@router.delete("/{sermon_id}", status_code=204, summary="Eliminar un sermón")
+async def delete_sermon(
+    sermon_id: str,
+    db=Depends(get_db),
+    user=Depends(get_current_user),
+):
+    """
+    Elimina permanentemente un sermón del sistema.
+    """
+    user_id = str(user.id)
+    response = sermon_repo.delete(db, sermon_id, user_id)
+    
+    # Supabase delete returns empty list if no rows matched
+    if not response.data:
+        raise EntityNotFoundException(
+            message=f"Sermón con ID {sermon_id} no encontrado o no pertenece al usuario."
+        )
+    
+    return None
+
+
 from app.services.subscription_service import subscription_service
 
 @router.post(

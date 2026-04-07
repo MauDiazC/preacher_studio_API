@@ -41,11 +41,14 @@ const SermonEditor: React.FC = () => {
           if (!isMounted) return;
           
           setVerse(data.title || '');
+          setCurrentLocations(data.key_locations || []);
           
-          // Blindaje de inyección: Reintentamos hasta que editorRef.current esté listo
+          const contentToInject = data.content || '';
+          
+          // Intentamos inyectar el contenido
           const injectContent = () => {
             if (editorRef.current) {
-              editorRef.current.innerHTML = formatAnalysisHtml(data.content || '');
+              editorRef.current.innerHTML = formatAnalysisHtml(contentToInject);
               setLoading(false);
               return true;
             }
@@ -53,10 +56,14 @@ const SermonEditor: React.FC = () => {
           };
 
           if (!injectContent()) {
+            let attempts = 0;
             const interval = setInterval(() => {
-              if (injectContent()) clearInterval(interval);
-            }, 50);
-            setTimeout(() => clearInterval(interval), 2000);
+              attempts++;
+              if (injectContent() || attempts > 20) {
+                clearInterval(interval);
+                setLoading(false); // Forzamos fin de carga si falla el ref
+              }
+            }, 100);
           }
 
         } catch (error) {
@@ -75,12 +82,13 @@ const SermonEditor: React.FC = () => {
 
   const validatePassage = (input: string) => {
     let cleanInput = input.trim().replace(/\./g, ' ').replace(/\s+/g, ' ');
+    // Regex mejorada para soportar libros con números (1 Juan, 2 Corintios)
     const bibleRegex = /^(\d\s)?([a-zA-ZáéíóúÁÉÍÓÚñÑ]+)\s*(\d+)([:\s]*\d*)$/;
     const match = cleanInput.match(bibleRegex);
     if (!match) return null;
     const [_, num, book, chapter, versePart] = match;
     const formattedBook = book.charAt(0).toUpperCase() + book.slice(1).toLowerCase();
-    const formattedNum = num || '';
+    const formattedNum = num ? num.trim() + ' ' : '';
     const formattedVerse = versePart.replace(/[:\s]/g, '').trim();
     return `${formattedNum}${formattedBook} ${chapter}${formattedVerse ? ':' + formattedVerse : ''}`;
   };
@@ -204,18 +212,58 @@ Notas adicionales:
 
   const getResourceLinks = (verseRef: string) => {
     const bookMap: { [key: string]: string } = {
-      'Juan': 'john', 'Mateo': 'matthew', 'Marcos': 'mark', 'Lucas': 'lucas',
-      'Romanos': 'romans', 'Génesis': 'genesis', 'Éxodo': 'exodus', 'Salmos': 'psalms',
-      'Proverbios': 'proverbs', 'Apocalipsis': 'revelation', 'Hechos': 'acts'
+      'Génesis': 'genesis', 'Éxodo': 'exodus', 'Levítico': 'leviticus', 'Números': 'numbers', 'Deuteronomio': 'deuteronomy',
+      'Josué': 'joshua', 'Jueces': 'judges', 'Rut': 'ruth', '1 Samuel': '1_samuel', '2 Samuel': '2_samuel',
+      '1 Reyes': '1_kings', '2 Reyes': '2_kings', '1 Crónicas': '1_chronicles', '2 Crónicas': '2_chronicles',
+      'Esdras': 'ezra', 'Nehemías': 'nehemiah', 'Ester': 'esther', 'Job': 'job', 'Salmos': 'psalms',
+      'Proverbios': 'proverbs', 'Eclesiastés': 'ecclesiastes', 'Cantares': 'songs', 'Isaías': 'isaiah',
+      'Jeremías': 'jeremiah', 'Lamentaciones': 'lamentations', 'Ezequiel': 'ezekiel', 'Daniel': 'daniel',
+      'Oseas': 'hosea', 'Joel': 'joel', 'Amós': 'amos', 'Abdías': 'obadiah', 'Jonás': 'jonah',
+      'Miqueas': 'micah', 'Nahúm': 'nahum', 'Habacuc': 'habakkuk', 'Sofonías': 'zephaniah',
+      'Hageo': 'haggai', 'Zacarías': 'zechariah', 'Malaquías': 'malachi',
+      'Mateo': 'matthew', 'Marcos': 'mark', 'Lucas': 'lucas', 'Juan': 'john', 'Hechos': 'acts',
+      'Romanos': 'romans', '1 Corintios': '1_corinthians', '2 Corintios': '2_corinthians',
+      'Gálatas': 'galatians', 'Efesios': 'ephesians', 'Filipenses': 'philippians', 'Colosenses': 'colossians',
+      '1 Tesalonicenses': '1_thessalonians', '2 Tesalonicenses': '2_thessalonians',
+      '1 Timoteo': '1_timothy', '2 Timoteo': '2_timothy', 'Tito': 'titus', 'Filemón': 'philemon',
+      'Hebreos': 'hebrews', 'Santiago': 'james', '1 Pedro': '1_peter', '2 Pedro': '2_peter',
+      '1 Juan': '1_john', '2 Juan': '2_john', '3 Juan': '3_john', 'Judas': 'jude', 'Apocalipsis': 'revelation'
     };
-    const parts = verseRef.trim().split(' ');
-    const book = parts[0];
-    const chapterVerse = parts[parts.length - 1] || '';
+    
+    // Extraer libro (puede tener número al inicio: "1 Juan")
+    const match = verseRef.match(/^(\d\s)?[a-zA-ZáéíóúÁÉÍÓÚñÑ]+/);
+    const book = match ? match[0] : '';
+    
+    // Extraer capítulo y versículo
+    const cvMatch = verseRef.match(/\d+[:\s]?\d*$/);
+    const chapterVerse = cvMatch ? cvMatch[0].trim() : '';
+    
     const englishBook = bookMap[book] || book.toLowerCase();
+    
     return {
-      bibleHub: `https://biblehub.com/interlinear/${englishBook}/${chapterVerse.replace(':', '-')}.htm`,
+      bibleHub: `https://biblehub.com/interlinear/${englishBook}/${chapterVerse.replace(/[:\s]/g, '-')}.htm`,
       blueLetter: `https://www.blueletterbible.org/search/preSearch.cfm?Criteria=${encodeURIComponent(verseRef)}`
     };
+  };
+
+  const translateLocation = (loc: string) => {
+    const locMap: { [key: string]: string } = {
+      'Ponto': 'pontus',
+      'Galacia': 'galatia',
+      'Capadocia': 'cappadocia',
+      'Asia': 'asia',
+      'Bitinia': 'bithynia',
+      'Jerusalén': 'jerusalem',
+      'Egipto': 'egypt',
+      'Roma': 'rome',
+      'Éfeso': 'ephesus',
+      'Corinto': 'corinth',
+      'Filipos': 'philippi',
+      'Colosas': 'colossae',
+      'Tesalónica': 'thessalonica'
+    };
+    const englishName = locMap[loc] || loc;
+    return englishName.toLowerCase().replace(/\s+/g, '_');
   };
 
   if (loading) return <div className="loading-screen">Cargando análisis ministerial...</div>;
@@ -266,7 +314,7 @@ Notas adicionales:
                 📖 Léxico Strong
               </a>
               {currentLocations.map((loc, i) => (
-                <a key={i} href={`https://biblehub.com/maps/${loc.toLowerCase().replace(/\s+/g, '_')}.htm`} target="_blank" rel="noopener noreferrer" className="resource-link-map">
+                <a key={i} href={`https://biblehub.com/maps/${translateLocation(loc)}.htm`} target="_blank" rel="noopener noreferrer" className="resource-link-map">
                   📍 {loc}
                 </a>
               ))}

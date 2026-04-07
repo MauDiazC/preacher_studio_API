@@ -104,19 +104,21 @@
   background: var(--border-color);
 }
 
-.logout-icon-btn {
+.logout-text-btn {
   background: none;
   border: none;
-  font-size: 1.1rem;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #b0c6ff;
   cursor: pointer;
   display: flex;
   align-items: center;
-  opacity: 0.7;
   transition: opacity 0.2s;
+  letter-spacing: 0.05em;
 }
 
-.logout-icon-btn:hover {
-  opacity: 1;
+.logout-text-btn:hover {
+  opacity: 0.8;
 }
 
 @media (max-width: 768px) {
