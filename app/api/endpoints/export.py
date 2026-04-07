@@ -11,6 +11,7 @@ from pptx.util import Inches, Pt
 from pptx.dml.color import RGBColor
 from pptx.enum.text import PP_ALIGN
 import io
+import re
 
 from app.core.db import get_db
 
@@ -97,14 +98,11 @@ async def export_to_pptx(sermon_id: str, db=Depends(get_db), user=Depends(get_cu
 
     # Diapositivas de Contenido
     content = sermon.get("content", "")
-    # Dividir por bloques de títulos (detectados por el formato que inyectamos en el editor)
-    # Buscamos patrones como "X. TITULO:" o "VERSION XXX:"
-    import re
+    # Dividir por bloques de títulos
     blocks = re.split(r'(\d+\.\s+[A-ZÁÉÍÓÚÑ\s\(\)]+:|VERSIÓN [A-Z0-9\s]+:)', content)
 
     # Re-combinar títulos con su contenido
     slides_data = []
-    current_title = "Detalles"
     for i in range(1, len(blocks), 2):
         title_text = blocks[i].strip()
         body_text = blocks[i+1].strip() if i+1 < len(blocks) else ""
@@ -124,7 +122,7 @@ async def export_to_pptx(sermon_id: str, db=Depends(get_db), user=Depends(get_cu
             title_shape = shapes.title
             body_shape = shapes.placeholders[1]
 
-            title_suffix = f" (cont.)" if idx > 0 else ""
+            title_suffix = " (cont.)" if idx > 0 else ""
             title_shape.text = s_title + title_suffix
             title_shape.text_frame.paragraphs[0].font.color.rgb = accent_color
             title_shape.text_frame.paragraphs[0].font.size = Pt(32)
