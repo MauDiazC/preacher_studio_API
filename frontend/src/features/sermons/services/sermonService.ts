@@ -8,6 +8,7 @@ export interface Sermon {
   pastor_name?: string;
   series?: string;
   tags?: string[];
+  key_locations?: string[];
   created_at: string;
   updated_at: string;
 }

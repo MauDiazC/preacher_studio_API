@@ -33,6 +33,10 @@ class SermonBase(BaseModel):
         description="Estado del sermón en el flujo de trabajo.",
         examples=["draft"],
     )
+    key_locations: Optional[List[str]] = Field(
+        default_factory=list,
+        description="Lugares geográficos clave identificados.",
+    )
 
     @field_validator("title", "content", "main_passage")
     @classmethod
@@ -62,6 +66,7 @@ class SermonUpdate(BaseModel):
     status: Optional[str] = Field(
         None, pattern="^(seed|draft|final)$", examples=["final"]
     )
+    key_locations: Optional[List[str]] = Field(None, examples=[["Ponto", "Galacia"]])
 
     @field_validator("title", "content", "main_passage")
     @classmethod

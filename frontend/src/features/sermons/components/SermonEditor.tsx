@@ -108,7 +108,11 @@ const SermonEditor: React.FC = () => {
     if (silent) setIsSaving(true);
 
     try {
-      const payload = { title: currentTitle, content: currentContent };
+      const payload = { 
+        title: currentTitle, 
+        content: currentContent,
+        key_locations: currentLocations 
+      };
       if (id && id !== 'new') {
         await sermonService.update(id, payload);
         if (!silent) addNotification('Guardado.', 'success');
