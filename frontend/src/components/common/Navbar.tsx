@@ -6,9 +6,13 @@ import Button from './Button';
 import './Navbar.css';
 
 const Navbar: React.FC = () => {
-  const { isAuthenticated, logout } = useAuthStore();
+  const { isAuthenticated, logout, user } = useAuthStore();
   const { language, toggleLanguage, t } = useLanguage();
   const navigate = useNavigate();
+
+  // Mockup de créditos para el admin
+  const isAdmin = user?.email === 'mdiazcabr@gmail.com';
+  const credits = isAdmin ? '∞' : '50';
 
   const handleLogout = () => {
     logout();
@@ -44,14 +48,19 @@ const Navbar: React.FC = () => {
           {language === 'es' ? '🇺🇸 EN' : '🇪🇸 ES'}
         </button>
 
-        {isAuthenticated ? (
-          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-            <span className="user-badge">Admin</span>
-            <button onClick={handleLogout} className="navbar-link logout-btn">
-              {t('nav.logout')}
+        {isAuthenticated && (
+          <div className="user-info-pill">
+            <span className="credits-indicator" title="Créditos de Mentoría">
+              ✨ {credits}
+            </span>
+            <div className="v-divider"></div>
+            <button onClick={handleLogout} className="logout-icon-btn" title={t('nav.logout')}>
+              🚪
             </button>
           </div>
-        ) : (
+        )}
+
+        {!isAuthenticated && (
           <>
             <Link to="/login" className="navbar-link">{t('nav.login')}</Link>
             <Button size="sm" onClick={() => navigate('/register')}>{t('nav.try_free')}</Button>

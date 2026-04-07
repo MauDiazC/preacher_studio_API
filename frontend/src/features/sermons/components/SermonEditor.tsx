@@ -24,6 +24,7 @@ const SermonEditor: React.FC = () => {
   const autoSaveTimerRef = useRef<any>(null);
 
   const formatAnalysisHtml = (text: string) => {
+    if (!text) return '';
     return text
       .replace(/ANÁLISIS EXEGÉTICO: (.*)/g, '<h1 class="editor-title main-title">ANÁLISIS EXEGÉTICO: $1</h1>')
       .replace(/(\d+\.\s+[A-ZÁÉÍÓÚÑ\s\(\)]+:)/g, '<span class="editor-title section-title">$1</span>')
@@ -41,13 +42,22 @@ const SermonEditor: React.FC = () => {
           
           setVerse(data.title || '');
           
-          // Aseguramos la inyección y apagamos el loading inmediatamente después
-          setTimeout(() => {
+          // Blindaje de inyección: Reintentamos hasta que editorRef.current esté listo
+          const injectContent = () => {
             if (editorRef.current) {
               editorRef.current.innerHTML = formatAnalysisHtml(data.content || '');
+              setLoading(false);
+              return true;
             }
-            setLoading(false);
-          }, 100);
+            return false;
+          };
+
+          if (!injectContent()) {
+            const interval = setInterval(() => {
+              if (injectContent()) clearInterval(interval);
+            }, 50);
+            setTimeout(() => clearInterval(interval), 2000);
+          }
 
         } catch (error) {
           if (isMounted) {
@@ -64,30 +74,21 @@ const SermonEditor: React.FC = () => {
   }, [id]);
 
   const validatePassage = (input: string) => {
-    // 1. Limpieza inicial: quitar puntos y espacios extras
     let cleanInput = input.trim().replace(/\./g, ' ').replace(/\s+/g, ' ');
-    
-    // 2. Corregir errores comunes (jan -> Juan)
-    if (cleanInput.toLowerCase().startsWith('jan')) {
-      cleanInput = cleanInput.replace(/jan/i, 'Juan');
-    }
-    
-    // 3. Regex para validar estructura: [Número opcional] [Libro] [Espacio/Punto] [Capítulo] [:] [Versículo]
     const bibleRegex = /^(\d\s)?([a-zA-ZáéíóúÁÉÍÓÚñÑ]+)\s*(\d+)([:\s]*\d*)$/;
     const match = cleanInput.match(bibleRegex);
-    
     if (!match) return null;
-
-    // 4. Formatear estéticamente (Juan 3:16)
     const [_, num, book, chapter, versePart] = match;
     const formattedBook = book.charAt(0).toUpperCase() + book.slice(1).toLowerCase();
     const formattedNum = num || '';
     const formattedVerse = versePart.replace(/[:\s]/g, '').trim();
-    
     return `${formattedNum}${formattedBook} ${chapter}${formattedVerse ? ':' + formattedVerse : ''}`;
   };
 
   const handleSave = async (forcedContent?: string, forcedTitle?: string, silent: boolean = false) => {
+    // Usamos innerHTML para capturar el formato si es necesario, 
+    // pero el backend espera texto plano para procesar. 
+    // Mantenemos innerText para la persistencia de datos.
     const currentContent = forcedContent !== undefined ? forcedContent : (editorRef.current?.innerText || '');
     const currentTitle = forcedTitle !== undefined ? forcedTitle : verse;
     
@@ -111,31 +112,22 @@ const SermonEditor: React.FC = () => {
         return newStudy.id;
       }
     } catch (error: any) {
-      if (!silent) {
-        const msg = error.response?.data?.message || error.message || 'Error al guardar';
-        addNotification(msg, 'error');
-      }
-      console.error('Save Error:', error);
+      if (!silent) addNotification('Error al guardar', 'error');
       return null;
     } finally {
-      if (silent) {
-        setTimeout(() => setIsSaving(false), 1000);
-      }
+      if (silent) setTimeout(() => setIsSaving(false), 1000);
     }
   };
 
   const handleAutoSaveTrigger = () => {
     if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
-    
-    autoSaveTimerRef.current = setTimeout(() => {
-      handleSave(undefined, undefined, true);
-    }, 3000); // 3 segundos de inactividad
+    autoSaveTimerRef.current = setTimeout(() => handleSave(undefined, undefined, true), 3000);
   };
 
   const handleAnalyze = async () => {
     const validatedVerse = validatePassage(verse);
     if (!validatedVerse) {
-      addNotification('Por favor ingresa una cita válida (ej: Juan 3:16)', 'error');
+      addNotification('Ingresa una cita válida', 'error');
       return;
     }
     
@@ -182,8 +174,6 @@ Notas adicionales:
         editorRef.current.innerHTML = formatAnalysisHtml(analysisText);
       }
       addNotification('Análisis listo.', 'success');
-      
-      // Enviamos el título validado directamente para evitar esperar al estado
       await handleSave(analysisText, validatedVerse);
     } catch (error: any) {
       addNotification('Error en la consulta.', 'error');
@@ -194,12 +184,9 @@ Notas adicionales:
 
   const handleExport = async (format: 'pdf' | 'keynote') => {
     let currentId: string | undefined | null = id;
-    
     if (!currentId || currentId === 'new') {
-      addNotification('Guardando para exportar...', 'info');
       currentId = await handleSave();
     }
-
     if (!currentId) return;
 
     try {
@@ -207,38 +194,31 @@ Notas adicionales:
         addNotification('Generando PDF...', 'info');
         await exportService.exportToPDF(currentId);
       } else {
-        addNotification('Generando Keynote (PPTX)...', 'info');
+        addNotification('Generando Keynote...', 'info');
         await exportService.exportToKeynote(currentId);
       }
     } catch (error) {
       addNotification('Error al exportar.', 'error');
-      console.error(error);
     }
   };
 
   const getResourceLinks = (verseRef: string) => {
-    // Mapeo simple de libros comunes para BibleHub (Inglés)
     const bookMap: { [key: string]: string } = {
       'Juan': 'john', 'Mateo': 'matthew', 'Marcos': 'mark', 'Lucas': 'lucas',
       'Romanos': 'romans', 'Génesis': 'genesis', 'Éxodo': 'exodus', 'Salmos': 'psalms',
       'Proverbios': 'proverbs', 'Apocalipsis': 'revelation', 'Hechos': 'acts'
     };
-
-    const cleanRef = verseRef.trim();
-    const parts = cleanRef.split(' ');
+    const parts = verseRef.trim().split(' ');
     const book = parts[0];
     const chapterVerse = parts[parts.length - 1] || '';
-    const formattedChapterVerse = chapterVerse.replace(':', '-');
-    
     const englishBook = bookMap[book] || book.toLowerCase();
-    
     return {
-      bibleHub: `https://biblehub.com/interlinear/${englishBook}/${formattedChapterVerse}.htm`,
-      blueLetter: `https://www.blueletterbible.org/search/preSearch.cfm?Criteria=${encodeURIComponent(cleanRef)}`
+      bibleHub: `https://biblehub.com/interlinear/${englishBook}/${chapterVerse.replace(':', '-')}.htm`,
+      blueLetter: `https://www.blueletterbible.org/search/preSearch.cfm?Criteria=${encodeURIComponent(verseRef)}`
     };
   };
 
-  if (loading) return <div className="loading-screen">Cargando...</div>;
+  if (loading) return <div className="loading-screen">Cargando análisis ministerial...</div>;
 
   const links = getResourceLinks(verse);
 
@@ -266,7 +246,6 @@ Notas adicionales:
 
       <div className="sermon-editor-main">
         <div className="editor-pane">
-          {/* Editor Enriquecido usando contentEditable */}
           <div 
             ref={editorRef}
             className="rich-editor" 
@@ -277,72 +256,22 @@ Notas adicionales:
         </div>
         
         <div className="sidebar-pane">
-          {/* Panel de Recursos - Solo visible si hay contenido (análisis listo) */}
-          {editorRef.current?.innerText.trim() && (
-            <div className="export-panel">
-              <h3>Recursos: {verse}</h3>
-              <div className="resource-links" style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                <a 
-                  href={links.bibleHub}
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="resource-link"
-                  style={{ 
-                    color: 'var(--accent-purple)', 
-                    textDecoration: 'none', 
-                    fontSize: '0.9rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem'
-                  }}
-                >
-                  <span>🌐</span> Interlineal Griego/Hebreo
+          <div className="export-panel">
+            <h3>Recursos: {verse}</h3>
+            <div className="resource-links" style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+              <a href={links.bibleHub} target="_blank" rel="noopener noreferrer" className="resource-link-item">
+                🌐 Interlineal
+              </a>
+              <a href={links.blueLetter} target="_blank" rel="noopener noreferrer" className="resource-link-item">
+                📖 Léxico Strong
+              </a>
+              {currentLocations.map((loc, i) => (
+                <a key={i} href={`https://biblehub.com/maps/${loc.toLowerCase().replace(/\s+/g, '_')}.htm`} target="_blank" rel="noopener noreferrer" className="resource-link-map">
+                  📍 {loc}
                 </a>
-                <a 
-                  href={links.blueLetter}
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="resource-link"
-                  style={{ 
-                    color: 'var(--accent-purple)', 
-                    textDecoration: 'none', 
-                    fontSize: '0.9rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem'
-                  }}
-                >
-                  <span>📖</span> Concordancia y Léxico
-                </a>
-
-                {currentLocations.length > 0 && (
-                  <div style={{ marginTop: '0.5rem', borderTop: '1px solid var(--border-color)', paddingTop: '0.5rem' }}>
-                    <p style={{ fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.4rem', color: 'var(--text-secondary)' }}>Mapas Geográficos:</p>
-                    {currentLocations.map((loc, i) => (
-                      <a 
-                        key={i}
-                        href={`https://biblehub.com/maps/${loc.toLowerCase().replace(/\s+/g, '_')}.htm`}
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="resource-link"
-                        style={{ 
-                          color: 'var(--accent-gold)', 
-                          textDecoration: 'none', 
-                          fontSize: '0.85rem',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '0.5rem',
-                          marginBottom: '0.3rem'
-                        }}
-                      >
-                        <span>📍</span> {loc}
-                      </a>
-                    ))}
-                  </div>
-                )}
-              </div>
+              ))}
             </div>
-          )}
+          </div>
 
           <div className="export-panel">
             <h3>Exportar</h3>

@@ -10,9 +10,9 @@ import './SermonList.css';
 const SermonList: React.FC = () => {
   const [sermons, setSermons] = useState<Sermon[]>([]);
   const [loading, setLoading] = useState(true);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  // Cambiado a 'list' por defecto como solicitaste
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
   
-  // Paginación
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const limit = 10;
@@ -29,7 +29,7 @@ const SermonList: React.FC = () => {
       setSermons(response.data);
       setTotal(response.total);
     } catch (error) {
-      console.error('Error fetching studies:', error);
+      console.error('Error fetching:', error);
     } finally {
       setLoading(false);
     }
@@ -37,9 +37,7 @@ const SermonList: React.FC = () => {
 
   const handleDelete = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    e.preventDefault();
-    
-    if (window.confirm('¿Estás seguro de que deseas eliminar este estudio ministerial? Esta acción no se puede deshacer.')) {
+    if (window.confirm('¿Eliminar este estudio permanentemente?')) {
       try {
         await sermonService.delete(id);
         addNotification('Estudio eliminado.', 'success');
@@ -69,18 +67,18 @@ const SermonList: React.FC = () => {
         <div className="list-actions">
           <div className="view-toggle">
             <button 
-              className={viewMode === 'grid' ? 'active' : ''} 
-              onClick={() => setViewMode('grid')}
-              title="Vista de Rejilla"
-            >
-              ⊞
-            </button>
-            <button 
               className={viewMode === 'list' ? 'active' : ''} 
               onClick={() => setViewMode('list')}
               title="Vista de Lista"
             >
               ≡
+            </button>
+            <button 
+              className={viewMode === 'grid' ? 'active' : ''} 
+              onClick={() => setViewMode('grid')}
+              title="Vista de Rejilla"
+            >
+              ⊞
             </button>
           </div>
           <Button onClick={() => navigate('/sermons/new')}>{t('list.new_btn')}</Button>
@@ -93,27 +91,16 @@ const SermonList: React.FC = () => {
         {viewMode === 'grid' ? (
           <div className="sermon-grid">
             {sermons.map((sermon) => (
-              <div key={sermon.id} className="sermon-card">
-                <div className="sermon-card-main">
+              <div key={sermon.id} className="sermon-card-compact">
+                <div className="card-body">
                   <h3>{sermon.title}</h3>
-                  <span className="sermon-date">
-                    {new Date(sermon.created_at).toLocaleDateString()}
-                  </span>
+                  <p className="card-date">{new Date(sermon.created_at).toLocaleDateString()}</p>
                 </div>
-                <div className="sermon-card-actions">
-                  <button 
-                    onClick={() => navigate(`/sermons/${sermon.id}`)} 
-                    className="edit-btn"
-                  >
+                <div className="card-actions-compact">
+                  <button onClick={() => navigate(`/sermons/${sermon.id}`)} className="edit-btn-compact">
                     {t('list.edit')}
                   </button>
-                  <button 
-                    onClick={(e) => handleDelete(sermon.id, e)} 
-                    className="delete-btn-icon"
-                    title="Eliminar"
-                  >
-                    🗑️
-                  </button>
+                  <button onClick={(e) => handleDelete(sermon.id, e)} className="del-btn-compact">🗑️</button>
                 </div>
               </div>
             ))}
@@ -132,16 +119,10 @@ const SermonList: React.FC = () => {
                   {new Date(sermon.created_at).toLocaleDateString()}
                 </span>
                 <div className="table-row-actions">
-                  <button 
-                    onClick={() => navigate(`/sermons/${sermon.id}`)} 
-                    className="sermon-edit-btn-small"
-                  >
+                  <button onClick={() => navigate(`/sermons/${sermon.id}`)} className="sermon-edit-btn-small">
                     {t('list.edit')}
                   </button>
-                  <button 
-                    onClick={(e) => handleDelete(sermon.id, e)} 
-                    className="delete-btn-icon-small"
-                  >
+                  <button onClick={(e) => handleDelete(sermon.id, e)} className="delete-btn-icon-small">
                     🗑️
                   </button>
                 </div>
@@ -153,21 +134,11 @@ const SermonList: React.FC = () => {
 
       {totalPages > 1 && (
         <div className="pagination-controls">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            disabled={page === 1} 
-            onClick={() => setPage(page - 1)}
-          >
+          <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage(page - 1)}>
             Anterior
           </Button>
-          <span className="page-info">Página {page} de {totalPages}</span>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            disabled={page === totalPages} 
-            onClick={() => setPage(page + 1)}
-          >
+          <span className="page-info">{page} / {totalPages}</span>
+          <Button variant="outline" size="sm" disabled={page === totalPages} onClick={() => setPage(page + 1)}>
             Siguiente
           </Button>
         </div>
