@@ -25,9 +25,10 @@ export const aiService = {
     return response.data;
   },
 
-  analyzeVerse: async (verseReference: string) => {
+  analyzeVerse: async (verseReference: string, language: string = 'es') => {
     const response = await api.post<VerseExegesis>(`/sermons/exegesis`, {
-      verse_reference: verseReference
+      verse_reference: verseReference,
+      language: language
     });
     return response.data;
   }

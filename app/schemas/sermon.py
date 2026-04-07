@@ -131,6 +131,7 @@ class VerseExegesisRequest(BaseModel):
         min_length=3,
         max_length=100,
     )
+    language: Optional[str] = Field("es", description="Idioma deseado para el análisis.")
 
 
 class VerseExegesisResponse(BaseModel):

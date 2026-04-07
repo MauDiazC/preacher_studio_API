@@ -285,7 +285,7 @@ async def analyze_verse(
 
     try:
         # 2. Llamar a la IA
-        exegesis = await ai_service.analyze_verse(payload.verse_reference)
+        exegesis = await ai_service.analyze_verse(payload.verse_reference, language=payload.language or "es")
         
         # 3. Registrar uso y descontar crédito (si no es admin)
         await subscription_service.record_usage(

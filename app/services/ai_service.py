@@ -82,16 +82,27 @@ class AISermonService:
                 central_theme="Por favor, verifique su OPENAI_API_KEY y saldo en la cuenta."
             )
 
-    async def analyze_verse(self, verse_reference: str) -> VerseExegesisResponse:
-        cache_key = verse_reference.strip().lower()
+    async def analyze_verse(self, verse_reference: str, language: str = "es") -> VerseExegesisResponse:
+        cache_key = f"{language}:{verse_reference.strip().lower()}"
         if cache_key in self._exegesis_cache:
             logger.info(f"CACHE HIT for verse: {verse_reference}")
             return self._exegesis_cache[cache_key]
 
         start_time = time.perf_counter()
         
+        # Ajuste dinámico de versiones según idioma
+        bible_versions = """
+        version_rv1960: Reina Valera 1960.
+        version_nvi: Nueva Versión Internacional.
+        """ if language == "es" else """
+        version_rv1960: King James Version (KJV).
+        version_nvi: New International Version (NIV).
+        """
+
         user_prompt = f"""
         Realiza un análisis exegético profundo y académico del siguiente pasaje bíblico: "{verse_reference}"
+        
+        IMPORTANTE: Responde TODO el contenido del JSON en el idioma: {language.upper()} (excepto términos técnicos en Griego/Hebreo).
         
         Tu análisis debe ser exhaustivo y teológicamente sólido.
         
@@ -102,11 +113,10 @@ class AISermonService:
             "purpose": "El propósito teológico y pastoral original del pasaje.",
             "historical_context": "Contexto sociocultural, político y geográfico detallado de la época.",
             "significance_context": "Significancia teológica profunda y alusiones culturales o religiosas.",
-            "version_rv1960": "El texto exacto en la versión Reina Valera 1960.",
-            "version_nvi": "El texto exacto en la versión Nueva Versión Internacional.",
+            {bible_versions}
             "original_languages": "Análisis léxico-profesional. Para las 3 palabras más importantes del pasaje, incluye: 1) Palabra en original (Hebreo/Griego), 2) Transliteración, 3) Número de Strong, 4) Definición detallada basada en el Léxico de Thayer (si es NT) o Brown-Driver-Briggs (si es AT). Proporciona esto como una cadena de texto académica y estructurada.",
             "source_attribution": "Indica de qué comentarios académicos clásicos y contemporáneos (ej. Matthew Henry, Barclay, Kittel) proviene este análisis.",
-            "key_locations": ["Lista de strings con los nombres de ciudades o regiones geográficas mencionadas en el pasaje o su contexto inmediato."]
+            "key_locations": ["Lista de strings con los nombres de ciudades o regiones geográficas mencionadas en el pasaje o su contexto inmediato. (Usa nombres en ESPAÑOL si el idioma es ES, o en INGLÉS si el idioma es EN)"]
         }}
         """
 

@@ -13,7 +13,7 @@ const SermonEditor: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { addNotification } = useNotificationStore();
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
   
   const [verse, setVerse] = useState('');
   const [loading, setLoading] = useState(id && id !== 'new' ? true : false);
@@ -32,12 +32,12 @@ const SermonEditor: React.FC = () => {
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;');
 
-    // Aplicar estilos a títulos y secciones
+    // Aplicar estilos a títulos y secciones (Soporta EN/ES)
     html = html
-      .replace(/ANÁLISIS EXEGÉTICO: (.*)/g, '<h1 class="editor-title main-title">ANÁLISIS EXEGÉTICO: $1</h1>')
+      .replace(/(ANÁLISIS EXEGÉTICO|EXEGETICAL ANALYSIS): (.*)/gi, '<h1 class="editor-title main-title">$1: $2</h1>')
       .replace(/(\d+\.\s+[A-ZÁÉÍÓÚÑ\s\(\)]+:)/g, '<span class="editor-title section-title">$1</span>')
-      .replace(/(VERSIÓN [A-Z0-9\s]+:)/g, '<span class="editor-title version-title">$1</span>')
-      .replace(/(6\. IDIOMAS ORIGINALES \(GRIEGO\/HEBREO\):)/g, '<span class="editor-title original-langs-title">$1</span>');
+      .replace(/((VERSIÓN|VERSION) [A-Z0-9\s]+:)/gi, '<span class="editor-title version-title">$1</span>')
+      .replace(/(\d+\.\s+(IDIOMAS ORIGINALES|ORIGINAL LANGUAGES) \(GRIEGO\/HEBREO\):)/gi, '<span class="editor-title original-langs-title">$1</span>');
 
     // Convertir saltos de línea a <br/> para que se vean en el editor
     return html.replace(/\n/g, '<br/>');
@@ -56,16 +56,28 @@ const SermonEditor: React.FC = () => {
           
           const contentToInject = data.content || '';
           
-          // Blindaje de inyección: Usamos un pequeño timeout para asegurar que el ref está listo
-          setTimeout(() => {
-            if (editorRef.current && isMounted) {
-              // Si el contenido ya es HTML (tiene <br> o <span>), lo inyectamos tal cual.
-              // Si es texto plano (viene de la DB antigua), le aplicamos el formateo.
+          // Reintento de inyección más robusto
+          let attempts = 0;
+          const checkAndInject = () => {
+            if (editorRef.current) {
               const isHtml = contentToInject.includes('<br') || contentToInject.includes('<span');
               editorRef.current.innerHTML = isHtml ? contentToInject : formatAnalysisHtml(contentToInject);
               setLoading(false);
+              return true;
             }
-          }, 100);
+            return false;
+          };
+
+          if (!checkAndInject()) {
+            const interval = setInterval(() => {
+              attempts++;
+              if (checkAndInject() || attempts > 50) {
+                clearInterval(interval);
+                setLoading(false);
+              }
+            }, 50);
+            return () => clearInterval(interval);
+          }
 
         } catch (error) {
           if (isMounted) {
@@ -83,10 +95,11 @@ const SermonEditor: React.FC = () => {
 
   const validatePassage = (input: string) => {
     let cleanInput = input.trim().replace(/\./g, ' ').replace(/\s+/g, ' ');
-    // Regex mejorada para soportar libros con números (1 Juan, 2 Corintios)
+    // Soporta formatos internacionales (1 John, 1 Juan)
     const bibleRegex = /^(\d\s)?([a-zA-ZáéíóúÁÉÍÓÚñÑ]+)\s*(\d+)([:\s]*\d*)$/;
     const match = cleanInput.match(bibleRegex);
-    if (!match) return null;
+    if (!match) return cleanInput; // Si no encaja, devolvemos tal cual
+
     const [_, num, book, chapter, versePart] = match;
     const formattedBook = book.charAt(0).toUpperCase() + book.slice(1).toLowerCase();
     const formattedNum = num ? num.trim() + ' ' : '';
@@ -95,8 +108,6 @@ const SermonEditor: React.FC = () => {
   };
 
   const handleSave = async (forcedContent?: string, forcedTitle?: string, silent: boolean = false, forcedLocations?: string[]) => {
-    // CAMBIO CRÍTICO: Usamos innerHTML para persistir el formato (colores, negritas de los títulos)
-    // El backend lo recibe y lo guarda tal cual.
     const currentContent = forcedContent !== undefined ? forcedContent : (editorRef.current?.innerHTML || '');
     const currentTitle = forcedTitle !== undefined ? forcedTitle : verse;
     const finalLocations = forcedLocations !== undefined ? forcedLocations : currentLocations;
@@ -140,59 +151,69 @@ const SermonEditor: React.FC = () => {
 
   const handleAnalyze = async () => {
     const validatedVerse = validatePassage(verse);
-    if (!validatedVerse) {
-      addNotification('Ingresa una cita válida', 'error');
-      return;
-    }
-    
     setVerse(validatedVerse);
     setAnalyzing(true);
     try {
-      const data = await aiService.analyzeVerse(validatedVerse);
+      // Pasamos el idioma actual al servicio de IA
+      const data = await aiService.analyzeVerse(validatedVerse, language);
       const locs = data.key_locations || [];
       setCurrentLocations(locs);
       
-      const analysisText = `
-ANÁLISIS EXEGÉTICO: ${validatedVerse}
+      const analysisTitle = language === 'es' ? 'ANÁLISIS EXEGÉTICO' : 'EXEGETICAL ANALYSIS';
+      const version1Name = language === 'es' ? 'VERSIÓN RVR1960' : 'VERSION KJV';
+      const version2Name = language === 'es' ? 'VERSIÓN NVI' : 'VERSION NIV';
+      
+      // Mapeo dinámico de etiquetas según idioma
+      const labels = language === 'es' ? [
+        '1. TIPO LITERARIO', '2. AUTORÍA', '3. PROPÓSITO ORIGINAL', 
+        '4. CONTEXTO HISTÓRICO', '5. CONTEXTO DE SIGNIFICANCIA', 
+        '6. IDIOMAS ORIGINALES (GRIEGO/HEBREO)', '7. ATRIBUCIÓN Y FUENTES'
+      ] : [
+        '1. LITERARY TYPE', '2. AUTHORSHIP', '3. ORIGINAL PURPOSE',
+        '4. HISTORICAL CONTEXT', '5. SIGNIFICANCE CONTEXT',
+        '6. ORIGINAL LANGUAGES (GREEK/HEBREW)', '7. ATTRIBUTION AND SOURCES'
+      ];
 
-VERSIÓN RVR1960:
+      const analysisText = `
+${analysisTitle}: ${validatedVerse}
+
+${version1Name}:
 ${data.version_rv1960}
 
-VERSIÓN NVI:
+${version2Name}:
 ${data.version_nvi}
 
-1. TIPO LITERARIO:
+${labels[0]}:
 ${data.literary_type}
 
-2. AUTORÍA:
+${labels[1]}:
 ${data.author}
 
-3. PROPÓSITO ORIGINAL:
+${labels[2]}:
 ${data.purpose}
 
-4. CONTEXTO HISTÓRICO:
+${labels[3]}:
 ${data.historical_context}
 
-5. CONTEXTO DE SIGNIFICANCIA:
+${labels[4]}:
 ${data.significance_context}
 
-6. IDIOMAS ORIGINALES (GRIEGO/HEBREO):
+${labels[5]}:
 ${data.original_languages}
 
-7. ATRIBUCIÓN Y FUENTES:
+${labels[6]}:
 ${data.source_attribution}
 
 -------------------------------------------
-Notas adicionales:
+${language === 'es' ? 'Notas adicionales' : 'Additional notes'}:
 `;
       if (editorRef.current) {
         editorRef.current.innerHTML = formatAnalysisHtml(analysisText);
       }
-      addNotification('Análisis listo.', 'success');
-      // Pasar locs directamente para evitar el lag del estado
+      addNotification(language === 'es' ? 'Análisis listo.' : 'Analysis ready.', 'success');
       await handleSave(analysisText, validatedVerse, false, locs);
     } catch (error: any) {
-      addNotification('Error en la consulta.', 'error');
+      addNotification(language === 'es' ? 'Error en la consulta.' : 'Query error.', 'error');
     } finally {
       setAnalyzing(false);
     }
@@ -220,32 +241,18 @@ Notas adicionales:
 
   const getResourceLinks = (verseRef: string) => {
     const bookMap: { [key: string]: string } = {
+      // ES
       'Génesis': 'genesis', 'Éxodo': 'exodus', 'Levítico': 'leviticus', 'Números': 'numbers', 'Deuteronomio': 'deuteronomy',
-      'Josué': 'joshua', 'Jueces': 'judges', 'Rut': 'ruth', '1 Samuel': '1_samuel', '2 Samuel': '2_samuel',
-      '1 Reyes': '1_kings', '2 Reyes': '2_kings', '1 Crónicas': '1_chronicles', '2 Crónicas': '2_chronicles',
-      'Esdras': 'ezra', 'Nehemías': 'nehemiah', 'Ester': 'esther', 'Job': 'job', 'Salmos': 'psalms',
-      'Proverbios': 'proverbs', 'Eclesiastés': 'ecclesiastes', 'Cantares': 'songs', 'Isaías': 'isaiah',
-      'Jeremías': 'jeremiah', 'Lamentaciones': 'lamentations', 'Ezequiel': 'ezekiel', 'Daniel': 'daniel',
-      'Oseas': 'hosea', 'Joel': 'joel', 'Amós': 'amos', 'Abdías': 'obadiah', 'Jonás': 'jonah',
-      'Miqueas': 'micah', 'Nahúm': 'nahum', 'Habacuc': 'habakkuk', 'Sofonías': 'zephaniah',
-      'Hageo': 'haggai', 'Zacarías': 'zechariah', 'Malaquías': 'malachi',
-      'Mateo': 'matthew', 'Marcos': 'mark', 'Lucas': 'lucas', 'Juan': 'john', 'Hechos': 'acts',
-      'Romanos': 'romans', '1 Corintios': '1_corinthians', '2 Corintios': '2_corinthians',
-      'Gálatas': 'galatians', 'Efesios': 'ephesians', 'Filipenses': 'philippians', 'Colosenses': 'colossians',
-      '1 Tesalonicenses': '1_thessalonians', '2 Tesalonicenses': '2_thessalonians',
-      '1 Timoteo': '1_timothy', '2 Timoteo': '2_timothy', 'Tito': 'titus', 'Filemón': 'philemon',
-      'Hebreos': 'hebrews', 'Santiago': 'james', '1 Pedro': '1_peter', '2 Pedro': '2_peter',
-      '1 Juan': '1_john', '2 Juan': '2_john', '3 Juan': '3_john', 'Judas': 'jude', 'Apocalipsis': 'revelation'
+      'Mateo': 'matthew', 'Marcos': 'mark', 'Lucas': 'lucas', 'Juan': 'john', 'Hechos': 'acts', 'Romanos': 'romans',
+      'Apocalipsis': 'revelation', 'Gálatas': 'galatians', 'Efesios': 'ephesians', 'Filipenses': 'philippians', 'Colosenses': 'colossians',
+      // EN Fallback (o si ya vienen en inglés)
+      'Genesis': 'genesis', 'Exodus': 'exodus', 'Matthew': 'matthew', 'Mark': 'mark', 'Luke': 'lucas', 'John': 'john', 'Acts': 'acts', 'Romans': 'romans'
     };
     
-    // Extraer libro (puede tener número al inicio: "1 Juan")
     const match = verseRef.match(/^(\d\s)?[a-zA-ZáéíóúÁÉÍÓÚñÑ]+/);
     const book = match ? match[0] : '';
-    
-    // Extraer capítulo y versículo
     const cvMatch = verseRef.match(/\d+[:\s]?\d*$/);
     const chapterVerse = cvMatch ? cvMatch[0].trim() : '';
-    
     const englishBook = bookMap[book] || book.toLowerCase();
     
     return {
@@ -256,25 +263,23 @@ Notas adicionales:
 
   const translateLocation = (loc: string) => {
     const locMap: { [key: string]: string } = {
-      'Ponto': 'pontus',
-      'Galacia': 'galatia',
-      'Capadocia': 'cappadocia',
-      'Asia': 'asia',
-      'Bitinia': 'bithynia',
-      'Jerusalén': 'jerusalem',
-      'Egipto': 'egypt',
-      'Roma': 'rome',
-      'Éfeso': 'ephesus',
-      'Corinto': 'corinth',
-      'Filipos': 'philippi',
-      'Colosas': 'colossae',
-      'Tesalónica': 'thessalonica'
+      'Ponto': 'pontus', 'Pontus': 'pontus',
+      'Galacia': 'galatia', 'Galatia': 'galatia',
+      'Capadocia': 'cappadocia', 'Cappadocia': 'cappadocia',
+      'Asia': 'asia', 'Asia menor': 'asia_minor', 'Asia Minor': 'asia_minor',
+      'Bitinia': 'bithynia', 'Bithynia': 'bithynia',
+      'Roma': 'rome', 'Rome': 'rome',
+      'Jerusalén': 'jerusalem', 'Jerusalem': 'jerusalem'
     };
     const englishName = locMap[loc] || loc;
-    return englishName.toLowerCase().replace(/\s+/g, '_');
+    return englishName.toLowerCase().trim().replace(/\s+/g, '_');
   };
 
-  if (loading) return <div className="loading-screen">Cargando análisis ministerial...</div>;
+  if (loading) return (
+    <div className="loading-screen">
+      {language === 'es' ? 'Cargando análisis ministerial...' : 'Loading ministerial analysis...'}
+    </div>
+  );
 
   const links = getResourceLinks(verse);
 
@@ -291,12 +296,16 @@ Notas adicionales:
           <Button onClick={handleAnalyze} disabled={analyzing || !verse}>
             {analyzing ? '...' : t('editor.analyze_btn')}
           </Button>
-          {isSaving && <span className="saving-indicator">Guardando...</span>}
+          {isSaving && <span className="saving-indicator">{language === 'es' ? 'Guardando...' : 'Saving...'}</span>}
         </div>
         
         <div className="header-actions">
-          <Button variant="outline" onClick={() => navigate('/sermons')}>Estudios</Button>
-          <Button onClick={() => handleSave()}>Guardar</Button>
+          <Button variant="outline" onClick={() => navigate('/sermons')}>
+            {language === 'es' ? 'Estudios' : 'Studies'}
+          </Button>
+          <Button onClick={() => handleSave()}>
+            {language === 'es' ? 'Guardar' : 'Save'}
+          </Button>
         </div>
       </div>
 
@@ -313,13 +322,13 @@ Notas adicionales:
         
         <div className="sidebar-pane">
           <div className="export-panel">
-            <h3>Recursos: {verse}</h3>
+            <h3>{language === 'es' ? 'Recursos' : 'Resources'}: {verse}</h3>
             <div className="resource-links" style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
               <a href={links.bibleHub} target="_blank" rel="noopener noreferrer" className="resource-link-item">
-                🌐 Interlineal
+                🌐 {language === 'es' ? 'Interlineal' : 'Interlinear'}
               </a>
               <a href={links.blueLetter} target="_blank" rel="noopener noreferrer" className="resource-link-item">
-                📖 Léxico Strong
+                📖 {language === 'es' ? 'Léxico Strong' : 'Strong Lexicon'}
               </a>
               {currentLocations.map((loc, i) => (
                 <a key={i} href={`https://biblehub.com/atlas/${translateLocation(loc)}.htm`} target="_blank" rel="noopener noreferrer" className="resource-link-map">
@@ -330,7 +339,7 @@ Notas adicionales:
           </div>
 
           <div className="export-panel">
-            <h3>Exportar</h3>
+            <h3>{language === 'es' ? 'Exportar' : 'Export'}</h3>
             <div className="export-buttons-vertical">
               <Button variant="outline" onClick={() => handleExport('pdf')}>PDF</Button>
               <Button variant="outline" onClick={() => handleExport('keynote')}>Keynote</Button>
