@@ -41,20 +41,13 @@ const SermonEditor: React.FC = () => {
           
           setVerse(data.title || '');
           
-          // Inyectamos el contenido una sola vez
-          let attempts = 0;
-          const checkExist = setInterval(() => {
+          // Aseguramos la inyección y apagamos el loading inmediatamente después
+          setTimeout(() => {
             if (editorRef.current) {
               editorRef.current.innerHTML = formatAnalysisHtml(data.content || '');
-              clearInterval(checkExist);
-              setLoading(false);
             }
-            attempts++;
-            if (attempts > 20) {
-              clearInterval(checkExist);
-              setLoading(false);
-            }
-          }, 50);
+            setLoading(false);
+          }, 100);
 
         } catch (error) {
           if (isMounted) {
@@ -353,9 +346,9 @@ Notas adicionales:
 
           <div className="export-panel">
             <h3>Exportar</h3>
-            <div className="export-buttons">
-              <Button variant="outline" size="sm" onClick={() => handleExport('pdf')}>PDF</Button>
-              <Button variant="outline" size="sm" onClick={() => handleExport('keynote')}>Keynote</Button>
+            <div className="export-buttons-vertical">
+              <Button variant="outline" onClick={() => handleExport('pdf')}>PDF</Button>
+              <Button variant="outline" onClick={() => handleExport('keynote')}>Keynote</Button>
             </div>
           </div>
         </div>

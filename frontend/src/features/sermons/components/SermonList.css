@@ -95,28 +95,47 @@
   color: rgba(194, 198, 215, 0.6);
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  margin-bottom: 2rem;
+}
+
+.sermon-card-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2rem;
 }
 
 .edit-btn {
-  background: rgba(176, 198, 255, 0.1);
-  color: #b0c6ff;
-  border: 1px solid rgba(176, 198, 255, 0.2);
+  background: #b0c6ff;
+  color: #111127;
+  border: none;
   padding: 0.7rem 1.5rem;
   border-radius: 10px;
-  font-weight: 700;
+  font-weight: 800;
   font-size: 0.85rem;
   text-decoration: none;
   text-align: center;
-  align-self: flex-start;
   transition: all 0.2s ease;
+  cursor: pointer;
 }
 
 .edit-btn:hover {
-  background: #b0c6ff;
-  color: #111127;
-  border-color: #b0c6ff;
+  transform: scale(1.05);
   box-shadow: 0 0 20px rgba(176, 198, 255, 0.4);
+}
+
+.delete-btn-icon {
+  background: rgba(255, 77, 77, 0.1);
+  border: 1px solid rgba(255, 77, 77, 0.2);
+  padding: 0.5rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.delete-btn-icon:hover {
+  background: var(--error-color);
+  transform: scale(1.1);
 }
 
 /* Vista de Tabla/Lista */
@@ -129,7 +148,7 @@
 
 .table-header {
   display: grid;
-  grid-template-columns: 1fr 150px 100px;
+  grid-template-columns: 1fr 150px 150px;
   padding: 1rem 1.5rem;
   background: rgba(255, 255, 255, 0.05);
   font-weight: 700;
@@ -140,7 +159,7 @@
 
 .table-row {
   display: grid;
-  grid-template-columns: 1fr 150px 100px;
+  grid-template-columns: 1fr 150px 150px;
   padding: 1.2rem 1.5rem;
   border-bottom: 1px solid var(--border-color);
   align-items: center;
@@ -149,6 +168,12 @@
 
 .table-row:hover {
   background: rgba(255, 255, 255, 0.04);
+}
+
+.table-row-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
 }
 
 .sermon-title-cell {
@@ -162,14 +187,29 @@
 }
 
 .sermon-edit-btn-small {
-  color: var(--accent-purple);
-  text-decoration: none;
+  background: none;
+  border: none;
+  color: #b0c6ff;
   font-weight: 700;
   font-size: 0.85rem;
+  cursor: pointer;
 }
 
 .sermon-edit-btn-small:hover {
   text-decoration: underline;
+}
+
+.delete-btn-icon-small {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.delete-btn-icon-small:hover {
+  opacity: 1;
 }
 
 /* Paginación */
@@ -198,6 +238,6 @@
   .table-header { display: none; }
   .table-row {
     grid-template-columns: 1fr;
-    gap: 0.5rem;
+    gap: 1rem;
   }
 }

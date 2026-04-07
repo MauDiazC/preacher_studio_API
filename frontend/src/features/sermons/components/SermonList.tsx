@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import Card from '../../../components/common/Card';
+import { useNavigate } from 'react-router-dom';
 import Button from '../../../components/common/Button';
 import { sermonService } from '../services/sermonService';
 import type { Sermon } from '../services/sermonService';
 import { useLanguage } from '../../../context/LanguageContext';
+import { useNotificationStore } from '../../../store/useNotificationStore';
 import './SermonList.css';
 
 const SermonList: React.FC = () => {
@@ -19,6 +19,7 @@ const SermonList: React.FC = () => {
 
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { addNotification } = useNotificationStore();
 
   const fetchSermons = async () => {
     setLoading(true);
@@ -34,11 +35,26 @@ const SermonList: React.FC = () => {
     }
   };
 
+  const handleDelete = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    
+    if (window.confirm('¿Estás seguro de que deseas eliminar este estudio ministerial? Esta acción no se puede deshacer.')) {
+      try {
+        await sermonService.delete(id);
+        addNotification('Estudio eliminado.', 'success');
+        fetchSermons();
+      } catch (error) {
+        addNotification('Error al eliminar.', 'error');
+      }
+    }
+  };
+
   useEffect(() => {
     fetchSermons();
   }, [page]);
 
-  if (loading && sermons.length === 0) return <div className="loading-screen">{t('nav.my_sermons')}...</div>;
+  if (loading && sermons.length === 0) return <div className="loading-screen">Cargando estudios...</div>;
 
   const totalPages = Math.ceil(total / limit);
 
@@ -77,14 +93,29 @@ const SermonList: React.FC = () => {
         {viewMode === 'grid' ? (
           <div className="sermon-grid">
             {sermons.map((sermon) => (
-              <Card key={sermon.id} title={sermon.title}>
-                <div className="sermon-card-footer">
+              <div key={sermon.id} className="sermon-card">
+                <div className="sermon-card-main">
+                  <h3>{sermon.title}</h3>
                   <span className="sermon-date">
                     {new Date(sermon.created_at).toLocaleDateString()}
                   </span>
-                  <Link to={`/sermons/${sermon.id}`} className="sermon-edit-link">{t('list.edit')}</Link>
                 </div>
-              </Card>
+                <div className="sermon-card-actions">
+                  <button 
+                    onClick={() => navigate(`/sermons/${sermon.id}`)} 
+                    className="edit-btn"
+                  >
+                    {t('list.edit')}
+                  </button>
+                  <button 
+                    onClick={(e) => handleDelete(sermon.id, e)} 
+                    className="delete-btn-icon"
+                    title="Eliminar"
+                  >
+                    🗑️
+                  </button>
+                </div>
+              </div>
             ))}
           </div>
         ) : (
@@ -92,7 +123,7 @@ const SermonList: React.FC = () => {
             <div className="table-header">
               <span>Estudio</span>
               <span>Fecha</span>
-              <span>Acción</span>
+              <span>Acciones</span>
             </div>
             {sermons.map((sermon) => (
               <div key={sermon.id} className="table-row">
@@ -100,7 +131,20 @@ const SermonList: React.FC = () => {
                 <span className="sermon-date-cell">
                   {new Date(sermon.created_at).toLocaleDateString()}
                 </span>
-                <Link to={`/sermons/${sermon.id}`} className="sermon-edit-btn-small">Editar</Link>
+                <div className="table-row-actions">
+                  <button 
+                    onClick={() => navigate(`/sermons/${sermon.id}`)} 
+                    className="sermon-edit-btn-small"
+                  >
+                    {t('list.edit')}
+                  </button>
+                  <button 
+                    onClick={(e) => handleDelete(sermon.id, e)} 
+                    className="delete-btn-icon-small"
+                  >
+                    🗑️
+                  </button>
+                </div>
               </div>
             ))}
           </div>
