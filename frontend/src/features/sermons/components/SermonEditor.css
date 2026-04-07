@@ -1,19 +1,18 @@
 .sermon-editor-container {
-  padding: 0 5%;
-  min-height: calc(100vh - 80px);
   display: flex;
   flex-direction: column;
-  overflow-x: hidden;
-  max-width: 100vw;
+  height: calc(100vh - 80px);
+  background-color: var(--bg-dark);
 }
 
 .sermon-editor-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--spacing-md) 0;
+  padding: 1rem 5%;
+  background: rgba(255, 255, 255, 0.02);
   border-bottom: 1px solid var(--border-color);
-  gap: 2rem;
+  backdrop-filter: blur(10px);
 }
 
 .header-left {
@@ -23,160 +22,138 @@
   flex: 1;
 }
 
+.verse-input-main {
+  max-width: 300px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.sermon-editor-main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.editor-pane {
+  flex: 1;
+  overflow-y: auto;
+  padding: 3rem 10%;
+  background: radial-gradient(circle at top right, rgba(125, 92, 255, 0.03) 0%, transparent 50%);
+}
+
+.rich-editor {
+  outline: none;
+  min-height: 100%;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+}
+
+/* Clases inyectadas por formatAnalysisHtml */
+.editor-title {
+  display: block;
+  font-weight: 700;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--accent-purple);
+}
+
+.main-title {
+  font-family: 'Noto Serif', serif;
+  font-size: 2rem;
+  color: #FFFFFF;
+  border-bottom: 2px solid rgba(176, 198, 255, 0.1);
+  padding-bottom: 1rem;
+  margin-bottom: 3rem;
+}
+
+.section-title {
+  color: var(--accent-purple);
+  font-size: 1.3rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.version-title {
+  color: var(--accent-gold);
+  opacity: 0.9;
+  font-size: 1.1rem;
+  background: rgba(255, 184, 120, 0.05);
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  display: inline-block;
+  margin-top: 1.5rem;
+}
+
+.original-langs-title {
+  color: #00E676; /* Emerald/Sacred Green */
+  font-size: 1.4rem;
+  border-left: 4px solid #00E676;
+  padding-left: 1rem;
+  margin-top: 3rem;
+}
+
+.sidebar-pane {
+  width: 350px;
+  background: rgba(0, 0, 0, 0.2);
+  border-left: 1px solid var(--border-color);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  overflow-y: auto;
+}
+
+.export-panel h3 {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+.export-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
 .saving-indicator {
   font-size: 0.8rem;
-  color: var(--text-secondary);
+  color: var(--accent-purple);
   font-style: italic;
   animation: pulse 2s infinite;
 }
 
 @keyframes pulse {
-  0% { opacity: 0.5; }
+  0%, 100% { opacity: 0.5; }
   50% { opacity: 1; }
-  100% { opacity: 0.5; }
-}
-
-.verse-input-main {
-  margin-bottom: 0 !important;
-  flex: 1;
-  max-width: 400px;
-}
-
-.verse-input-main .input-field {
-  font-size: 1.25rem !important;
-  font-weight: 700;
-  border: none !important;
-  background: rgba(255, 255, 255, 0.05) !important;
-  padding: 0.8rem 1.2rem !important;
-}
-
-.header-actions {
-  display: flex;
-  gap: var(--spacing-md);
-}
-
-.sermon-editor-main {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 340px;
-  gap: var(--spacing-2xl); /* Incremento de espacio */
-  flex: 1;
-  padding: var(--spacing-lg) 0;
-  align-items: start;
-  width: 100%;
-  overflow-x: hidden;
-}
-
-.editor-pane {
-  min-width: 0;
-  width: 100%;
-}
-
-/* El nuevo editor que permite estilos */
-.rich-editor {
-  width: 100%;
-  min-height: 650px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-md);
-  color: var(--text-primary);
-  font-family: 'Inter', sans-serif;
-  font-size: 1.1rem;
-  line-height: 1.8;
-  padding: 2.5rem;
-  outline: none;
-  transition: var(--transition-normal);
-  white-space: pre-wrap; /* Mantener saltos de línea */
-}
-
-.rich-editor:focus {
-  background: rgba(255, 255, 255, 0.04);
-  border-color: var(--accent-purple);
-  box-shadow: 0 0 20px rgba(125, 92, 255, 0.1);
-}
-
-/* Estilo para los títulos dentro del texto */
-.editor-title {
-  color: var(--accent-purple);
-  font-weight: 800;
-  font-size: 1.3rem;
-  margin-top: 1.5rem;
-  margin-bottom: 0.5rem;
-  display: block;
-}
-
-.sidebar-pane {
-  width: 320px;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-lg);
-  background: #16142C;
-  padding: 1.5rem;
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-md);
-  position: sticky;
-  top: 1rem;
-  z-index: 1000;
-  box-shadow: -10px 0 30px rgba(0,0,0,0.5);
-}
-
-.export-panel {
-  background: var(--surface-dark);
-  border: 1px solid var(--border-color);
-  padding: var(--spacing-lg);
-  border-radius: var(--border-radius-md);
-}
-
-.export-panel h3 {
-  font-size: 0.9rem;
-  margin-bottom: var(--spacing-md);
-  color: var(--accent-purple);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.export-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.resource-link:hover {
-  text-decoration: underline !important;
-  opacity: 0.8;
 }
 
 .loading-screen {
-  padding: 4rem;
-  text-align: center;
-  color: var(--text-secondary);
-  font-size: 1.2rem;
-}
-
-.empty-msg {
-  color: var(--text-secondary);
-  text-align: center;
-  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 1.5rem;
+  color: var(--accent-purple);
 }
 
 @media (max-width: 1024px) {
-  .sermon-editor-header {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 1rem;
-  }
-  .header-left {
-    width: 100%;
-  }
-  .verse-input-main {
-    max-width: 100%;
-  }
   .sermon-editor-main {
-    display: flex;
     flex-direction: column;
   }
   .sidebar-pane {
-    max-width: 100%;
-    order: -1; /* Poner el panel de exportación arriba en móvil */
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid var(--border-color);
+  }
+  .editor-pane {
+    padding: 2rem 5%;
   }
 }

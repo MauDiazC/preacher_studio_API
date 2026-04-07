@@ -27,6 +27,7 @@ class AISermonService:
         
         self.gemini_model = "gemini-1.5-flash"
         self.system_instruction = "Eres un mentor homilético experto. Ayudas a pastores a estructurar sermones bíblicos profundos y prácticos."
+        self._exegesis_cache = {}
 
     async def get_suggestions(self, title: str, content: str, style: str = "encouraging"):
         start_time = time.perf_counter()
@@ -82,6 +83,11 @@ class AISermonService:
             )
 
     async def analyze_verse(self, verse_reference: str) -> VerseExegesisResponse:
+        cache_key = verse_reference.strip().lower()
+        if cache_key in self._exegesis_cache:
+            logger.info(f"CACHE HIT for verse: {verse_reference}")
+            return self._exegesis_cache[cache_key]
+
         start_time = time.perf_counter()
         
         user_prompt = f"""
@@ -119,7 +125,9 @@ class AISermonService:
                 latency = time.perf_counter() - start_time
                 logger.info(f"AI PROVIDER: GOOGLE GEMINI | Status: Success | Latency: {latency:.2f}s")
                 
-                return VerseExegesisResponse.model_validate_json(response.text)
+                result = VerseExegesisResponse.model_validate_json(response.text)
+                self._exegesis_cache[cache_key] = result
+                return result
             except Exception as e:
                 logger.warning(f"AI PROVIDER: GOOGLE GEMINI | Status: Failed | Error: {str(e)}. Falling back to OpenAI...")
                 start_time = time.perf_counter()

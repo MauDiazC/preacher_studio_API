@@ -24,41 +24,50 @@ const SermonEditor: React.FC = () => {
   const autoSaveTimerRef = useRef<any>(null);
 
   const formatAnalysisHtml = (text: string) => {
-    // Reemplaza el título principal, los subtítulos numerados y los títulos de versión con clases de estilo
     return text
-      .replace(/ANÁLISIS EXEGÉTICO: (.*)/g, '<h1 class="editor-title" style="font-size: 1.5rem; margin-top: 0">ANÁLISIS EXEGÉTICO: $1</h1>')
-      .replace(/(\d+\.\s+[A-ZÁÉÍÓÚÑ\s\(\)]+:)/g, '<span class="editor-title">$1</span>')
-      .replace(/(VERSIÓN [A-Z0-9\s]+:)/g, '<span class="editor-title" style="opacity: 0.8; font-size: 1.1rem">$1</span>');
+      .replace(/ANÁLISIS EXEGÉTICO: (.*)/g, '<h1 class="editor-title main-title">ANÁLISIS EXEGÉTICO: $1</h1>')
+      .replace(/(\d+\.\s+[A-ZÁÉÍÓÚÑ\s\(\)]+:)/g, '<span class="editor-title section-title">$1</span>')
+      .replace(/(VERSIÓN [A-Z0-9\s]+:)/g, '<span class="editor-title version-title">$1</span>')
+      .replace(/(6\. IDIOMAS ORIGINALES \(GRIEGO\/HEBREO\):)/g, '<span class="editor-title original-langs-title">$1</span>');
   };
 
   useEffect(() => {
+    let isMounted = true;
     const fetchSermon = async () => {
       if (id && id !== 'new') {
         try {
           const data = await sermonService.getById(id);
+          if (!isMounted) return;
+          
           setVerse(data.title || '');
           
-          // Aseguramos que el componente esté renderizado antes de inyectar HTML
+          // Inyectamos el contenido una sola vez
+          let attempts = 0;
           const checkExist = setInterval(() => {
             if (editorRef.current) {
               editorRef.current.innerHTML = formatAnalysisHtml(data.content || '');
               clearInterval(checkExist);
               setLoading(false);
             }
+            attempts++;
+            if (attempts > 20) {
+              clearInterval(checkExist);
+              setLoading(false);
+            }
           }, 50);
-          
-          // Limpieza de seguridad por si algo falla
-          setTimeout(() => clearInterval(checkExist), 2000);
 
         } catch (error) {
-          addNotification('Error al cargar.', 'error');
-          setLoading(false);
+          if (isMounted) {
+            addNotification('Error al cargar.', 'error');
+            setLoading(false);
+          }
         }
       } else {
         setLoading(false);
       }
     };
     fetchSermon();
+    return () => { isMounted = false; };
   }, [id]);
 
   const validatePassage = (input: string) => {

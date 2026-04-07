@@ -58,8 +58,65 @@
 
 .sermon-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: var(--spacing-lg);
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2.5rem;
+}
+
+.sermon-card {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 240px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  position: relative;
+}
+
+.sermon-card:hover {
+  transform: translateY(-8px);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(176, 198, 255, 0.3);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.sermon-card h3 {
+  font-family: 'Noto Serif', serif;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+  color: #FFFFFF;
+}
+
+.sermon-date {
+  font-size: 0.75rem;
+  color: rgba(194, 198, 215, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 2rem;
+}
+
+.edit-btn {
+  background: rgba(176, 198, 255, 0.1);
+  color: #b0c6ff;
+  border: 1px solid rgba(176, 198, 255, 0.2);
+  padding: 0.7rem 1.5rem;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-decoration: none;
+  text-align: center;
+  align-self: flex-start;
+  transition: all 0.2s ease;
+}
+
+.edit-btn:hover {
+  background: #b0c6ff;
+  color: #111127;
+  border-color: #b0c6ff;
+  box-shadow: 0 0 20px rgba(176, 198, 255, 0.4);
 }
 
 /* Vista de Tabla/Lista */
