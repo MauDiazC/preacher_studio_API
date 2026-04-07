@@ -25,11 +25,22 @@ const SermonEditor: React.FC = () => {
 
   const formatAnalysisHtml = (text: string) => {
     if (!text) return '';
-    return text
+    
+    // Escapar HTML básico para evitar problemas de renderizado
+    let html = text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+
+    // Aplicar estilos a títulos y secciones
+    html = html
       .replace(/ANÁLISIS EXEGÉTICO: (.*)/g, '<h1 class="editor-title main-title">ANÁLISIS EXEGÉTICO: $1</h1>')
       .replace(/(\d+\.\s+[A-ZÁÉÍÓÚÑ\s\(\)]+:)/g, '<span class="editor-title section-title">$1</span>')
       .replace(/(VERSIÓN [A-Z0-9\s]+:)/g, '<span class="editor-title version-title">$1</span>')
       .replace(/(6\. IDIOMAS ORIGINALES \(GRIEGO\/HEBREO\):)/g, '<span class="editor-title original-langs-title">$1</span>');
+
+    // Convertir saltos de línea a <br/> para que se vean en el editor
+    return html.replace(/\n/g, '<br/>');
   };
 
   useEffect(() => {
@@ -93,12 +104,13 @@ const SermonEditor: React.FC = () => {
     return `${formattedNum}${formattedBook} ${chapter}${formattedVerse ? ':' + formattedVerse : ''}`;
   };
 
-  const handleSave = async (forcedContent?: string, forcedTitle?: string, silent: boolean = false) => {
+  const handleSave = async (forcedContent?: string, forcedTitle?: string, silent: boolean = false, forcedLocations?: string[]) => {
     // Usamos innerHTML para capturar el formato si es necesario, 
     // pero el backend espera texto plano para procesar. 
     // Mantenemos innerText para la persistencia de datos.
     const currentContent = forcedContent !== undefined ? forcedContent : (editorRef.current?.innerText || '');
     const currentTitle = forcedTitle !== undefined ? forcedTitle : verse;
+    const finalLocations = forcedLocations !== undefined ? forcedLocations : currentLocations;
     
     if (!currentTitle) {
       if (!silent) addNotification('El título (pasaje) es requerido.', 'error');
@@ -110,8 +122,9 @@ const SermonEditor: React.FC = () => {
     try {
       const payload = { 
         title: currentTitle, 
+        main_passage: currentTitle, // Mapeamos título a pasaje principal
         content: currentContent,
-        key_locations: currentLocations 
+        key_locations: finalLocations 
       };
       if (id && id !== 'new') {
         await sermonService.update(id, payload);
@@ -147,7 +160,8 @@ const SermonEditor: React.FC = () => {
     setAnalyzing(true);
     try {
       const data = await aiService.analyzeVerse(validatedVerse);
-      setCurrentLocations(data.key_locations || []);
+      const locs = data.key_locations || [];
+      setCurrentLocations(locs);
       
       const analysisText = `
 ANÁLISIS EXEGÉTICO: ${validatedVerse}
@@ -186,7 +200,8 @@ Notas adicionales:
         editorRef.current.innerHTML = formatAnalysisHtml(analysisText);
       }
       addNotification('Análisis listo.', 'success');
-      await handleSave(analysisText, validatedVerse);
+      // Pasar locs directamente para evitar el lag del estado
+      await handleSave(analysisText, validatedVerse, false, locs);
     } catch (error: any) {
       addNotification('Error en la consulta.', 'error');
     } finally {
