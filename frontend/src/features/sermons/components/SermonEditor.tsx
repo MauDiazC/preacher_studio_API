@@ -56,26 +56,16 @@ const SermonEditor: React.FC = () => {
           
           const contentToInject = data.content || '';
           
-          // Intentamos inyectar el contenido
-          const injectContent = () => {
-            if (editorRef.current) {
-              editorRef.current.innerHTML = formatAnalysisHtml(contentToInject);
+          // Blindaje de inyección: Usamos un pequeño timeout para asegurar que el ref está listo
+          setTimeout(() => {
+            if (editorRef.current && isMounted) {
+              // Si el contenido ya es HTML (tiene <br> o <span>), lo inyectamos tal cual.
+              // Si es texto plano (viene de la DB antigua), le aplicamos el formateo.
+              const isHtml = contentToInject.includes('<br') || contentToInject.includes('<span');
+              editorRef.current.innerHTML = isHtml ? contentToInject : formatAnalysisHtml(contentToInject);
               setLoading(false);
-              return true;
             }
-            return false;
-          };
-
-          if (!injectContent()) {
-            let attempts = 0;
-            const interval = setInterval(() => {
-              attempts++;
-              if (injectContent() || attempts > 20) {
-                clearInterval(interval);
-                setLoading(false); // Forzamos fin de carga si falla el ref
-              }
-            }, 100);
-          }
+          }, 100);
 
         } catch (error) {
           if (isMounted) {
@@ -105,10 +95,9 @@ const SermonEditor: React.FC = () => {
   };
 
   const handleSave = async (forcedContent?: string, forcedTitle?: string, silent: boolean = false, forcedLocations?: string[]) => {
-    // Usamos innerHTML para capturar el formato si es necesario, 
-    // pero el backend espera texto plano para procesar. 
-    // Mantenemos innerText para la persistencia de datos.
-    const currentContent = forcedContent !== undefined ? forcedContent : (editorRef.current?.innerText || '');
+    // CAMBIO CRÍTICO: Usamos innerHTML para persistir el formato (colores, negritas de los títulos)
+    // El backend lo recibe y lo guarda tal cual.
+    const currentContent = forcedContent !== undefined ? forcedContent : (editorRef.current?.innerHTML || '');
     const currentTitle = forcedTitle !== undefined ? forcedTitle : verse;
     const finalLocations = forcedLocations !== undefined ? forcedLocations : currentLocations;
     
@@ -122,7 +111,7 @@ const SermonEditor: React.FC = () => {
     try {
       const payload = { 
         title: currentTitle, 
-        main_passage: currentTitle, // Mapeamos título a pasaje principal
+        main_passage: currentTitle,
         content: currentContent,
         key_locations: finalLocations 
       };
@@ -333,7 +322,7 @@ Notas adicionales:
                 📖 Léxico Strong
               </a>
               {currentLocations.map((loc, i) => (
-                <a key={i} href={`https://biblehub.com/maps/${translateLocation(loc)}.htm`} target="_blank" rel="noopener noreferrer" className="resource-link-map">
+                <a key={i} href={`https://biblehub.com/atlas/${translateLocation(loc)}.htm`} target="_blank" rel="noopener noreferrer" className="resource-link-map">
                   📍 {loc}
                 </a>
               ))}
