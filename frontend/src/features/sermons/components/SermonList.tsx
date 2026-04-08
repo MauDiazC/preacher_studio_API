@@ -16,7 +16,16 @@ const SermonList: React.FC = () => {
   
   const navigate = useNavigate();
   const { addNotification } = useNotificationStore();
-  const { t } = useLanguage();
+  const { t, language, toggleLanguage } = useLanguage();
+  const { logout, user } = useAuthStore();
+
+  // Créditos dummy para visualización (en una versión real vendrían del perfil)
+  const credits = 25; 
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   const fetchSermons = async () => {
     try {
@@ -104,6 +113,23 @@ const SermonList: React.FC = () => {
             <span>{t('nav.settings')}</span>
           </a>
         </nav>
+
+        <div className="sidebar-footer-sacred">
+          <div className="sidebar-user-stats">
+            <div className="stat-pill-mini">
+              <span>✨ {credits}</span>
+            </div>
+            <button className="lang-toggle-sidebar" onClick={toggleLanguage}>
+              <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>language</span>
+              {language.toUpperCase()}
+            </button>
+          </div>
+          
+          <button className="logout-btn-sidebar" onClick={handleLogout}>
+            <span className="material-symbols-outlined">logout</span>
+            <span>{t('nav.logout').toUpperCase()}</span>
+          </button>
+        </div>
 
         <button className="new-study-btn-sidebar" onClick={() => navigate('/sermons/new')}>
           <span className="material-symbols-outlined">add</span>

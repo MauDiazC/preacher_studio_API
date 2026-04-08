@@ -30,6 +30,73 @@
   margin-bottom: 2rem;
 }
 
+.sidebar-footer-sacred {
+  margin-top: auto;
+  padding: 1.5rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  margin-bottom: 1rem;
+}
+
+.sidebar-user-stats {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.stat-pill-mini {
+  background: rgba(176, 198, 255, 0.1);
+  color: #b0c6ff;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.lang-toggle-sidebar {
+  background: transparent;
+  border: 1px solid rgba(194, 193, 255, 0.2);
+  color: #c2c1ff;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.lang-toggle-sidebar:hover {
+  border-color: #b0c6ff;
+  color: #b0c6ff;
+}
+
+.logout-btn-sidebar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: transparent;
+  border: none;
+  color: rgba(255, 180, 171, 0.6);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: all 0.2s;
+  justify-content: flex-start;
+}
+
+.logout-btn-sidebar:hover {
+  color: #ffb4ab;
+  background-color: rgba(255, 180, 171, 0.05);
+  border-radius: 0.5rem;
+}
+
 .editor-main-canvas {
   flex: 1;
   margin-left: 288px;

@@ -11,7 +11,8 @@ const SermonEditor: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { addNotification } = useNotificationStore();
-  const { language, t } = useLanguage();
+  const { language, t, toggleLanguage } = useLanguage();
+  const { logout } = useAuthStore();
   
   const [verse, setVerse] = useState('');
   const [loading, setLoading] = useState(id && id !== 'new' ? true : false);
@@ -24,6 +25,11 @@ const SermonEditor: React.FC = () => {
   
   const editorRef = useRef<HTMLDivElement>(null);
   const autoSaveTimerRef = useRef<any>(null);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   const formatAnalysisHtml = (text: string) => {
     if (!text) return '';
@@ -305,6 +311,23 @@ ${language === 'es' ? 'Notas adicionales' : 'Additional notes'}:
             <span>{t('nav.settings')}</span>
           </a>
         </nav>
+
+        <div className="sidebar-footer-sacred">
+          <div className="sidebar-user-stats">
+            <div className="stat-pill-mini">
+              <span>✨ 25</span>
+            </div>
+            <button className="lang-toggle-sidebar" onClick={toggleLanguage}>
+              <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>language</span>
+              {language.toUpperCase()}
+            </button>
+          </div>
+          
+          <button className="logout-btn-sidebar" onClick={handleLogout}>
+            <span className="material-symbols-outlined">logout</span>
+            <span>{t('nav.logout').toUpperCase()}</span>
+          </button>
+        </div>
       </aside>
 
       {/* Main Content */}

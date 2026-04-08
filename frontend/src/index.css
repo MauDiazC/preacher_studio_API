@@ -30,6 +30,12 @@ body {
   min-height: 100vh;
 }
 
+/* Ocultar Navbar global en la aplicación (donde hay sidebar) */
+body:has(.sacred-sidebar) .navbar,
+body:has(.sacred-sidebar-editor) .navbar {
+  display: none !important;
+}
+
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
