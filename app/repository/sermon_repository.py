@@ -38,9 +38,9 @@ class SermonRepository:
             query = query.lte("created_at", to_date)
 
         # Ordenar por updated_at (con fallback a created_at si es null)
-        # Supabase Python usa nulls_first=False para que los nulls vayan al final
+        # El SDK de Supabase Python usa nullsfirst (todo pegado)
         return (
-            query.order("updated_at", desc=True, nulls_first=False)
+            query.order("updated_at", desc=True, nullsfirst=False)
             .range(offset, offset + limit - 1)
             .execute()
         )
