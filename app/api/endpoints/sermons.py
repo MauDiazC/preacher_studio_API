@@ -263,6 +263,9 @@ async def delete_sermon(
 
 from app.services.subscription_service import subscription_service
 
+import logging
+logger = logging.getLogger("app.api.sermons")
+
 @router.post(
     "/exegesis",
     response_model=VerseExegesisResponse,
@@ -296,4 +299,5 @@ async def analyze_verse(
         
         return exegesis
     except Exception as e:
+        logger.error(f"❌ Error crítico en analyze_verse: {str(e)}", exc_info=True)
         raise AIServiceUnavailableException(details=str(e))

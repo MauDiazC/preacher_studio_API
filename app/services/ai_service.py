@@ -122,6 +122,7 @@ class AISermonService:
         # Intento primario con Gemini 1.5 Flash (Nuevo SDK)
         if self.gemini_client:
             try:
+                logger.info(f"Iniciando análisis con Gemini para: {verse_reference} ({language})")
                 response = self.gemini_client.models.generate_content(
                     model=self.gemini_model,
                     contents=user_prompt,
@@ -138,11 +139,14 @@ class AISermonService:
                 self._exegesis_cache[cache_key] = result
                 return result
             except Exception as e:
-                logger.warning(f"AI PROVIDER: GOOGLE GEMINI | Status: Failed | Error: {str(e)}. Falling back to OpenAI...")
+                logger.error(f"AI PROVIDER: GOOGLE GEMINI | Status: Failed | Error: {str(e)}", exc_info=True)
                 start_time = time.perf_counter()
+        else:
+            logger.warning("Gemini client NOT initialized (missing API key?)")
 
         # Fallback a OpenAI
         try:
+            logger.info(f"Iniciando fallback a OpenAI para: {verse_reference}")
             response = self.client.chat.completions.create(
                 model=self.model_id,
                 messages=[
