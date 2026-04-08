@@ -78,6 +78,11 @@ const translations = {
     'auth.success_body': 'Hemos enviado un enlace de activación a',
     'auth.success_body_2': 'Por favor, revisa tu bandeja de entrada para confirmar tu cuenta y empezar a usar las herramientas de',
     'auth.go_login': 'Ir al Inicio de Sesión',
+    'auth.forgot_password': 'Olvidé mi contraseña',
+    'auth.continue_with': 'O continuar con',
+    'auth.ministerio': 'Ministerio',
+    'auth.inspired_prep': 'Preparación Inspirada',
+    'auth.register_church': 'Registrar mi Iglesia',
     // List
     'list.title': 'Mis Estudios Exegéticos',
     'list.new_btn': 'Nuevo Análisis',
@@ -190,6 +195,11 @@ const translations = {
     'auth.success_body': 'We have sent an activation link to',
     'auth.success_body_2': 'Please check your inbox to confirm your account and start using the tools from',
     'auth.go_login': 'Go to Log In',
+    'auth.forgot_password': 'Forgot my password',
+    'auth.continue_with': 'Or continue with',
+    'auth.ministerio': 'Ministry',
+    'auth.inspired_prep': 'Inspired Preparation',
+    'auth.register_church': 'Register my Church',
     // List
     'list.title': 'My Exegetical Studies',
     'list.new_btn': 'New Analysis',

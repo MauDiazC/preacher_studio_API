@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Preacher Studio - Iniciar Sesión</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;family=Inter:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed-variant": "#362fb8",
+                    "surface-tint": "#b0c6ff",
+                    "outline": "#8c90a0",
+                    "on-secondary-container": "#aeadff",
+                    "background": "#111127",
+                    "on-error": "#690005",
+                    "secondary": "#c2c1ff",
+                    "primary-fixed": "#d9e2ff",
+                    "error": "#ffb4ab",
+                    "on-secondary-fixed": "#0d006a",
+                    "on-primary-container": "#002661",
+                    "outline-variant": "#424655",
+                    "on-background": "#e2dfff",
+                    "surface": "#111127",
+                    "on-tertiary-fixed-variant": "#454747",
+                    "tertiary-fixed-dim": "#c6c6c6",
+                    "on-tertiary-fixed": "#1a1c1c",
+                    "error-container": "#93000a",
+                    "inverse-on-surface": "#2e2e46",
+                    "surface-container-low": "#191930",
+                    "on-tertiary-container": "#282a2a",
+                    "on-secondary": "#1c04a3",
+                    "on-primary-fixed": "#001945",
+                    "surface-container": "#1d1d34",
+                    "on-surface-variant": "#c2c6d7",
+                    "on-tertiary": "#2f3131",
+                    "inverse-surface": "#e2dfff",
+                    "inverse-primary": "#0058ca",
+                    "secondary-fixed-dim": "#c2c1ff",
+                    "surface-container-highest": "#33324b",
+                    "surface-container-high": "#28283f",
+                    "secondary-fixed": "#e2dfff",
+                    "tertiary": "#c6c6c6",
+                    "secondary-container": "#362fb8",
+                    "tertiary-fixed": "#e2e2e2",
+                    "on-surface": "#e2dfff",
+                    "tertiary-container": "#909191",
+                    "surface-bright": "#37374f",
+                    "on-primary-fixed-variant": "#00429b",
+                    "surface-container-lowest": "#0c0c22",
+                    "surface-variant": "#33324b",
+                    "primary": "#b0c6ff",
+                    "primary-fixed-dim": "#b0c6ff",
+                    "on-primary": "#002d6e",
+                    "on-error-container": "#ffdad6",
+                    "primary-container": "#558dff",
+                    "surface-dim": "#111127"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Noto Serif"],
+                    "body": ["Plus Jakarta Sans"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .celestial-orbit {
+            background: radial-gradient(circle at 50% 50%, rgba(176, 198, 255, 0.05) 0%, transparent 70%);
+        }
+        .frosted-sanctum {
+            background: rgba(29, 29, 52, 0.7);
+            backdrop-filter: blur(24px);
+        }
+        .primary-gradient {
+            background: linear-gradient(135deg, #b0c6ff 0%, #558dff 100%);
+        }
+        .no-line-boundary {
+            box-shadow: 0 0 0 2px rgba(176, 198, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body min-h-screen flex flex-col overflow-hidden">
+<!-- TopNavBar Suppressed for Transactional Focus -->
+<main class="flex-grow flex items-center justify-center relative px-6">
+<!-- Celestial Orbit Effects -->
+<div class="absolute inset-0 overflow-hidden pointer-events-none">
+<div class="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] celestial-orbit rounded-full"></div>
+<div class="absolute -bottom-[30%] -right-[10%] w-[70%] h-[70%] celestial-orbit rounded-full"></div>
+</div>
+<!-- Login Card -->
+<div class="w-full max-w-md frosted-sanctum p-10 rounded-xl relative z-10 no-line-boundary">
+<!-- Brand Anchor -->
+<div class="flex flex-col items-center mb-10">
+<h1 class="font-headline text-4xl text-primary font-bold tracking-tight mb-2">Preacher Studio</h1>
+<p class="font-label text-secondary opacity-70 tracking-widest uppercase text-[10px]">Preparación Inspirada</p>
+</div>
+<!-- Login Form -->
+<form class="space-y-6">
+<div class="space-y-2">
+<label class="font-label text-label-sm uppercase tracking-widest text-on-surface-variant ml-1" for="email">Email</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-lg">mail</span>
+<input class="w-full bg-surface-container-highest border-none rounded-lg py-3.5 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary/30 transition-all placeholder:text-outline/50" id="email" placeholder="nombre@ministerio.org" type="email"/>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between items-center ml-1">
+<label class="font-label text-label-sm uppercase tracking-widest text-on-surface-variant" for="password">Password</label>
+<a class="text-xs text-primary hover:text-primary-fixed-dim transition-colors" href="#">Olvidé mi contraseña</a>
+</div>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-lg">lock</span>
+<input class="w-full bg-surface-container-highest border-none rounded-lg py-3.5 pl-12 pr-12 text-on-surface focus:ring-2 focus:ring-primary/30 transition-all placeholder:text-outline/50" id="password" placeholder="••••••••" type="password"/>
+<button class="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-primary transition-colors" type="button">
+<span class="material-symbols-outlined text-lg">visibility</span>
+</button>
+</div>
+</div>
+<button class="w-full primary-gradient text-on-primary-container font-semibold py-4 rounded-lg shadow-[0px_8px_16px_rgba(85,141,255,0.2)] hover:shadow-[0px_12px_24px_rgba(85,141,255,0.3)] hover:scale-[0.99] active:scale-95 transition-all duration-300" type="submit">
+                    Entrar
+                </button>
+</form>
+<!-- Social Provider Divider -->
+<div class="relative my-8">
+<div class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-outline-variant opacity-20"></div>
+</div>
+<div class="relative flex justify-center text-xs">
+<span class="px-4 bg-transparent text-outline font-label uppercase tracking-tighter">O continuar con</span>
+</div>
+</div>
+<!-- Social Providers -->
+<div class="grid grid-cols-2 gap-4">
+<button class="flex items-center justify-center gap-3 bg-surface-container-high hover:bg-surface-container-highest text-on-surface py-3 rounded-lg transition-colors group">
+<img alt="Google" class="w-5 h-5 grayscale group-hover:grayscale-0 transition-all" data-alt="Google brand identity logo symbol in high quality and minimalist style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzHSulEetOv5axXZfgRhee6tPLsOVpZBVjNIpLxW3zQ1nAW00RVlBDU57KOZQFI8Q8_sATa76tTgHZ7NBeEhzEOwVawC8oM-hlfWtEEG6EbdwYOg68xAWCC4OTlP1q1O2AFGZvADHVguqhp0ii1yy46GQs3tHS9Ycl8KcR0C1GDGHGnEsZVBuLnS6qj2bAY0cMrHyAw4yeoUYyo1RHuDFkfvhXCab69tyv4FrgPay4WeuT9SS3S3-Vd67tcKQr210C7EY5H01TztI"/>
+<span class="text-sm font-medium">Google</span>
+</button>
+<button class="flex items-center justify-center gap-3 bg-surface-container-high hover:bg-surface-container-highest text-on-surface py-3 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-lg" data-weight="fill">cloud</span>
+<span class="text-sm font-medium">Ministerio</span>
+</button>
+</div>
+<!-- Footer Link -->
+<p class="text-center mt-8 text-on-surface-variant text-sm">
+                ¿Aún no tienes acceso? 
+                <a class="text-secondary font-semibold hover:text-primary transition-colors ml-1" href="#">Registrar mi Iglesia</a>
+</p>
+</div>
+<!-- Decorative Floating Elements -->
+<div class="hidden lg:block absolute left-20 bottom-20 w-32 h-32 opacity-20">
+<img class="w-full h-full object-cover rounded-full" data-alt="Close-up of ancient vellum manuscript texture with elegant weathered edges and soft dramatic shadow" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdnW3E2zOpnnRz8HwhTUnaDXY99B8R2rvkVouVO_1cZzupvVUujn_I9GhSv6Blrro2X50eO0e6UDZLb_cXhLYf2attZjoSRXKhxzp_Svq_9K-RLXZlFiftJAxxBwfLS957xvUs7EuWhqXfe1NJy4wJM9irbU83IVjXLXHiiTO1hqIQ_av0CpA4RHuDBjLw12b8rENFB2JCopFJz--O_OpGXqw5F4ccpNmtCIJQ8ieJ3FHGjs6JZzJJzdjsg8XvNFaXY9JEiEYKFfo"/>
+</div>
+<div class="hidden lg:block absolute right-20 top-20 w-40 h-40 opacity-20">
+<img class="w-full h-full object-cover rounded-full" data-alt="Deep space nebula with soft blue and violet celestial gas clouds and tiny distant twinkling stars" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYaqXuwrHJ3hAYACtCpEe00GBHDcSKfR_XFLABQAHtIu38-rvH8Ed43r9ts_c0pXTcN511N5Q3PJjXJS8nB5QcZrJHdkqz8_ZdiSm-vTDZZYcNXAMVpTpAifHp5iwaKRUTFp7s9Qg6HnbI5uR6f9wEcjBymmt56mXkjqwa_xrcU6KogXFgsJRkcjmvnuql3YHpakO7rCO4CgZXiyd4CP7iON-b1QGbb-A_DxJLOGdLJu5iZgoRwZX2sYD9zjU525SiS7yERIpwI-s"/>
+</div>
+</main>
+<!-- Footer from Shared Components JSON -->
+<footer class="w-full py-12 bg-[#111127] border-t border-[#b0c6ff]/10">
+<div class="flex flex-col md:flex-row justify-between items-center px-8 max-w-7xl mx-auto space-y-4 md:space-y-0">
+<p class="font-sans text-xs uppercase tracking-widest text-[#c2c1ff]/50">© 2024 Preacher Studio. Preparación Inspirada.</p>
+<div class="flex gap-8">
+<a class="font-sans text-xs uppercase tracking-widest text-[#c2c1ff]/50 hover:text-[#b0c6ff] transition-all" href="#">Privacidad</a>
+<a class="font-sans text-xs uppercase tracking-widest text-[#c2c1ff]/50 hover:text-[#b0c6ff] transition-all" href="#">Términos</a>
+<a class="font-sans text-xs uppercase tracking-widest text-[#c2c1ff]/50 hover:text-[#b0c6ff] transition-all" href="#">Contacto</a>
+</div>
+</div>
+</footer>
+</body></html>
