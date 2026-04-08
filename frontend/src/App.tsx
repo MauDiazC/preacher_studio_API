@@ -10,6 +10,7 @@ import SermonList from './features/sermons/components/SermonList';
 import SermonEditor from './features/sermons/components/SermonEditor';
 import LandingPage from './features/landing/components/LandingPage';
 import PricingPage from './features/landing/components/PricingPage';
+import CheckoutPage from './features/checkout/CheckoutPage';
 
 function App() {
   const { isAuthenticated } = useAuthStore();
@@ -22,6 +23,7 @@ function App() {
             {/* Public Routes */}
             <Route path="/" element={<LandingPage />} />
             <Route path="/pricing" element={<PricingPage />} />
+            <Route path="/checkout/:planId" element={<CheckoutPage />} />
             <Route path="/login" element={!isAuthenticated ? <LoginPage /> : <Navigate to="/sermons" />} />
             <Route path="/register" element={!isAuthenticated ? <RegisterPage /> : <Navigate to="/sermons" />} />
             

@@ -9,6 +9,7 @@ const PricingPage: React.FC = () => {
 
   const plans = [
     {
+      id: 'free',
       label: t('pricing.essential'),
       name: t('plan.free'),
       price: '$0',
@@ -23,6 +24,7 @@ const PricingPage: React.FC = () => {
       recommended: false
     },
     {
+      id: 'mentor',
       label: t('pricing.advanced'),
       name: t('plan.pro'),
       price: '$19',
@@ -39,6 +41,7 @@ const PricingPage: React.FC = () => {
       recommended: true
     },
     {
+      id: 'exegete',
       label: t('pricing.teams'),
       name: t('auth.ministerio'),
       price: '$49',
@@ -114,7 +117,7 @@ const PricingPage: React.FC = () => {
 
               <button 
                 className={`plan-btn ${plan.recommended ? 'btn-primary-gradient' : 'btn-outline'}`}
-                onClick={() => navigate('/register')}
+                onClick={() => navigate(`/checkout/${plan.id}`)}
               >
                 {plan.buttonText}
               </button>
