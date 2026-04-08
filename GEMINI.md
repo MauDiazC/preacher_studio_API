@@ -7,37 +7,34 @@ Plataforma especializada de mentoría homilética diseñada para ayudar a pastor
 - **Tono Ministerial:** Se evita estrictamente el término "IA". Se utiliza: *Asistencia Homilética Digital*, *Mentoría Teológica*, *Estudio del Texto Original*.
 - **Calibre Académico:** El análisis incluye información de léxicos profesionales (Strong, Thayer, BDB) y fuentes académicas clásicas.
 
-## Estado Actual (v1.2 - Sacred Observatory ✅)
+## Estado Actual (v1.3 - Sacred Checkout ✅)
 
-El sistema ha completado su transición a una identidad visual de alta gama y ha estabilizado sus funciones principales.
+El sistema ha unificado su lenguaje visual y ha preparado la infraestructura para la monetización.
 
 - **Identidad Visual "Sacred Observatory":** 
-    - Implementación total en Landing, Pricing, Login, Registro, Lista de Estudios y Editor.
-    - Uso de **Noto Serif** (Autoridad) y **Plus Jakarta Sans** (Gestión).
-    - Efectos de "Celestial Orbits" y Glassmorphism ("Frosted Sanctum") en toda la interfaz.
-- **Arquitectura Backend & IA:** 
-    - **IA Multilingüe:** Prompt optimizado para responder en ES/EN, forzando versiones bíblicas correctas (RVR1960/NVI o KJV/NIV).
-    - **Sincronización de Formato:** Persistencia completa de `innerHTML` que permite guardar negritas, colores y estructuras del editor.
-    - **Validación Robusta:** Limpieza automática de citas bíblicas y manejo de errores de validación JSON en el fallback.
-- **Frontend & Navegación:** 
-    - **Navbar Inteligente:** Se oculta automáticamente en las rutas internas para dar paso al Sidebar.
-    - **Sidebar Integrado:** Control de créditos, idioma y logout unificados en el menú vertical.
-    - **Dashboard de Lista:** Nuevo grid de estadísticas y tarjetas de estudio con efectos de micro-interacción.
+    - Implementación total en Landing, Pricing, Login, Registro, Lista de Estudios, Editor y la nueva **Página de Checkout**.
+    - Unificación de Navbar global con efectos `backdrop-blur-3xl` y tipografía Noto Serif.
+- **Flujo de Suscripción:** 
+    - Navegación lógica conectada: `Landing -> Pricing -> Checkout`.
+    - Página de Checkout dinámica que recibe parámetros de plan (`/checkout/:planId`) y muestra beneficios específicos.
+- **Frontend & UX:** 
+    - **Sidebar Consolidado:** Los elementos de control (idioma, créditos, logout) están integrados en el sidebar, eliminando la necesidad de Navbar superior en rutas internas.
+    - **i18n:** Soporte completo de etiquetas de pago y confirmación en ES/EN.
 
 ## Membresías (Planes)
 
-1.  **Sembrador (Gratis):** 3 Estudios/mes. Análisis literario básico.
-2.  **Mentor ($9.99/mes):** 25 Estudios/mes. Contexto histórico completo y exportación PDF/Word.
-3.  **Exégeta ($19.99/mes):** Estudios ILIMITADOS. Léxico profesional, exportación Keynote/PPTX y soporte prioritario.
+1.  **Sembrador (Free):** 3 Estudios/mes.
+2.  **Mentor (Pro):** 25 Estudios/mes + Contexto Histórico.
+3.  **Exégeta (Teams):** Estudios Ilimitados + Léxico Pro + Soporte Prioritario.
 
-## Próximos Pasos (Mañana)
-- [ ] Refinar la exportación a PPTX para que coincida con el nuevo sistema de diseño "Sacred".
-- [ ] Implementar animaciones de transición entre páginas para reforzar la fluidez.
-- [ ] Revisar la responsividad detallada de la nueva Landing Page en dispositivos móviles pequeños.
+## Próximos Pasos (Pendientes)
+- [ ] **Backend (Stripe):** Implementar el endpoint de Webhook para procesar eventos `checkout.session.completed`.
+- [ ] **Lógica de Créditos:** Crear la función en el backend para actualizar automáticamente los créditos en la tabla `profiles` tras una compra exitosa.
+- [ ] **Refinamiento PPTX:** Adaptar la exportación a diapositivas al nuevo sistema de diseño "Sacred".
 
-## Punto de Restauración (v1.2 - 08/04/2026)
-- **Estado:** Identidad visual completa, IA estable y navegación lógica conectada.
-- **Commit de Referencia:** `3ec39d12` (Rediseño total Landing/Navbar).
+## Punto de Restauración (v1.3 - 08/04/2026)
+- **Estado:** UI completa, navegación de pago conectada, listo para integración de Stripe.
+- **Commit de Referencia:** `da1fd427` (Implementación de Checkout Page y nuevo Navbar).
 
 ## Infraestructura y CI/CD
 - **Hosting:** Railway (Backend) y Supabase (DB/Auth).
