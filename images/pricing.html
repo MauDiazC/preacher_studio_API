@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Precios | Preacher Studio</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;family=Inter:wght@600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed-variant": "#362fb8",
+                    "surface-tint": "#b0c6ff",
+                    "outline": "#8c90a0",
+                    "on-secondary-container": "#aeadff",
+                    "background": "#111127",
+                    "on-error": "#690005",
+                    "secondary": "#c2c1ff",
+                    "primary-fixed": "#d9e2ff",
+                    "error": "#ffb4ab",
+                    "on-secondary-fixed": "#0d006a",
+                    "on-primary-container": "#002661",
+                    "outline-variant": "#424655",
+                    "on-background": "#e2dfff",
+                    "surface": "#111127",
+                    "on-tertiary-fixed-variant": "#454747",
+                    "tertiary-fixed-dim": "#c6c6c6",
+                    "on-tertiary-fixed": "#1a1c1c",
+                    "error-container": "#93000a",
+                    "inverse-on-surface": "#2e2e46",
+                    "surface-container-low": "#191930",
+                    "on-tertiary-container": "#282a2a",
+                    "on-secondary": "#1c04a3",
+                    "on-primary-fixed": "#001945",
+                    "surface-container": "#1d1d34",
+                    "on-surface-variant": "#c2c6d7",
+                    "on-tertiary": "#2f3131",
+                    "inverse-surface": "#e2dfff",
+                    "inverse-primary": "#0058ca",
+                    "secondary-fixed-dim": "#c2c1ff",
+                    "surface-container-highest": "#33324b",
+                    "surface-container-high": "#28283f",
+                    "secondary-fixed": "#e2dfff",
+                    "tertiary": "#c6c6c6",
+                    "secondary-container": "#362fb8",
+                    "tertiary-fixed": "#e2e2e2",
+                    "on-surface": "#e2dfff",
+                    "tertiary-container": "#909191",
+                    "surface-bright": "#37374f",
+                    "on-primary-fixed-variant": "#00429b",
+                    "surface-container-lowest": "#0c0c22",
+                    "surface-variant": "#33324b",
+                    "primary": "#b0c6ff",
+                    "primary-fixed-dim": "#b0c6ff",
+                    "on-primary": "#002d6e",
+                    "on-error-container": "#ffdad6",
+                    "primary-container": "#558dff",
+                    "surface-dim": "#111127"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Noto Serif"],
+                    "body": ["Plus Jakarta Sans"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .celestial-orbit {
+            background: radial-gradient(circle at 50% 50%, rgba(176, 198, 255, 0.05) 0%, transparent 70%);
+        }
+        .glass-sanctum {
+            background: rgba(29, 29, 52, 0.7);
+            backdrop-filter: blur(24px);
+        }
+        .primary-gradient {
+            background: linear-gradient(135deg, #b0c6ff 0%, #558dff 100%);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-primary/30">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-gradient-to-b from-[#111127] to-transparent">
+<div class="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
+<div class="text-2xl font-bold font-headline text-[#b0c6ff]">Preacher Studio</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-[#c2c1ff]/70 hover:text-[#b0c6ff] transition-colors duration-300" href="#">Inicio</a>
+<a class="text-[#b0c6ff] font-semibold border-b-2 border-[#b0c6ff] pb-1" href="#">Precios</a>
+<a class="text-[#c2c1ff]/70 hover:text-[#b0c6ff] transition-colors duration-300" href="#">Recursos</a>
+</div>
+<div class="flex items-center gap-6">
+<button class="text-[#c2c1ff]/70 hover:bg-[#191930] p-2 rounded-full transition-colors duration-300">
+<span class="material-symbols-outlined">language</span>
+</button>
+<button class="primary-gradient text-on-primary-container px-6 py-2.5 rounded-xl font-semibold scale-95 active:opacity-80 transition-all shadow-[0_0_20px_rgba(176,198,255,0.2)]">
+                    Comenzar
+                </button>
+</div>
+</div>
+</nav>
+<main class="relative min-h-screen pt-32 pb-24 overflow-hidden">
+<!-- Background Decorative Orbits -->
+<div class="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] celestial-orbit -z-10 animate-pulse"></div>
+<div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] celestial-orbit -z-10"></div>
+<div class="max-w-7xl mx-auto px-8">
+<!-- Header Section -->
+<div class="text-center mb-20 max-w-3xl mx-auto">
+<h1 class="font-headline text-5xl md:text-6xl font-bold text-on-background mb-6 leading-tight">
+                    Inversión en su <span class="text-primary italic">Ministerio</span>
+</h1>
+<p class="text-on-surface-variant text-lg md:text-xl font-body leading-relaxed">
+                    Elija el plan que mejor se adapte a su ritmo de estudio y preparación pastoral. Herramientas diseñadas para la excelencia teológica.
+                </p>
+</div>
+<!-- Pricing Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+<!-- Basic Plan -->
+<div class="bg-surface-container-low rounded-xl p-10 flex flex-col transition-all duration-500 hover:bg-surface-container-high group">
+<div class="mb-8">
+<span class="label-sm text-primary uppercase tracking-[0.2em] font-label">Esencial</span>
+<h3 class="font-headline text-3xl font-semibold mt-4">Básico</h3>
+<div class="mt-6 flex items-baseline gap-1">
+<span class="text-4xl font-bold text-on-background">$0</span>
+<span class="text-on-surface-variant font-body">/mes</span>
+</div>
+</div>
+<div class="flex-grow space-y-6 mb-12">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-xl">check_circle</span>
+<span class="text-on-surface-variant">Hasta 3 bosquejos mensuales</span>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-xl">check_circle</span>
+<span class="text-on-surface-variant">Biblioteca de referencias básica</span>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-xl">check_circle</span>
+<span class="text-on-surface-variant">Exportación en PDF</span>
+</div>
+<div class="flex items-start gap-3 opacity-40">
+<span class="material-symbols-outlined text-xl">block</span>
+<span class="text-on-surface-variant">Colaboración en equipo</span>
+</div>
+</div>
+<button class="w-full py-4 rounded-xl border border-outline-variant hover:bg-surface-container-highest text-primary font-semibold transition-all">
+                        Comenzar Gratis
+                    </button>
+</div>
+<!-- Pro Plan (Recommended) -->
+<div class="glass-sanctum rounded-xl p-10 flex flex-col relative scale-105 shadow-2xl z-10">
+<div class="absolute -top-4 left-1/2 -translate-x-1/2 primary-gradient px-4 py-1 rounded-full text-xs font-bold text-on-primary-container uppercase tracking-widest">
+                        Recomendado
+                    </div>
+<div class="mb-8">
+<span class="label-sm text-secondary uppercase tracking-[0.2em] font-label">Avanzado</span>
+<h3 class="font-headline text-3xl font-semibold mt-4">Pro</h3>
+<div class="mt-6 flex items-baseline gap-1">
+<span class="text-5xl font-bold text-on-background">$19</span>
+<span class="text-on-surface-variant font-body">/mes</span>
+</div>
+<p class="text-primary-fixed-dim text-sm mt-2 font-body italic">Preparación Profunda sin límites</p>
+</div>
+<div class="flex-grow space-y-6 mb-12">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-xl">auto_awesome</span>
+<span class="text-on-background font-medium">Bosquejos ilimitados</span>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-xl">auto_awesome</span>
+<span class="text-on-background font-medium">Acceso a Lexicones Griegos y Hebreos</span>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-xl">auto_awesome</span>
+<span class="text-on-background font-medium">Nube de almacenamiento segura</span>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-xl">auto_awesome</span>
+<span class="text-on-background font-medium">Soporte prioritario 24/7</span>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-xl">auto_awesome</span>
+<span class="text-on-background font-medium">Modo "Lectura en Púlpito"</span>
+</div>
+</div>
+<button class="w-full py-4 rounded-xl primary-gradient text-on-primary-container font-bold text-lg shadow-[0_0_30px_rgba(176,198,255,0.3)] hover:scale-[1.02] transition-transform active:scale-95">
+                        Comenzar Ahora
+                    </button>
+</div>
+<!-- Ministerio Plan -->
+<div class="bg-surface-container-low rounded-xl p-10 flex flex-col transition-all duration-500 hover:bg-surface-container-high">
+<div class="mb-8">
+<span class="label-sm text-primary uppercase tracking-[0.2em] font-label">Equipos</span>
+<h3 class="font-headline text-3xl font-semibold mt-4">Ministerio</h3>
+<div class="mt-6 flex items-baseline gap-1">
+<span class="text-4xl font-bold text-on-background">$49</span>
+<span class="text-on-surface-variant font-body">/mes</span>
+</div>
+</div>
+<div class="flex-grow space-y-6 mb-12">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-xl">groups</span>
+<span class="text-on-surface-variant">Hasta 10 usuarios incluidos</span>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-xl">groups</span>
+<span class="text-on-surface-variant">Espacios de trabajo compartidos</span>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-xl">groups</span>
+<span class="text-on-surface-variant">Control administrativo de roles</span>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-xl">groups</span>
+<span class="text-on-surface-variant">Integración con presentaciones</span>
+</div>
+</div>
+<button class="w-full py-4 rounded-xl border border-outline-variant hover:border-primary text-on-background font-semibold transition-all">
+                        Contactar Ventas
+                    </button>
+</div>
+</div>
+<!-- Bento Grid - Why choose us -->
+<div class="mt-32 grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-6 h-auto md:h-[600px]">
+<div class="md:col-span-2 md:row-span-2 bg-surface-container rounded-xl p-8 flex flex-col justify-end relative overflow-hidden">
+<img class="absolute inset-0 w-full h-full object-cover opacity-20 transition-opacity duration-700 hover:opacity-30" data-alt="Close up of an old bible on a wooden table in a dimly lit library with soft warm light hitting the pages" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBc6QB3jgAw13LZExCBs_FoQXVc0DyMB8ac6uzzbRoEdqJUleuIeBIwSD_W3KJ7HO5aZczcPImK8r546e-RMNTT3mwDqjyPmEV7CerIWWE1lKfvQdcfifLAZqSkX-zrkH2_AFU1PXI6TsLjMhTkrJ8DDlfyZCtwdDZJw8kRjs8ZakTDDZs4Cw2PN2vpAO9gfOzza6FXPrpKAvM9VH5JhNjYpEUqfPCCHl0hlc_9uWgQnGlRRBiS68krU7GW6jv3VDpZBlPCILjlo4A"/>
+<div class="relative z-10">
+<h4 class="font-headline text-3xl font-bold mb-4">La Biblioteca del Púlpito</h4>
+<p class="text-on-surface-variant">Acceda a miles de recursos teológicos curados para alimentar su preparación semanal.</p>
+</div>
+</div>
+<div class="md:col-span-2 bg-surface-container rounded-xl p-8 flex items-center gap-6 group">
+<div class="p-4 rounded-full bg-primary/10 text-primary transition-transform duration-500 group-hover:rotate-12">
+<span class="material-symbols-outlined text-4xl">cloud_sync</span>
+</div>
+<div>
+<h5 class="font-headline text-xl font-bold mb-2">Sincronización Divina</h5>
+<p class="text-on-surface-variant text-sm">Sus estudios disponibles en móvil, tablet y escritorio instantáneamente.</p>
+</div>
+</div>
+<div class="bg-surface-container-high rounded-xl p-8 flex flex-col justify-center text-center">
+<span class="text-primary text-4xl font-bold mb-2">99.9%</span>
+<span class="text-label-sm font-label uppercase tracking-widest opacity-60">Disponibilidad</span>
+</div>
+<div class="bg-surface-container-high rounded-xl p-8 flex flex-col justify-center text-center">
+<span class="text-primary text-4xl font-bold mb-2">+5k</span>
+<span class="text-label-sm font-label uppercase tracking-widest opacity-60">Pastores</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full py-12 border-t border-[#b0c6ff]/10 bg-[#111127]">
+<div class="flex flex-col md:flex-row justify-between items-center px-8 max-w-7xl mx-auto">
+<div class="font-sans text-xs uppercase tracking-widest text-[#c2c1ff]/50 mb-4 md:mb-0">
+                © 2024 Preacher Studio. Preparación Inspirada.
+            </div>
+<div class="flex gap-8">
+<a class="font-sans text-xs uppercase tracking-widest text-[#c2c1ff]/50 hover:text-[#b0c6ff] transition-all" href="#">Privacidad</a>
+<a class="font-sans text-xs uppercase tracking-widest text-[#c2c1ff]/50 hover:text-[#b0c6ff] transition-all" href="#">Términos</a>
+<a class="font-sans text-xs uppercase tracking-widest text-[#c2c1ff]/50 hover:text-[#b0c6ff] transition-all" href="#">Contacto</a>
+</div>
+</div>
+</footer>
+</body></html>
