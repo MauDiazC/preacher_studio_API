@@ -4,6 +4,7 @@ import { aiService } from '../services/aiService';
 import { sermonService } from '../services/sermonService';
 import { exportService } from '../services/exportService';
 import { useNotificationStore } from '../../../store/useNotificationStore';
+import { useAuthStore } from '../../../store/authStore';
 import { useLanguage } from '../../../context/LanguageContext';
 import './SermonEditor.css';
 

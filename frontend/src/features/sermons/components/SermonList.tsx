@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { sermonService } from '../services/sermonService';
 import type { Sermon } from '../services/sermonService';
 import { useNotificationStore } from '../../../store/useNotificationStore';
+import { useAuthStore } from '../../../store/authStore';
 import { useLanguage } from '../../../context/LanguageContext';
 import './SermonList.css';
 
@@ -17,7 +18,7 @@ const SermonList: React.FC = () => {
   const navigate = useNavigate();
   const { addNotification } = useNotificationStore();
   const { t, language, toggleLanguage } = useLanguage();
-  const { logout, user } = useAuthStore();
+  const { logout } = useAuthStore();
 
   // Créditos dummy para visualización (en una versión real vendrían del perfil)
   const credits = 25; 
