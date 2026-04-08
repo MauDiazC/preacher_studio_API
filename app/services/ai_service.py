@@ -92,14 +92,14 @@ class AISermonService:
         
         # Ajuste dinámico de versiones según idioma
         if language == "es":
-            bible_instruction = "version_rv1960: Reina Valera 1960, version_nvi: Nueva Versión Internacional."
+            bible_instruction = "In 'version_rv1960' key, provide the Spanish RVR1960 text. In 'version_nvi' key, provide the Spanish NVI text."
         else:
-            bible_instruction = "version_rv1960: King James Version (KJV), version_nvi: New International Version (NIV). DO NOT change the JSON keys, only the content."
+            bible_instruction = "In 'version_rv1960' key, YOU MUST provide the English King James Version (KJV). In 'version_nvi' key, YOU MUST provide the English New International Version (NIV). DO NOT provide Spanish translations for these versions."
 
         user_prompt = f"""
         Realiza un análisis exegético profundo y académico del siguiente pasaje bíblico: "{verse_reference}"
         
-        IMPORTANTE: Responde TODO el contenido del JSON en el idioma: {language.upper()} (excepto términos técnicos en Griego/Hebreo).
+        IMPORTANTE: Responde TODO el contenido del JSON en el idioma: {language.upper()}.
         
         {bible_instruction}
         
@@ -107,16 +107,16 @@ class AISermonService:
         
         Debes devolver UNICAMENTE un objeto JSON con la siguiente estructura exacta (MANTÉN ESTAS LLAVES SIEMPRE):
         {{
-            "literary_type": "Análisis detallado...",
-            "author": "Información histórica...",
-            "purpose": "El propósito...",
-            "historical_context": "Contexto sociocultural...",
-            "significance_context": "Significancia teológica...",
-            "version_rv1960": "El texto exacto en versión RVR1960 (o KJV si es EN)",
-            "version_nvi": "El texto exacto en versión NVI (o NIV si es EN)",
-            "original_languages": "Análisis léxico...",
-            "source_attribution": "Indica las fuentes...",
-            "key_locations": ["Lista de lugares..."]
+            "literary_type": "...",
+            "author": "...",
+            "purpose": "...",
+            "historical_context": "...",
+            "significance_context": "...",
+            "version_rv1960": "KJV text here if English, RVR1960 if Spanish",
+            "version_nvi": "NIV text here if English, NVI if Spanish",
+            "original_languages": "...",
+            "source_attribution": "...",
+            "key_locations": ["..."]
         }}
         """
 

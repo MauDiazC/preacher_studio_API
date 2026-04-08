@@ -83,7 +83,13 @@ const SermonEditor: React.FC = () => {
   }, [dataLoaded, initialContent]);
 
   const validatePassage = (input: string) => {
-    let cleanInput = input.trim().replace(/\./g, ' ').replace(/\s+/g, ' ');
+    // Limpieza profunda: Solo permitir letras, números, espacios y dos puntos
+    let cleanInput = input
+      .replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s:]/g, ' ')
+      .replace(/\./g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
     const bibleRegex = /^(\d\s)?([a-zA-ZáéíóúÁÉÍÓÚñÑ]+)\s*(\d+)([:\s]*\d*)$/;
     const match = cleanInput.match(bibleRegex);
     if (!match) return cleanInput;
