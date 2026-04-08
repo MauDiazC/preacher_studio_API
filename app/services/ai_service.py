@@ -91,18 +91,17 @@ class AISermonService:
         start_time = time.perf_counter()
         
         # Ajuste dinámico de versiones según idioma
-        bible_versions = """
-        version_rv1960: Reina Valera 1960.
-        version_nvi: Nueva Versión Internacional.
-        """ if language == "es" else """
-        version_rv1960: King James Version (KJV).
-        version_nvi: New International Version (NIV).
-        """
+        if language == "es":
+            bible_instruction = "version_rv1960 debe ser Reina Valera 1960, version_nvi debe ser Nueva Versión Internacional."
+        else:
+            bible_instruction = "version_rv1960 MUST BE King James Version (KJV), version_nvi MUST BE New International Version (NIV). DO NOT USE SPANISH VERSIONS."
 
         user_prompt = f"""
         Realiza un análisis exegético profundo y académico del siguiente pasaje bíblico: "{verse_reference}"
         
         IMPORTANTE: Responde TODO el contenido del JSON en el idioma: {language.upper()} (excepto términos técnicos en Griego/Hebreo).
+        
+        {bible_instruction}
         
         Tu análisis debe ser exhaustivo y teológicamente sólido.
         

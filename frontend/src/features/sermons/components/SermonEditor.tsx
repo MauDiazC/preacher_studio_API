@@ -56,28 +56,19 @@ const SermonEditor: React.FC = () => {
           
           const contentToInject = data.content || '';
           
-          // Reintento de inyección más robusto
-          let attempts = 0;
-          const checkAndInject = () => {
+          // Inyección forzada con reintentos para contentEditable
+          const attemptInjection = (content: string, limit: number) => {
+            if (limit <= 0) return;
             if (editorRef.current) {
-              const isHtml = contentToInject.includes('<br') || contentToInject.includes('<span');
-              editorRef.current.innerHTML = isHtml ? contentToInject : formatAnalysisHtml(contentToInject);
+              const isHtml = content.includes('<br') || content.includes('<span');
+              editorRef.current.innerHTML = isHtml ? content : formatAnalysisHtml(content);
               setLoading(false);
-              return true;
+            } else {
+              setTimeout(() => attemptInjection(content, limit - 1), 50);
             }
-            return false;
           };
 
-          if (!checkAndInject()) {
-            const interval = setInterval(() => {
-              attempts++;
-              if (checkAndInject() || attempts > 50) {
-                clearInterval(interval);
-                setLoading(false);
-              }
-            }, 50);
-            return () => clearInterval(interval);
-          }
+          attemptInjection(contentToInject, 40); // 2 segundos de reintentos
 
         } catch (error) {
           if (isMounted) {
@@ -262,6 +253,7 @@ ${language === 'es' ? 'Notas adicionales' : 'Additional notes'}:
   };
 
   const translateLocation = (loc: string) => {
+    // 1. Mapeo explícito para casos complejos
     const locMap: { [key: string]: string } = {
       'Ponto': 'pontus', 'Pontus': 'pontus',
       'Galacia': 'galatia', 'Galatia': 'galatia',
@@ -269,10 +261,23 @@ ${language === 'es' ? 'Notas adicionales' : 'Additional notes'}:
       'Asia': 'asia', 'Asia menor': 'asia_minor', 'Asia Minor': 'asia_minor',
       'Bitinia': 'bithynia', 'Bithynia': 'bithynia',
       'Roma': 'rome', 'Rome': 'rome',
-      'Jerusalén': 'jerusalem', 'Jerusalem': 'jerusalem'
+      'Jerusalén': 'jerusalem', 'Jerusalem': 'jerusalem',
+      'Nazaret': 'nazareth', 'Nazareth': 'nazareth',
+      'Belén': 'bethlehem', 'Bethlehem': 'bethlehem',
+      'Antioquía': 'antioch', 'Antioch': 'antioch',
+      'Corinto': 'corinth', 'Corinth': 'corinth',
+      'Éfeso': 'ephesus', 'Ephesus': 'ephesus'
     };
-    const englishName = locMap[loc] || loc;
-    return englishName.toLowerCase().trim().replace(/\s+/g, '_');
+
+    const cleanName = locMap[loc] || loc;
+
+    // 2. Limpieza de acentos para los que no están en el mapa
+    return cleanName
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '_');
   };
 
   if (loading) return (
