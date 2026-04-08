@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;family=Inter:wght@600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface": "#e2dfff",
+                        "surface-dim": "#111127",
+                        "on-primary-fixed-variant": "#00429b",
+                        "on-primary-fixed": "#001945",
+                        "error": "#ffb4ab",
+                        "secondary-container": "#362fb8",
+                        "background": "#111127",
+                        "surface-variant": "#33324b",
+                        "inverse-primary": "#0058ca",
+                        "on-error": "#690005",
+                        "surface": "#111127",
+                        "on-secondary": "#1c04a3",
+                        "secondary-fixed": "#e2dfff",
+                        "on-primary": "#002d6e",
+                        "tertiary-fixed": "#e2e2e2",
+                        "outline": "#8c90a0",
+                        "secondary-fixed-dim": "#c2c1ff",
+                        "tertiary": "#c6c6c6",
+                        "surface-container-high": "#28283f",
+                        "error-container": "#93000a",
+                        "outline-variant": "#424655",
+                        "inverse-on-surface": "#2e2e46",
+                        "on-primary-container": "#002661",
+                        "on-secondary-fixed": "#0d006a",
+                        "primary-container": "#558dff",
+                        "on-tertiary-container": "#282a2a",
+                        "secondary": "#c2c1ff",
+                        "primary": "#b0c6ff",
+                        "tertiary-container": "#909191",
+                        "inverse-surface": "#e2dfff",
+                        "on-secondary-container": "#aeadff",
+                        "surface-bright": "#37374f",
+                        "surface-tint": "#b0c6ff",
+                        "surface-container": "#1d1d34",
+                        "on-tertiary": "#2f3131"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Noto Serif"],
+                        "body": ["Plus Jakarta Sans"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .celestial-glow {
+            background: radial-gradient(circle at center, rgba(176, 198, 255, 0.05) 0%, transparent 70%);
+        }
+        .glass-card {
+            background: rgba(29, 29, 52, 0.7);
+            backdrop-filter: blur(24px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body min-h-screen selection:bg-primary-container selection:text-white">
+<!-- Side Navigation Shell -->
+<aside class="h-screen w-72 flex-col fixed left-0 top-0 bg-[#191930] dark:bg-[#191930] shadow-2xl flex flex-col py-8 px-4 space-y-6 z-50 overflow-hidden">
+<div class="flex items-center space-x-4 px-2 mb-8">
+<div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-secondary-container flex items-center justify-center shadow-lg">
+<span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">auto_stories</span>
+</div>
+<div>
+<h1 class="text-xl font-serif text-[#b0c6ff] leading-none">The Pulpit</h1>
+<p class="text-[10px] uppercase tracking-[0.2em] text-[#c2c1ff]/50 mt-1">Inspired Preparation</p>
+</div>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center px-4 py-3 bg-gradient-to-r from-[#b0c6ff]/10 to-transparent text-[#b0c6ff] border-r-2 border-[#b0c6ff] transition-all duration-300 ease-out group" href="#">
+<span class="material-symbols-outlined mr-3 text-xl" style="font-variation-settings: 'FILL' 1;">book_2</span>
+<span class="font-sans text-sm tracking-wide">Library</span>
+</a>
+<a class="flex items-center px-4 py-3 text-[#c2c1ff]/50 hover:bg-[#b0c6ff]/5 hover:text-[#b0c6ff] transition-all duration-300 ease-out group" href="#">
+<span class="material-symbols-outlined mr-3 text-xl">edit_note</span>
+<span class="font-sans text-sm tracking-wide">Sermon Prep</span>
+</a>
+<a class="flex items-center px-4 py-3 text-[#c2c1ff]/50 hover:bg-[#b0c6ff]/5 hover:text-[#b0c6ff] transition-all duration-300 ease-out group" href="#">
+<span class="material-symbols-outlined mr-3 text-xl">menu_book</span>
+<span class="font-sans text-sm tracking-wide">Theology</span>
+</a>
+<a class="flex items-center px-4 py-3 text-[#c2c1ff]/50 hover:bg-[#b0c6ff]/5 hover:text-[#b0c6ff] transition-all duration-300 ease-out group" href="#">
+<span class="material-symbols-outlined mr-3 text-xl">inventory_2</span>
+<span class="font-sans text-sm tracking-wide">Archives</span>
+</a>
+<a class="flex items-center px-4 py-3 text-[#c2c1ff]/50 hover:bg-[#b0c6ff]/5 hover:text-[#b0c6ff] transition-all duration-300 ease-out group" href="#">
+<span class="material-symbols-outlined mr-3 text-xl">settings</span>
+<span class="font-sans text-sm tracking-wide">Settings</span>
+</a>
+</nav>
+<div class="mt-auto px-2">
+<button class="w-full py-4 rounded-xl bg-gradient-to-br from-primary to-primary-container text-on-primary-container font-semibold flex items-center justify-center gap-2 hover:shadow-[0_0_20px_rgba(176,198,255,0.3)] transition-all active:scale-95">
+<span class="material-symbols-outlined">add</span>
+<span>New Study</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-72 min-h-screen relative overflow-hidden">
+<!-- Celestial Orbit Backgrounds -->
+<div class="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] celestial-glow rounded-full pointer-events-none"></div>
+<div class="absolute bottom-[-5%] left-[-5%] w-[400px] h-[400px] celestial-glow rounded-full pointer-events-none"></div>
+<!-- Top Header Bar -->
+<header class="flex justify-between items-center px-12 h-24 sticky top-0 z-40 backdrop-blur-md bg-background/60">
+<div>
+<h2 class="font-headline text-3xl font-bold text-on-surface tracking-tight">Estudios Exegéticos</h2>
+<p class="font-body text-sm text-on-surface-variant opacity-70">Gestionando la Sabiduría Divina</p>
+</div>
+<div class="flex items-center gap-6">
+<!-- Search Component -->
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">search</span>
+<input class="bg-surface-container-high border-none rounded-full pl-12 pr-6 py-3 w-80 text-sm focus:ring-2 focus:ring-primary/30 transition-all placeholder:text-outline-variant" placeholder="Buscar pasajes o temas..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-surface-container-highest border border-outline-variant/10 flex items-center justify-center overflow-hidden">
+<img alt="Profile" class="w-full h-full object-cover" data-alt="close-up portrait of a thoughtful mature man with short graying hair in a professional setting with soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHD4dtPWet4jlmJngmO8y5R4iW-s1XgzS--jtKGnETjwx1mlEU4ppJgMZdpAy3W5oTPn3JfNBlM9UuxTkJkTO4blUC58OufCaLD6HAxRwXryi4HPiT0jzrYDeELDVbHrORpbicuCNNXsw-NPh7qVqXOLsMqmyTVjUIgukON3hsqzYNcvpd-aNmZSf1jvSQ1pFvkQ1DQdcUi64bhY7eu1UDyWzurmYyHhoLXt39z87eDHxdo3eztfOilWccoCSIqA1OcE5BZGRAjAk"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Dashboard Content -->
+<div class="px-12 pb-20">
+<!-- Stats Grid -->
+<div class="grid grid-cols-4 gap-6 mb-12">
+<div class="glass-card p-6 rounded-2xl border-l-4 border-primary">
+<p class="text-xs font-label uppercase tracking-widest text-on-surface-variant mb-2">Total Estudios</p>
+<div class="flex items-end justify-between">
+<span class="text-3xl font-serif font-bold text-primary">124</span>
+<span class="material-symbols-outlined text-primary/30 text-4xl">history_edu</span>
+</div>
+</div>
+<div class="glass-card p-6 rounded-2xl border-l-4 border-secondary">
+<p class="text-xs font-label uppercase tracking-widest text-on-surface-variant mb-2">Este Mes</p>
+<div class="flex items-end justify-between">
+<span class="text-3xl font-serif font-bold text-secondary">12</span>
+<span class="material-symbols-outlined text-secondary/30 text-4xl">calendar_month</span>
+</div>
+</div>
+<div class="glass-card p-6 rounded-2xl border-l-4 border-tertiary">
+<p class="text-xs font-label uppercase tracking-widest text-on-surface-variant mb-2">Borradores</p>
+<div class="flex items-end justify-between">
+<span class="text-3xl font-serif font-bold text-tertiary">5</span>
+<span class="material-symbols-outlined text-tertiary/30 text-4xl">draw</span>
+</div>
+</div>
+<div class="glass-card p-6 rounded-2xl border-l-4 border-on-primary-fixed-variant">
+<p class="text-xs font-label uppercase tracking-widest text-on-surface-variant mb-2">Archivados</p>
+<div class="flex items-end justify-between">
+<span class="text-3xl font-serif font-bold text-on-primary-fixed-variant">87</span>
+<span class="material-symbols-outlined text-on-primary-fixed-variant/30 text-4xl">archive</span>
+</div>
+</div>
+</div>
+<!-- Library Bento Grid -->
+<div class="grid grid-cols-1 gap-6">
+<!-- Header row for the list view alternative -->
+<div class="flex items-center px-8 py-3 text-xs font-label uppercase tracking-[0.2em] text-on-surface-variant/60">
+<div class="w-[35%]">Referencia Bíblica</div>
+<div class="w-[20%]">Última Edición</div>
+<div class="w-[25%]">Etiquetas de Estudio</div>
+<div class="w-[20%] text-right">Acciones</div>
+</div>
+<!-- Study Item 1 -->
+<div class="glass-card group hover:bg-surface-container-high transition-all duration-500 rounded-3xl p-8 flex items-center justify-between shadow-lg relative overflow-hidden">
+<div class="absolute left-0 top-0 w-1 h-full bg-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="w-[35%] flex items-center gap-6">
+<div class="w-16 h-16 rounded-2xl bg-surface-container-highest flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">menu_book</span>
+</div>
+<div>
+<h3 class="font-headline text-xl font-semibold text-on-surface">Lucas 2:3</h3>
+<p class="text-sm text-on-surface-variant/70 italic mt-1">"Y todos iban a inscribirse, cada uno a su ciudad."</p>
+</div>
+</div>
+<div class="w-[20%]">
+<div class="flex flex-col">
+<span class="font-body text-on-surface">Octubre 24, 2023</span>
+<span class="text-xs text-on-surface-variant/50">14:45 PM</span>
+</div>
+</div>
+<div class="w-[25%] flex gap-2 flex-wrap">
+<span class="px-3 py-1 rounded-full bg-secondary-container/30 text-on-secondary-container text-[10px] font-label uppercase tracking-wider">Providencia</span>
+<span class="px-3 py-1 rounded-full bg-surface-container-highest text-on-surface-variant text-[10px] font-label uppercase tracking-wider">Histórico</span>
+</div>
+<div class="w-[20%] flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+<button class="p-3 rounded-xl bg-surface-container-highest text-primary hover:bg-primary hover:text-on-primary transition-all">
+<span class="material-symbols-outlined">edit</span>
+</button>
+<button class="p-3 rounded-xl bg-surface-container-highest text-error hover:bg-error hover:text-on-error transition-all">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+<!-- Study Item 2 -->
+<div class="glass-card group hover:bg-surface-container-high transition-all duration-500 rounded-3xl p-8 flex items-center justify-between shadow-lg relative overflow-hidden">
+<div class="absolute left-0 top-0 w-1 h-full bg-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="w-[35%] flex items-center gap-6">
+<div class="w-16 h-16 rounded-2xl bg-surface-container-highest flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">auto_stories</span>
+</div>
+<div>
+<h3 class="font-headline text-xl font-semibold text-on-surface">Romanos 8:28</h3>
+<p class="text-sm text-on-surface-variant/70 italic mt-1">"Y sabemos que a los que aman a Dios, todas las cosas les ayudan a bien..."</p>
+</div>
+</div>
+<div class="w-[20%]">
+<div class="flex flex-col">
+<span class="font-body text-on-surface">Octubre 18, 2023</span>
+<span class="text-xs text-on-surface-variant/50">09:12 AM</span>
+</div>
+</div>
+<div class="w-[25%] flex gap-2 flex-wrap">
+<span class="px-3 py-1 rounded-full bg-secondary-container/30 text-on-secondary-container text-[10px] font-label uppercase tracking-wider">Soberanía</span>
+<span class="px-3 py-1 rounded-full bg-surface-container-highest text-on-surface-variant text-[10px] font-label uppercase tracking-wider">Consolación</span>
+</div>
+<div class="w-[20%] flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+<button class="p-3 rounded-xl bg-surface-container-highest text-primary hover:bg-primary hover:text-on-primary transition-all">
+<span class="material-symbols-outlined">edit</span>
+</button>
+<button class="p-3 rounded-xl bg-surface-container-highest text-error hover:bg-error hover:text-on-error transition-all">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+<!-- Study Item 3 -->
+<div class="glass-card group hover:bg-surface-container-high transition-all duration-500 rounded-3xl p-8 flex items-center justify-between shadow-lg relative overflow-hidden">
+<div class="absolute left-0 top-0 w-1 h-full bg-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="w-[35%] flex items-center gap-6">
+<div class="w-16 h-16 rounded-2xl bg-surface-container-highest flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">menu_book</span>
+</div>
+<div>
+<h3 class="font-headline text-xl font-semibold text-on-surface">Salmo 23</h3>
+<p class="text-sm text-on-surface-variant/70 italic mt-1">"Jehová es mi pastor; nada me faltará."</p>
+</div>
+</div>
+<div class="w-[20%]">
+<div class="flex flex-col">
+<span class="font-body text-on-surface">Septiembre 30, 2023</span>
+<span class="text-xs text-on-surface-variant/50">21:30 PM</span>
+</div>
+</div>
+<div class="w-[25%] flex gap-2 flex-wrap">
+<span class="px-3 py-1 rounded-full bg-secondary-container/30 text-on-secondary-container text-[10px] font-label uppercase tracking-wider">Devocional</span>
+</div>
+<div class="w-[20%] flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+<button class="p-3 rounded-xl bg-surface-container-highest text-primary hover:bg-primary hover:text-on-primary transition-all">
+<span class="material-symbols-outlined">edit</span>
+</button>
+<button class="p-3 rounded-xl bg-surface-container-highest text-error hover:bg-error hover:text-on-error transition-all">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+<!-- Study Item 4 (Locked/Archive Style) -->
+<div class="glass-card group hover:bg-surface-container-high transition-all duration-500 rounded-3xl p-8 flex items-center justify-between shadow-lg relative overflow-hidden opacity-60 grayscale hover:grayscale-0 hover:opacity-100">
+<div class="absolute left-0 top-0 w-1 h-full bg-outline opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="w-[35%] flex items-center gap-6">
+<div class="w-16 h-16 rounded-2xl bg-surface-container-highest flex items-center justify-center text-outline group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-3xl">history</span>
+</div>
+<div>
+<h3 class="font-headline text-xl font-semibold text-on-surface">Hebreos 11:1</h3>
+<p class="text-sm text-on-surface-variant/70 italic mt-1">"Es, pues, la fe la certeza de lo que se espera..."</p>
+</div>
+</div>
+<div class="w-[20%]">
+<div class="flex flex-col">
+<span class="font-body text-on-surface">Agosto 05, 2023</span>
+<span class="text-xs text-on-surface-variant/50">12:00 PM</span>
+</div>
+</div>
+<div class="w-[25%] flex gap-2 flex-wrap">
+<span class="px-3 py-1 rounded-full bg-surface-container-highest text-on-surface-variant text-[10px] font-label uppercase tracking-wider">Fe</span>
+<span class="px-3 py-1 rounded-full bg-surface-container-highest text-on-surface-variant text-[10px] font-label uppercase tracking-wider">Archivado</span>
+</div>
+<div class="w-[20%] flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+<button class="p-3 rounded-xl bg-surface-container-highest text-primary hover:bg-primary hover:text-on-primary transition-all">
+<span class="material-symbols-outlined">restore</span>
+</button>
+<button class="p-3 rounded-xl bg-surface-container-highest text-error hover:bg-error hover:text-on-error transition-all">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Study Ribbon / Bottom Pagination -->
+<div class="mt-12 flex justify-center">
+<div class="glass-card py-3 px-6 rounded-full flex items-center gap-4 border border-outline-variant/10 shadow-xl">
+<button class="w-8 h-8 rounded-full hover:bg-white/5 flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</button>
+<div class="flex gap-2">
+<button class="w-8 h-8 rounded-full bg-primary text-on-primary text-xs font-bold">1</button>
+<button class="w-8 h-8 rounded-full hover:bg-white/5 text-xs font-medium">2</button>
+<button class="w-8 h-8 rounded-full hover:bg-white/5 text-xs font-medium">3</button>
+<span class="w-8 h-8 flex items-center justify-center text-xs opacity-50">...</span>
+<button class="w-8 h-8 rounded-full hover:bg-white/5 text-xs font-medium">12</button>
+</div>
+<button class="w-8 h-8 rounded-full hover:bg-white/5 flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Background Image Accent - Subtle -->
+<div class="absolute bottom-0 right-0 w-[400px] h-[400px] opacity-10 pointer-events-none mix-blend-screen">
+<img alt="Nebula" class="w-full h-full object-cover rounded-tl-[100px]" data-alt="vibrant deep space nebula with swirls of royal blue and purple gas clouds and brilliant distant stars in high resolution" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJWsl7BwpEf_hzrJEaVwmabdF8r2xl90XaMbYTlaZQaeqpPOv74RflzmMWmpMVPOU7OZfM3jP8dLrSEZEs9idiDz43XJrkK562XGpT09_ALoeh7RlgXcn1HM85MaYyt-OSP5wMfPFT6_yt1LM4KqF8SFAhSZDBu_z77uGTQsnLNl2tYWP7mk4N24-zXy2uz627LZox_2jQCIxZBehPmSxTuAGAjtIchjbDxkbWKVnFrmG9whou7blTTUGFa7QVbxSA885AZ5MhqfY"/>
+</div>
+</main>
+<!-- Floating Action Button (FAB) Suppression on Dashboard typically, but provided as a fixed study trigger if needed -->
+<!-- Not rendered per instructions to suppress on Details/Transactional, but keeping layout focused -->
+</body></html>

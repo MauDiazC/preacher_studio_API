@@ -1,50 +1,33 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Button from '../../../components/common/Button';
+import { useNavigate, Link } from 'react-router-dom';
 import { sermonService } from '../services/sermonService';
 import type { Sermon } from '../services/sermonService';
-import { useLanguage } from '../../../context/LanguageContext';
 import { useNotificationStore } from '../../../store/useNotificationStore';
+import { useLanguage } from '../../../context/LanguageContext';
 import './SermonList.css';
 
 const SermonList: React.FC = () => {
   const [sermons, setSermons] = useState<Sermon[]>([]);
   const [loading, setLoading] = useState(true);
-  // Cambiado a 'list' por defecto como solicitaste
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
-  
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
+  const [searchTerm, setSearchText] = useState('');
   const limit = 10;
-
+  
   const navigate = useNavigate();
-  const { t } = useLanguage();
   const { addNotification } = useNotificationStore();
+  const { t } = useLanguage();
 
   const fetchSermons = async () => {
-    setLoading(true);
     try {
-      const offset = (page - 1) * limit;
-      const response = await sermonService.getAll(limit, offset);
-      setSermons(response.data);
-      setTotal(response.total);
+      setLoading(true);
+      const data = await sermonService.getAll(page, limit);
+      setSermons(data.items);
+      setTotal(data.total);
     } catch (error) {
-      console.error('Error fetching:', error);
+      addNotification('Error al cargar estudios.', 'error');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleDelete = async (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (window.confirm('¿Eliminar este estudio permanentemente?')) {
-      try {
-        await sermonService.delete(id);
-        addNotification('Estudio eliminado.', 'success');
-        fetchSermons();
-      } catch (error) {
-        addNotification('Error al eliminar.', 'error');
-      }
     }
   };
 
@@ -52,97 +35,243 @@ const SermonList: React.FC = () => {
     fetchSermons();
   }, [page]);
 
-  if (loading && sermons.length === 0) return <div className="loading-screen">{t('list.loading')}</div>;
+  const handleDelete = async (id: string) => {
+    if (!window.confirm('¿Eliminar este estudio permanentemente?')) return;
+    try {
+      await sermonService.delete(id);
+      addNotification('Estudio eliminado.', 'success');
+      fetchSermons();
+    } catch (error) {
+      addNotification('Error al eliminar.', 'error');
+    }
+  };
+
+  const formatDate = (dateStr: string) => {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString(undefined, { day: '2-digit', month: 'long', year: 'numeric' });
+  };
+
+  const formatTime = (dateStr: string) => {
+    const d = new Date(dateStr);
+    return d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+  };
+
+  if (loading && sermons.length === 0) return (
+    <div className="loading-screen" style={{ backgroundColor: '#111127', color: '#b0c6ff' }}>
+      {t('list.loading')}
+    </div>
+  );
 
   const totalPages = Math.ceil(total / limit);
 
   return (
-    <div className="sermon-list-container">
-      <div className="sermon-list-header">
-        <div className="header-info">
-          <h1>{t('list.title')}</h1>
-          <p className="total-count">{total} estudios encontrados</p>
-        </div>
-        
-        <div className="list-actions">
-          <div className="view-toggle">
-            <button 
-              className={viewMode === 'list' ? 'active' : ''} 
-              onClick={() => setViewMode('list')}
-              title="Vista de Lista"
-            >
-              ≡
-            </button>
-            <button 
-              className={viewMode === 'grid' ? 'active' : ''} 
-              onClick={() => setViewMode('grid')}
-              title="Vista de Rejilla"
-            >
-              ⊞
-            </button>
+    <div className="sermon-list-page">
+      {/* Side Navigation */}
+      <aside className="sacred-sidebar">
+        <div className="sidebar-brand">
+          <div className="brand-icon-box">
+            <span className="material-symbols-outlined">auto_stories</span>
           </div>
-          <Button onClick={() => navigate('/sermons/new')}>{t('list.new_btn')}</Button>
+          <div>
+            <h1 className="brand-text-pulpit">The Pulpit</h1>
+            <p className="brand-tagline-sm">Inspired Preparation</p>
+          </div>
         </div>
-      </div>
 
-      <div className={`sermons-content ${viewMode}-view`}>
-        {sermons.length === 0 && !loading && <p className="empty-msg">{t('list.empty')}</p>}
-        
-        {viewMode === 'grid' ? (
-          <div className="sermon-grid">
-            {sermons.map((sermon) => (
-              <div key={sermon.id} className="sermon-card-compact">
-                <div className="card-body">
-                  <h3>{sermon.title}</h3>
-                  <p className="card-date">{new Date(sermon.created_at).toLocaleDateString()}</p>
-                </div>
-                <div className="card-actions-compact">
-                  <button onClick={() => navigate(`/sermons/${sermon.id}`)} className="edit-btn-compact">
-                    {t('list.edit')}
-                  </button>
-                  <button onClick={(e) => handleDelete(sermon.id, e)} className="del-btn-compact">🗑️</button>
-                </div>
-              </div>
-            ))}
+        <nav className="sacred-nav">
+          <Link to="/sermons" className="nav-item active">
+            <span className="material-symbols-outlined nav-icon">book_2</span>
+            <span>{t('nav.library')}</span>
+          </Link>
+          <Link to="/sermons/new" className="nav-item">
+            <span className="material-symbols-outlined nav-icon">edit_note</span>
+            <span>{t('nav.sermon_prep')}</span>
+          </Link>
+          <a href="#" className="nav-item">
+            <span className="material-symbols-outlined nav-icon">menu_book</span>
+            <span>{t('nav.theology')}</span>
+          </a>
+          <a href="#" className="nav-item">
+            <span className="material-symbols-outlined nav-icon">inventory_2</span>
+            <span>{t('nav.archives')}</span>
+          </a>
+          <a href="#" className="nav-item">
+            <span className="material-symbols-outlined nav-icon">settings</span>
+            <span>{t('nav.settings')}</span>
+          </a>
+        </nav>
+
+        <button className="new-study-btn-sidebar" onClick={() => navigate('/sermons/new')}>
+          <span className="material-symbols-outlined">add</span>
+          <span>{t('list.new_study_btn')}</span>
+        </button>
+      </aside>
+
+      {/* Main Content */}
+      <main className="sermon-list-main">
+        {/* Background Accents */}
+        <div className="celestial-bg-list">
+          <div className="list-glow-1"></div>
+          <div className="list-glow-2"></div>
+        </div>
+
+        {/* Top Bar */}
+        <header className="list-top-bar">
+          <div className="top-bar-title">
+            <h2>{t('list.title')}</h2>
+            <p>{t('list.subtitle')}</p>
           </div>
-        ) : (
-          <div className="sermon-table">
-            <div className="table-header">
-              <span>Estudio</span>
-              <span>Fecha</span>
-              <span>Acciones</span>
+
+          <div className="list-search-wrapper">
+            <span className="material-symbols-outlined search-icon-sacred">search</span>
+            <input 
+              className="search-input-sacred"
+              type="text" 
+              placeholder={t('list.search_placeholder')}
+              value={searchTerm}
+              onChange={(e) => setSearchText(e.target.value)}
+            />
+          </div>
+        </header>
+
+        <div className="list-content-padding">
+          {/* Stats Grid */}
+          <div className="sacred-stats-grid">
+            <div className="stat-card-sacred primary">
+              <span className="stat-label">{t('list.total_studies')}</span>
+              <div className="stat-value-row">
+                <span className="stat-number">{total}</span>
+                <span className="material-symbols-outlined stat-icon">history_edu</span>
+              </div>
             </div>
-            {sermons.map((sermon) => (
-              <div key={sermon.id} className="table-row">
-                <span className="sermon-title-cell">{sermon.title}</span>
-                <span className="sermon-date-cell">
-                  {new Date(sermon.created_at).toLocaleDateString()}
-                </span>
-                <div className="table-row-actions">
-                  <button onClick={() => navigate(`/sermons/${sermon.id}`)} className="sermon-edit-btn-small">
-                    {t('list.edit')}
-                  </button>
-                  <button onClick={(e) => handleDelete(sermon.id, e)} className="delete-btn-icon-small">
-                    🗑️
-                  </button>
-                </div>
+            <div className="stat-card-sacred secondary">
+              <span className="stat-label">{t('list.this_month')}</span>
+              <div className="stat-value-row">
+                <span className="stat-number">--</span>
+                <span className="material-symbols-outlined stat-icon">calendar_month</span>
               </div>
-            ))}
+            </div>
+            <div className="stat-card-sacred tertiary">
+              <span className="stat-label">{t('list.drafts')}</span>
+              <div className="stat-value-row">
+                <span className="stat-number">--</span>
+                <span className="material-symbols-outlined stat-icon">draw</span>
+              </div>
+            </div>
+            <div className="stat-card-sacred info">
+              <span className="stat-label">{t('list.archived')}</span>
+              <div className="stat-value-row">
+                <span className="stat-number">--</span>
+                <span className="material-symbols-outlined stat-icon">archive</span>
+              </div>
+            </div>
           </div>
-        )}
-      </div>
 
-      {totalPages > 1 && (
-        <div className="pagination-controls">
-          <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage(page - 1)}>
-            Anterior
-          </Button>
-          <span className="page-info">{page} / {totalPages}</span>
-          <Button variant="outline" size="sm" disabled={page === totalPages} onClick={() => setPage(page + 1)}>
-            Siguiente
-          </Button>
+          {/* Table Header */}
+          <div className="sacred-list-header">
+            <div style={{ width: '35%' }}>{t('list.col_reference')}</div>
+            <div style={{ width: '20%' }}>{t('list.col_last_edit')}</div>
+            <div style={{ width: '25%' }}>{t('list.col_tags')}</div>
+            <div style={{ width: '20%', textAlign: 'right' }}>{t('list.col_actions')}</div>
+          </div>
+
+          {/* List Container */}
+          <div className="sacred-list-container">
+            {sermons.length === 0 ? (
+              <div className="glass-card" style={{ padding: '4rem', textAlign: 'center', color: '#c2c6d7' }}>
+                {t('list.empty')}
+              </div>
+            ) : (
+              sermons.map((sermon) => (
+                <div key={sermon.id} className="study-item-sacred group">
+                  <div className="item-accent-bar"></div>
+                  
+                  <div className="col-info">
+                    <div className="item-icon-box">
+                      <span className="material-symbols-outlined">menu_book</span>
+                    </div>
+                    <div>
+                      <h3 className="item-title-sacred">{sermon.title}</h3>
+                      <p className="item-excerpt">
+                        {sermon.main_passage || 'Preparación ministerial en curso...'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="col-date">
+                    <span className="item-date-text">{formatDate(sermon.updated_at || sermon.created_at)}</span>
+                    <span className="item-time-text">{formatTime(sermon.updated_at || sermon.created_at)}</span>
+                  </div>
+
+                  <div className="col-tags">
+                    <span className="sacred-tag tag-secondary">Estudio</span>
+                    {sermon.key_locations?.slice(0, 1).map((loc, i) => (
+                      <span key={i} className="sacred-tag tag-neutral">{loc}</span>
+                    ))}
+                  </div>
+
+                  <div className="col-actions">
+                    <button 
+                      className="action-btn-sacred btn-edit-sacred"
+                      onClick={() => navigate(`/sermons/${sermon.id}`)}
+                      title={t('list.edit')}
+                    >
+                      <span className="material-symbols-outlined">edit</span>
+                    </button>
+                    <button 
+                      className="action-btn-sacred btn-delete-sacred"
+                      onClick={() => handleDelete(sermon.id)}
+                      title="Eliminar"
+                    >
+                      <span className="material-symbols-outlined">delete</span>
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="sacred-pagination">
+              <div className="pagination-ribbon">
+                <button 
+                  className="page-arrow" 
+                  disabled={page === 1}
+                  onClick={() => setPage(page - 1)}
+                >
+                  <span className="material-symbols-outlined">chevron_left</span>
+                </button>
+                
+                <div className="page-numbers-sacred">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                    <button 
+                      key={p} 
+                      className={`page-num-btn ${page === p ? 'active' : ''}`}
+                      onClick={() => setPage(p)}
+                    >
+                      {p}
+                    </button>
+                  ))}
+                </div>
+
+                <button 
+                  className="page-arrow" 
+                  disabled={page === totalPages}
+                  onClick={() => setPage(page + 1)}
+                >
+                  <span className="material-symbols-outlined">chevron_right</span>
+                </button>
+              </div>
+            </div>
+          )}
         </div>
-      )}
+
+        {/* Decorative Image Accent */}
+        <div className="list-bottom-accent">
+          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJWsl7BwpEf_hzrJEaVwmabdF8r2xl90XaMbYTlaZQaeqpPOv74RflzmMWmpMVPOU7OZfM3jP8dLrSEZEs9idiDz43XJrkK562XGpT09_ALoeh7RlgXcn1HM85MaYyt-OSP5wMfPFT6_yt1LM4KqF8SFAhSZDBu_z77uGTQsnLNl2tYWP7mk4N24-zXy2uz627LZox_2jQCIxZBehPmSxTuAGAjtIchjbDxkbWKVnFrmG9whou7blTTUGFa7QVbxSA885AZ5MhqfY" alt="Nebula" />
+        </div>
+      </main>
     </div>
   );
 };
