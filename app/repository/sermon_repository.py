@@ -17,11 +17,9 @@ class SermonRepository:
         from_date: str | None = None,
         to_date: str | None = None,
     ):
-        # Eliminamos el count="exact" explícito que a veces rompe la generación de JSON en Supabase
-        # si hay columnas con tipos complejos como arrays o JSON
         query = (
             db.table(self.table)
-            .select("*")
+            .select("*", count="exact")
             .eq("user_id", user_id)
         )
 
@@ -40,8 +38,9 @@ class SermonRepository:
             query = query.lte("created_at", to_date)
 
         # Ordenar por updated_at (con fallback a created_at si es null)
+        # Supabase Python usa nulls_first=False para que los nulls vayan al final
         return (
-            query.order("updated_at", desc=True, nullsfirst=False)
+            query.order("updated_at", desc=True, nulls_first=False)
             .range(offset, offset + limit - 1)
             .execute()
         )

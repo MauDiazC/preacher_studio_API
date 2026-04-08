@@ -21,9 +21,13 @@ const SermonList: React.FC = () => {
   const fetchSermons = async () => {
     try {
       setLoading(true);
-      const data = await sermonService.getAll(page, limit);
-      setSermons(data.items);
-      setTotal(data.total);
+      // Calculamos el offset basado en la página actual
+      const currentOffset = (page - 1) * limit;
+      const data = await sermonService.getAll(limit, currentOffset);
+      
+      // El backend devuelve { data: [...], total: X }
+      setSermons(data.data || []);
+      setTotal(data.total || 0);
     } catch (error) {
       addNotification('Error al cargar estudios.', 'error');
     } finally {
