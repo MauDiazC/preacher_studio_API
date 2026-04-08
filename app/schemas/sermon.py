@@ -43,8 +43,10 @@ class SermonBase(BaseModel):
     def sanitize_html(cls, v: Optional[str]) -> Optional[str]:
         if v is None:
             return v
-        # Basic HTML tag removal to prevent simple XSS
-        return re.sub(r"<[^>]*>", "", v).strip()
+        # Ya no eliminamos los tags HTML para permitir el formato del editor (innerHTML)
+        # En una versión futura podríamos usar una librería como nh3 o bleach para sanitizar 
+        # sin eliminar tags básicos (b, i, u, span, br, h1, h2, h3).
+        return v.strip()
 
 
 class SermonCreate(SermonBase):
@@ -73,7 +75,7 @@ class SermonUpdate(BaseModel):
     def sanitize_html(cls, v: Optional[str]) -> Optional[str]:
         if v is None:
             return v
-        return re.sub(r"<[^>]*>", "", v).strip()
+        return v.strip()
 
 
 class SermonRead(SermonBase):

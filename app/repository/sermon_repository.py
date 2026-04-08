@@ -17,14 +17,15 @@ class SermonRepository:
         from_date: str | None = None,
         to_date: str | None = None,
     ):
+        # Eliminamos el count="exact" explícito que a veces rompe la generación de JSON en Supabase
+        # si hay columnas con tipos complejos como arrays o JSON
         query = (
             db.table(self.table)
-            .select("*", count=cast(Any, "exact"))
+            .select("*")
             .eq("user_id", user_id)
         )
 
         if search:
-            # Búsqueda simple en título o pasaje principal
             query = query.or_(
                 f"title.ilike.%{search}%,main_passage.ilike.%{search}%,content.ilike.%{search}%"
             )
@@ -38,8 +39,9 @@ class SermonRepository:
         if to_date:
             query = query.lte("created_at", to_date)
 
+        # Ordenar por updated_at (con fallback a created_at si es null)
         return (
-            query.order("updated_at", desc=True)  # type: ignore
+            query.order("updated_at", desc=True, nullsfirst=False)
             .range(offset, offset + limit - 1)
             .execute()
         )

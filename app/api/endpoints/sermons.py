@@ -49,7 +49,7 @@ async def list_sermons(
     )
 
     return {
-        "total": response.count,
+        "total": response.count if response.count is not None else len(response.data),
         "limit": limit,
         "offset": offset,
         "data": response.data,
