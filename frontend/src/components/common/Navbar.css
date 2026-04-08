@@ -1,142 +1,115 @@
 .navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+  background-color: rgba(17, 17, 39, 0.7);
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid rgba(66, 70, 85, 0.1);
+  transition: all 0.3s ease;
+}
+
+.navbar-content-sacred {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 5%;
-  background: rgba(11, 11, 19, 0.8);
-  backdrop-filter: blur(20px);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  border-bottom: 1px solid var(--border-color);
-  height: 80px;
 }
 
-.navbar-brand {
+.navbar-brand-sacred {
+  font-family: 'Noto Serif', serif;
   font-size: 1.25rem;
-  font-weight: 800;
-  color: var(--text-primary);
+  font-weight: 700;
+  color: #b0c6ff;
+  letter-spacing: -0.025em;
   text-decoration: none;
-  letter-spacing: 0.1em;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
 }
 
-.brand-icon {
-  font-size: 1.5rem;
+.navbar-links-sacred {
+  display: none;
+  align-items: center;
+  gap: 2rem;
 }
 
-.navbar-center {
-  display: flex;
-  gap: var(--spacing-xl);
+@media (min-width: 768px) {
+  .navbar-links-sacred {
+    display: flex;
+  }
 }
 
-.navbar-link {
-  color: var(--text-secondary);
+.navbar-link-sacred {
+  color: #c2c6d7;
+  font-size: 0.875rem;
+  font-weight: 500;
   text-decoration: none;
+  transition: color 0.3s;
+  padding-bottom: 0.25rem;
+}
+
+.navbar-link-sacred:hover {
+  color: #b0c6ff;
+}
+
+.navbar-link-sacred.active {
+  color: #b0c6ff;
+  border-bottom: 2px solid #b0c6ff;
+}
+
+.navbar-actions-sacred {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.lang-icon-sacred {
+  color: #b0c6ff;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.lang-icon-sacred:hover {
+  background-color: rgba(176, 198, 255, 0.1);
+}
+
+.btn-login-sacred {
+  color: #c2c6d7;
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.btn-login-sacred:hover {
+  color: #b0c6ff;
+}
+
+.btn-try-sacred {
+  background-color: #b0c6ff;
+  color: #002661;
   font-weight: 600;
-  font-size: 0.95rem;
-  transition: var(--transition-fast);
-}
-
-.navbar-link:hover {
-  color: var(--accent-purple);
-}
-
-.navbar-right {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-lg);
-}
-
-.lang-toggle {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
-  padding: 0.4rem 0.8rem;
-  border-radius: 8px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: var(--transition-fast);
-}
-
-.lang-toggle:hover {
-  border-color: var(--accent-purple);
-  background: rgba(125, 92, 255, 0.1);
-}
-
-.user-badge {
-  background: rgba(125, 92, 255, 0.1);
-  color: var(--accent-purple);
-  padding: 0.2rem 0.6rem;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  font-weight: 700;
-}
-
-.logout-btn {
-  background: none;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.5rem;
   border: none;
   cursor: pointer;
+  transition: all 0.3s;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
-.user-info-pill {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  background: rgba(255, 255, 255, 0.05);
-  padding: 0.4rem 1rem;
-  border-radius: 100px;
-  border: 1px solid var(--border-color);
+.btn-try-sacred:hover {
+  box-shadow: 0 0 15px rgba(176, 198, 255, 0.4);
+  transform: translateY(-1px);
 }
 
-.credits-indicator {
-  font-weight: 800;
-  color: #b0c6ff;
-  font-size: 0.9rem;
-}
-
-.v-divider {
-  width: 1px;
-  height: 20px;
-  background: var(--border-color);
-}
-
-.logout-text-btn {
-  background: none;
-  border: none;
-  font-size: 0.8rem;
-  font-weight: 800;
-  color: #b0c6ff;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  transition: opacity 0.2s;
-  letter-spacing: 0.05em;
-}
-
-.logout-text-btn:hover {
-  opacity: 0.8;
-}
-
-@media (max-width: 768px) {
-  .navbar {
-    padding: 0 4%;
-    height: 70px;
-  }
-  .navbar-center {
-    display: none; /* Ocultamos links centrales en móvil */
-  }
-  .navbar-brand {
-    font-size: 1rem;
-  }
-  .lang-toggle {
-    padding: 0.3rem 0.5rem;
-    font-size: 0.75rem;
-  }
-  .navbar-right {
-    gap: 0.5rem;
-  }
+.btn-try-sacred:active {
+  transform: translateY(0);
 }
