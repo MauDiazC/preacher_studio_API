@@ -114,7 +114,7 @@ class AISermonService:
             "significance_context": "...",
             "version_rv1960": "KJV text here if English, RVR1960 if Spanish",
             "version_nvi": "NIV text here if English, NVI if Spanish",
-            "original_languages": "...",
+            "original_languages": "Análisis léxico-profesional. Para las 3 palabras más importantes del pasaje, incluye: 1) Palabra en original (Hebreo/Griego), 2) Transliteración, 3) Número de Strong, 4) Definición detallada basada en el Léxico de Thayer (si es NT) o Brown-Driver-Briggs (si es AT). Proporciona esto como una cadena de texto académica y estructurada.",
             "source_attribution": "...",
             "key_locations": ["..."]
         }}
