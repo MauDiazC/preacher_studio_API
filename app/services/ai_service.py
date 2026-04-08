@@ -112,7 +112,7 @@ class AISermonService:
             "purpose": "El propósito teológico y pastoral original del pasaje.",
             "historical_context": "Contexto sociocultural, político y geográfico detallado de la época.",
             "significance_context": "Significancia teológica profunda y alusiones culturales o religiosas.",
-            {bible_versions}
+            {bible_instruction}
             "original_languages": "Análisis léxico-profesional. Para las 3 palabras más importantes del pasaje, incluye: 1) Palabra en original (Hebreo/Griego), 2) Transliteración, 3) Número de Strong, 4) Definición detallada basada en el Léxico de Thayer (si es NT) o Brown-Driver-Briggs (si es AT). Proporciona esto como una cadena de texto académica y estructurada.",
             "source_attribution": "Indica de qué comentarios académicos clásicos y contemporáneos (ej. Matthew Henry, Barclay, Kittel) proviene este análisis.",
             "key_locations": ["Lista de strings con los nombres de ciudades o regiones geográficas mencionadas en el pasaje o su contexto inmediato. (Usa nombres en ESPAÑOL si el idioma es ES, o en INGLÉS si el idioma es EN)"]
