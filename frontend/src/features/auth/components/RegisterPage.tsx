@@ -198,7 +198,6 @@ const RegisterPage: React.FC = () => {
             </button>
           </form>
 
-          {/* Footer Link */}
           <div className="reg-footer-divider">
             <p className="reg-footer-text">
               {t('auth.have_account')} 
