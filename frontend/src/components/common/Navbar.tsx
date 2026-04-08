@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { useLanguage } from '../../context/LanguageContext';
 import Button from './Button';
@@ -9,6 +9,12 @@ const Navbar: React.FC = () => {
   const { isAuthenticated, logout, user } = useAuthStore();
   const { language, toggleLanguage, t } = useLanguage();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Ocultar Navbar en las rutas internas de la aplicación que ya tienen Sidebar
+  if (location.pathname.startsWith('/sermons')) {
+    return null;
+  }
 
   // Mockup de créditos para el admin
   const isAdmin = user?.email === 'mdiazcabr@gmail.com';
