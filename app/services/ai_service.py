@@ -92,9 +92,9 @@ class AISermonService:
         
         # Ajuste dinámico de versiones según idioma
         if language == "es":
-            bible_instruction = "version_rv1960 debe ser Reina Valera 1960, version_nvi debe ser Nueva Versión Internacional."
+            bible_instruction = "version_rv1960: Reina Valera 1960, version_nvi: Nueva Versión Internacional."
         else:
-            bible_instruction = "version_rv1960 MUST BE King James Version (KJV), version_nvi MUST BE New International Version (NIV). DO NOT USE SPANISH VERSIONS."
+            bible_instruction = "version_rv1960: King James Version (KJV), version_nvi: New International Version (NIV). DO NOT change the JSON keys, only the content."
 
         user_prompt = f"""
         Realiza un análisis exegético profundo y académico del siguiente pasaje bíblico: "{verse_reference}"
@@ -105,17 +105,18 @@ class AISermonService:
         
         Tu análisis debe ser exhaustivo y teológicamente sólido.
         
-        Debes devolver UNICAMENTE un objeto JSON con la siguiente estructura exacta:
+        Debes devolver UNICAMENTE un objeto JSON con la siguiente estructura exacta (MANTÉN ESTAS LLAVES SIEMPRE):
         {{
-            "literary_type": "Análisis detallado del género literario y su impacto en la interpretación.",
-            "author": "Información histórica y académica sobre la autoría.",
-            "purpose": "El propósito teológico y pastoral original del pasaje.",
-            "historical_context": "Contexto sociocultural, político y geográfico detallado de la época.",
-            "significance_context": "Significancia teológica profunda y alusiones culturales o religiosas.",
-            {bible_instruction}
-            "original_languages": "Análisis léxico-profesional. Para las 3 palabras más importantes del pasaje, incluye: 1) Palabra en original (Hebreo/Griego), 2) Transliteración, 3) Número de Strong, 4) Definición detallada basada en el Léxico de Thayer (si es NT) o Brown-Driver-Briggs (si es AT). Proporciona esto como una cadena de texto académica y estructurada.",
-            "source_attribution": "Indica de qué comentarios académicos clásicos y contemporáneos (ej. Matthew Henry, Barclay, Kittel) proviene este análisis.",
-            "key_locations": ["Lista de strings con los nombres de ciudades o regiones geográficas mencionadas en el pasaje o su contexto inmediato. (Usa nombres en ESPAÑOL si el idioma es ES, o en INGLÉS si el idioma es EN)"]
+            "literary_type": "Análisis detallado...",
+            "author": "Información histórica...",
+            "purpose": "El propósito...",
+            "historical_context": "Contexto sociocultural...",
+            "significance_context": "Significancia teológica...",
+            "version_rv1960": "El texto exacto en versión RVR1960 (o KJV si es EN)",
+            "version_nvi": "El texto exacto en versión NVI (o NIV si es EN)",
+            "original_languages": "Análisis léxico...",
+            "source_attribution": "Indica las fuentes...",
+            "key_locations": ["Lista de lugares..."]
         }}
         """
 
@@ -123,6 +124,7 @@ class AISermonService:
         if self.gemini_client:
             try:
                 logger.info(f"Iniciando análisis con Gemini para: {verse_reference} ({language})")
+                # Cambio: Usar solo el nombre del modelo sin prefijo 'models/' si falla
                 response = self.gemini_client.models.generate_content(
                     model=self.gemini_model,
                     contents=user_prompt,

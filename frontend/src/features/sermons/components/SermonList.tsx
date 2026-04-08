@@ -52,7 +52,7 @@ const SermonList: React.FC = () => {
     fetchSermons();
   }, [page]);
 
-  if (loading && sermons.length === 0) return <div className="loading-screen">Cargando estudios...</div>;
+  if (loading && sermons.length === 0) return <div className="loading-screen">{t('list.loading')}</div>;
 
   const totalPages = Math.ceil(total / limit);
 

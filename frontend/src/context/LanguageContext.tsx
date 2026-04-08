@@ -83,6 +83,7 @@ const translations = {
     'list.new_btn': 'Nuevo Análisis',
     'list.empty': 'No tienes estudios guardados aún.',
     'list.edit': 'EDITAR',
+    'list.loading': 'Cargando estudios...',
     // Landing New
     'hero.title_new': 'Potencia tu Mensaje, Simplifica tu Ministerio',
     'hero.description_new': 'La herramienta definitiva para preparar sermones inspiradores y organizar tu estudio bíblico en un solo lugar. Sin distracciones, solo enfoque.',
@@ -194,6 +195,7 @@ const translations = {
     'list.new_btn': 'New Analysis',
     'list.empty': 'You have no saved studies yet.',
     'list.edit': 'EDIT',
+    'list.loading': 'Loading studies...',
     // Landing New
     'hero.title_new': 'Empower your Message, Simplify your Ministry',
     'hero.description_new': 'The ultimate tool for preparing inspiring sermons and organizing your Bible study in one place. No distractions, just focus.',

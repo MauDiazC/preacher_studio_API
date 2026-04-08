@@ -17,9 +17,11 @@ const SermonEditor: React.FC = () => {
   
   const [verse, setVerse] = useState('');
   const [loading, setLoading] = useState(id && id !== 'new' ? true : false);
+  const [dataLoaded, setDataLoaded] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [currentLocations, setCurrentLocations] = useState<string[]>([]);
+  const [initialContent, setInitialContent] = useState<string | null>(null);
   const editorRef = useRef<HTMLDivElement>(null);
   const autoSaveTimerRef = useRef<any>(null);
 
@@ -43,6 +45,7 @@ const SermonEditor: React.FC = () => {
     return html.replace(/\n/g, '<br/>');
   };
 
+  // Carga inicial de datos
   useEffect(() => {
     let isMounted = true;
     const fetchSermon = async () => {
@@ -53,23 +56,9 @@ const SermonEditor: React.FC = () => {
           
           setVerse(data.title || '');
           setCurrentLocations(data.key_locations || []);
-          
-          const contentToInject = data.content || '';
-          
-          // Inyección forzada con reintentos para contentEditable
-          const attemptInjection = (content: string, limit: number) => {
-            if (limit <= 0) return;
-            if (editorRef.current) {
-              const isHtml = content.includes('<br') || content.includes('<span');
-              editorRef.current.innerHTML = isHtml ? content : formatAnalysisHtml(content);
-              setLoading(false);
-            } else {
-              setTimeout(() => attemptInjection(content, limit - 1), 50);
-            }
-          };
-
-          attemptInjection(contentToInject, 40); // 2 segundos de reintentos
-
+          setInitialContent(data.content || '');
+          setDataLoaded(true);
+          setLoading(false);
         } catch (error) {
           if (isMounted) {
             addNotification('Error al cargar.', 'error');
@@ -77,6 +66,7 @@ const SermonEditor: React.FC = () => {
           }
         }
       } else {
+        setDataLoaded(true);
         setLoading(false);
       }
     };
@@ -84,12 +74,19 @@ const SermonEditor: React.FC = () => {
     return () => { isMounted = false; };
   }, [id]);
 
+  // Inyección de contenido cuando el Ref y los Datos estén listos
+  useEffect(() => {
+    if (dataLoaded && editorRef.current && initialContent !== null) {
+      const isHtml = initialContent.includes('<br') || initialContent.includes('<span');
+      editorRef.current.innerHTML = isHtml ? initialContent : formatAnalysisHtml(initialContent);
+    }
+  }, [dataLoaded, initialContent]);
+
   const validatePassage = (input: string) => {
     let cleanInput = input.trim().replace(/\./g, ' ').replace(/\s+/g, ' ');
-    // Soporta formatos internacionales (1 John, 1 Juan)
     const bibleRegex = /^(\d\s)?([a-zA-ZáéíóúÁÉÍÓÚñÑ]+)\s*(\d+)([:\s]*\d*)$/;
     const match = cleanInput.match(bibleRegex);
-    if (!match) return cleanInput; // Si no encaja, devolvemos tal cual
+    if (!match) return cleanInput;
 
     const [_, num, book, chapter, versePart] = match;
     const formattedBook = book.charAt(0).toUpperCase() + book.slice(1).toLowerCase();
@@ -145,7 +142,6 @@ const SermonEditor: React.FC = () => {
     setVerse(validatedVerse);
     setAnalyzing(true);
     try {
-      // Pasamos el idioma actual al servicio de IA
       const data = await aiService.analyzeVerse(validatedVerse, language);
       const locs = data.key_locations || [];
       setCurrentLocations(locs);
@@ -154,7 +150,6 @@ const SermonEditor: React.FC = () => {
       const version1Name = language === 'es' ? 'VERSIÓN RVR1960' : 'VERSION KJV';
       const version2Name = language === 'es' ? 'VERSIÓN NVI' : 'VERSION NIV';
       
-      // Mapeo dinámico de etiquetas según idioma
       const labels = language === 'es' ? [
         '1. TIPO LITERARIO', '2. AUTORÍA', '3. PROPÓSITO ORIGINAL', 
         '4. CONTEXTO HISTÓRICO', '5. CONTEXTO DE SIGNIFICANCIA', 
@@ -232,11 +227,9 @@ ${language === 'es' ? 'Notas adicionales' : 'Additional notes'}:
 
   const getResourceLinks = (verseRef: string) => {
     const bookMap: { [key: string]: string } = {
-      // ES
       'Génesis': 'genesis', 'Éxodo': 'exodus', 'Levítico': 'leviticus', 'Números': 'numbers', 'Deuteronomio': 'deuteronomy',
       'Mateo': 'matthew', 'Marcos': 'mark', 'Lucas': 'lucas', 'Juan': 'john', 'Hechos': 'acts', 'Romanos': 'romans',
       'Apocalipsis': 'revelation', 'Gálatas': 'galatians', 'Efesios': 'ephesians', 'Filipenses': 'philippians', 'Colosenses': 'colossians',
-      // EN Fallback (o si ya vienen en inglés)
       'Genesis': 'genesis', 'Exodus': 'exodus', 'Matthew': 'matthew', 'Mark': 'mark', 'Luke': 'lucas', 'John': 'john', 'Acts': 'acts', 'Romans': 'romans'
     };
     
@@ -253,7 +246,6 @@ ${language === 'es' ? 'Notas adicionales' : 'Additional notes'}:
   };
 
   const translateLocation = (loc: string) => {
-    // 1. Mapeo explícito para casos complejos
     const locMap: { [key: string]: string } = {
       'Ponto': 'pontus', 'Pontus': 'pontus',
       'Galacia': 'galatia', 'Galatia': 'galatia',
@@ -270,8 +262,6 @@ ${language === 'es' ? 'Notas adicionales' : 'Additional notes'}:
     };
 
     const cleanName = locMap[loc] || loc;
-
-    // 2. Limpieza de acentos para los que no están en el mapa
     return cleanName
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
