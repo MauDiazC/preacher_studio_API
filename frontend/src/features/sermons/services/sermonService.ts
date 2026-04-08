@@ -3,6 +3,7 @@ import api from '../../../services/api';
 export interface Sermon {
   id: string;
   title: string;
+  main_passage?: string;
   description?: string;
   content: string;
   pastor_name?: string;
