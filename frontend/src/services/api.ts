@@ -39,6 +39,10 @@ api.interceptors.response.use(
     });
     if (error.response?.status === 401) {
       useAuthStore.getState().logout();
+      // Forzar redirección al login si el token expira
+      if (!window.location.pathname.includes('/login')) {
+        window.location.href = '/login?expired=true';
+      }
     }
     return Promise.reject(error);
   }
