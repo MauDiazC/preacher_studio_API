@@ -27,11 +27,7 @@ class SermonBase(BaseModel):
             "En este sermón exploramos la importancia de un corazón receptivo..."
         ],
     )
-    exegesis: Optional[str] = None
-    homiletics: Optional[str] = None
-    application: Optional[str] = None
     additional_notes: Optional[str] = None
-    historical_context: Optional[str] = None
     status: Optional[str] = Field(
         "seed",
         pattern="^(seed|draft|final)$",
@@ -67,11 +63,7 @@ class SermonUpdate(BaseModel):
         None, max_length=50000, examples=["Contenido actualizado..."]
     )
     main_passage: Optional[str] = Field(None, max_length=100, examples=["Juan 3:16"])
-    exegesis: Optional[str] = None
-    homiletics: Optional[str] = None
-    application: Optional[str] = None
     additional_notes: Optional[str] = None
-    historical_context: Optional[str] = None
     status: Optional[str] = Field(
         None, pattern="^(seed|draft|final)$", examples=["final"]
     )
