@@ -44,17 +44,22 @@
   top: 0;
   z-index: 50;
   flex-shrink: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.verse-input-aligned-group {
+.header-left-aligned {
   display: flex;
   align-items: center;
-  gap: 1.5rem; /* Space between input and buttons */
+  gap: 1.5rem;
+  flex: 1;
+  min-width: 0;
 }
 
 .verse-input-wrapper {
   position: relative;
-  width: 200px; /* Reduced width to clear all panels */
+  width: 220px;
+  flex-shrink: 0;
 }
 
 .verse-icon {
@@ -75,6 +80,13 @@
   color: #e2dfff;
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.875rem;
+  outline: none;
+}
+
+.header-button-group {
+  display: flex;
+  gap: 0.75rem;
+  flex-shrink: 0;
 }
 
 .btn-generate-sacred {
@@ -86,6 +98,7 @@
   font-weight: 700;
   cursor: pointer;
   font-size: 0.875rem;
+  white-space: nowrap;
 }
 
 .btn-generate-sacred:disabled {
@@ -106,15 +119,15 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  white-space: nowrap;
 }
 
-.editor-user-info-box {
-  display: flex;
-  align-items: center;
+.header-right-aligned {
+  flex-shrink: 0;
   padding-left: 1rem;
 }
 
-.user-name-header {
+.user-name-display-header {
   color: #b0c6ff;
   font-weight: 700;
   font-size: 0.875rem;
@@ -124,7 +137,7 @@
 /* Dashboard Integrated Grid */
 .editor-dashboard-integrated {
   display: grid;
-  grid-template-columns: 1fr 260px; /* Main content + fixed tools column */
+  grid-template-columns: 1fr 260px; 
   flex: 1;
   overflow: hidden;
 }
@@ -208,7 +221,7 @@
   outline: none;
 }
 
-/* Integrated Right Panel - Not Fixed anymore! */
+/* Integrated Right Panel */
 .editor-right-tools-integrated {
   background-color: #1a1a33;
   border-left: 1px solid rgba(176, 198, 255, 0.1);
@@ -257,14 +270,6 @@
   border-color: #b0c6ff;
 }
 
-.resource-sublabel {
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  color: rgba(194, 198, 215, 0.4);
-  margin: 1.5rem 0 0.75rem;
-  font-weight: 800;
-}
-
 .map-link-item {
   display: flex;
   align-items: center;
@@ -281,35 +286,6 @@
   margin-top: auto;
 }
 
-.section-subtitle-sacred {
-  font-size: 0.65rem;
-  font-weight: 800;
-  color: rgba(194, 198, 215, 0.4);
-  margin-bottom: 1rem;
-}
-
-.export-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
-  margin-bottom: 2rem;
-}
-
-.export-icon-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 1rem 0.5rem;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(176, 198, 255, 0.05);
-  border-radius: 0.75rem;
-  color: #c2c6d7;
-  font-size: 0.7rem;
-  font-weight: 700;
-  cursor: pointer;
-}
-
 .btn-share-integrated {
   background: #b0c6ff;
   color: #002661;
@@ -324,7 +300,7 @@
   cursor: pointer;
 }
 
-/* Sidebar Brand and Nav - Shared */
+/* Shared styles */
 .sidebar-brand { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 2.5rem; }
 .brand-icon-box { width: 2.25rem; height: 2.25rem; background: rgba(176, 198, 255, 0.1); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; color: #b0c6ff; }
 .brand-text-pulp { font-family: 'Noto Serif', serif; font-size: 1.125rem; font-weight: 700; color: #b0c6ff; margin: 0; }

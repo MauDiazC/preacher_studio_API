@@ -5,6 +5,7 @@ import type { Sermon } from '../services/sermonService';
 import { useNotificationStore } from '../../../store/useNotificationStore';
 import { useAuthStore } from '../../../store/authStore';
 import { useLanguage } from '../../../context/LanguageContext';
+import api from '../../../services/api'; // Para consulta directa de perfil
 import './SermonEditor.css';
 
 const SermonEditor: React.FC = () => {
@@ -22,14 +23,25 @@ const SermonEditor: React.FC = () => {
     key_locations: []
   });
   
+  const [userProfile, setUserProfile] = useState<{full_name?: string, is_admin?: boolean} | null>(null);
   const [loading, setLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [lastSavedLabel, setLastSavedLabel] = useState<string>('');
 
+  // Cargar Perfil Real desde la BD
+  const loadProfile = async () => {
+    try {
+      const response = await api.get('/profile/me');
+      setUserProfile(response.data);
+    } catch (err) {
+      console.error("Error cargando perfil:", err);
+    }
+  };
+
   // Formatear nombre: Mauricio Diaz -> Mauricio D.
-  const formatUserName = (fullName?: string, email?: string) => {
-    const rawName = fullName || email || '';
-    if (!rawName) return 'Invitado';
+  const formatUserName = () => {
+    const rawName = userProfile?.full_name || user?.full_name || user?.email || '';
+    if (!rawName) return '...';
     const parts = rawName.split(/[ @\.]/);
     if (parts.length >= 2) {
       return `${parts[0].charAt(0).toUpperCase() + parts[0].slice(1)} ${parts[1][0].toUpperCase()}.`;
@@ -37,35 +49,40 @@ const SermonEditor: React.FC = () => {
     return rawName.charAt(0).toUpperCase() + rawName.slice(1);
   };
 
-  // Lógica de Admin y Créditos (Forzada)
+  // Lógica de Admin y Créditos (Bypass total)
   const userEmail = user?.email?.toLowerCase() || '';
-  const isAdmin = userEmail === 'diazzabala@gmail.com' || user?.role === 'admin';
+  const isAdmin = userProfile?.is_admin || userEmail === 'diazzabala@gmail.com';
 
   // Formatear tiempo relativo legible
   const formatRelativeTime = (updatedAt?: string) => {
-    if (!updatedAt) return language === 'es' ? 'Sin guardar' : 'Not saved';
+    if (!updatedAt) return language === 'es' ? 'Estudio nuevo' : 'New study';
     
     const diffMs = new Date().getTime() - new Date(updatedAt).getTime();
     const diffMins = Math.floor(diffMs / 60000);
     
     if (diffMins < 1) return language === 'es' ? 'Recién guardado' : 'Just saved';
-    if (diffMins < 60) return `${t('editor.saved_ago')} ${diffMins} min`;
     
-    const diffHours = Math.floor(diffMins / 60);
-    if (diffHours < 24) {
-      const remainingMins = diffMins % 60;
-      return `${t('editor.saved_ago')} ${diffHours}h ${remainingMins}m`;
-    }
-    
-    const diffDays = Math.floor(diffHours / 24);
-    const remainingHours = diffHours % 24;
-    return `${t('editor.saved_ago')} ${diffDays}d ${remainingHours}h`;
+    const mins = diffMins % 60;
+    const hoursTotal = Math.floor(diffMins / 60);
+    const hours = hoursTotal % 24;
+    const days = Math.floor(hoursTotal / 24);
+
+    let parts = [];
+    if (days > 0) parts.push(`${days}d`);
+    if (hours > 0) parts.push(`${hours}h`);
+    if (mins > 0 || parts.length === 0) parts.push(`${mins}m`);
+
+    return `${t('editor.saved_ago')} ${parts.join(' ')}`;
   };
 
   useEffect(() => {
+    loadProfile();
     const timer = setInterval(() => setLastSavedLabel(formatRelativeTime(sermon.updated_at)), 60000);
-    setLastSavedLabel(formatRelativeTime(sermon.updated_at));
     return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    setLastSavedLabel(formatRelativeTime(sermon.updated_at));
   }, [sermon.updated_at, language]);
 
   useEffect(() => {
@@ -212,9 +229,9 @@ const SermonEditor: React.FC = () => {
 
       {/* Main Workspace */}
       <main className="editor-main-workspace">
-        {/* Editor Top Bar */}
+        {/* Editor Header */}
         <header className="editor-header-sacred">
-          <div className="verse-input-aligned-group">
+          <div className="header-left-aligned">
             <div className="verse-input-wrapper">
               <span className="material-symbols-outlined verse-icon">auto_awesome</span>
               <input 
@@ -225,31 +242,32 @@ const SermonEditor: React.FC = () => {
                 onChange={(e) => setSermon({...sermon, main_passage: e.target.value})}
               />
             </div>
-            <button 
-              className="btn-generate-sacred" 
-              onClick={handleGenerateAnalysis}
-              disabled={loading || !!id}
-            >
-              {loading ? '...' : t('editor.analyze_btn')}
-            </button>
-            
-            <button 
-              className="btn-save-top-sacred" 
-              onClick={handleSave}
-              disabled={isSaving}
-            >
-              <span className="material-symbols-outlined">save</span>
-              {isSaving ? '...' : language === 'es' ? 'Guardar' : 'Save'}
-            </button>
+            <div className="header-button-group">
+              <button 
+                className="btn-generate-sacred" 
+                onClick={handleGenerateAnalysis}
+                disabled={loading || !!id}
+              >
+                {loading ? '...' : t('editor.analyze_btn')}
+              </button>
+              
+              <button 
+                className="btn-save-top-sacred" 
+                onClick={handleSave}
+                disabled={isSaving}
+              >
+                <span className="material-symbols-outlined">save</span>
+                {isSaving ? '...' : language === 'es' ? 'Guardar' : 'Save'}
+              </button>
+            </div>
           </div>
 
-          <div className="editor-user-info-box">
-            <span className="user-name-header">{formatUserName(user?.full_name, user?.email)}</span>
+          <div className="header-right-aligned">
+            <span className="user-name-display-header">{formatUserName()}</span>
           </div>
         </header>
 
         <div className="editor-dashboard-integrated">
-          {/* Studio Content Canvas */}
           <div className="editor-canvas-container">
             <div className="studio-main-card">
               <div className="card-top-header">
