@@ -99,10 +99,10 @@ const SermonList: React.FC = () => {
             <span className="material-symbols-outlined nav-icon">edit_note</span>
             <span>{t('nav.sermon_prep')}</span>
           </Link>
-          <a href="#" className="nav-item">
+          <Link to="/settings" className="nav-item">
             <span className="material-symbols-outlined nav-icon">settings</span>
             <span>{t('nav.settings')}</span>
-          </a>
+          </Link>
         </nav>
 
         <div className="sidebar-footer-sacred">

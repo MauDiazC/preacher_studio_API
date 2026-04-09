@@ -11,6 +11,7 @@ import SermonEditor from './features/sermons/components/SermonEditor';
 import LandingPage from './features/landing/components/LandingPage';
 import PricingPage from './features/landing/components/PricingPage';
 import CheckoutPage from './features/checkout/CheckoutPage';
+import SettingsPage from './features/profile/components/SettingsPage';
 
 function App() {
   const { isAuthenticated } = useAuthStore();
@@ -47,6 +48,14 @@ function App() {
             <Route path="/sermons/:id" element={
               isAuthenticated ? (
                 <SermonEditor />
+              ) : (
+                <Navigate to="/login" />
+              )
+            } />
+
+            <Route path="/settings" element={
+              isAuthenticated ? (
+                <SettingsPage />
               ) : (
                 <Navigate to="/login" />
               )
