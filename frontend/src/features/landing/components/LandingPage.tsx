@@ -24,13 +24,24 @@ const LandingPage: React.FC = () => {
       answer: language === 'es'
         ? 'Incluimos RVR1960 y NVI para español, y KJV y NIV para inglés, con acceso a léxicos originales Strong.'
         : 'We include KJV and NIV for English, and RVR1960 and NVI for Spanish, with access to original Strong lexicons.'
-    },
-    {
-      question: language === 'es' ? '¿Ofrecen planes para equipos pastorales?' : 'Do you offer plans for pastoral teams?',
-      answer: language === 'es'
-        ? 'Sí, el plan Ministerio está diseñado para hasta 10 usuarios con espacios de trabajo compartidos.'
-        : 'Yes, the Ministry plan is designed for up to 10 users with shared workspaces.'
     }
+  ];
+
+  const trustedBrands = [
+    'SOZEIN',
+    'EBENEZER',
+    'EBENEZER HOUSTON',
+    'EBENEZER GUATEMALA',
+    'EBENEZER CALIFORNIA'
+  ];
+
+  const heroPills = [
+    { text: language === 'es' ? 'Significancia' : 'Significance', class: 'pill-1' },
+    { text: language === 'es' ? 'Contexto Histórico' : 'Historical Context', class: 'pill-2' },
+    { text: language === 'es' ? 'Autoría' : 'Authorship', class: 'pill-3' },
+    { text: language === 'es' ? 'Propósito' : 'Purpose', class: 'pill-4' },
+    { text: language === 'es' ? 'Tipo Literario' : 'Literary Type', class: 'pill-5' },
+    { text: language === 'es' ? 'Mapa' : 'Map', class: 'pill-6' }
   ];
 
   return (
@@ -60,9 +71,14 @@ const LandingPage: React.FC = () => {
 
             <div className="hero-visual-wrapper">
               <div className="hero-visual-glow"></div>
+              {heroPills.map((pill, idx) => (
+                <div key={idx} className={`hero-pill ${pill.class}`}>
+                  {pill.text}
+                </div>
+              ))}
               <div className="hero-img-mask">
                 <img 
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuALFG_fDfcSfQWj-N7SyM7m4ZcXId595KPldM_8vRM33O48f1F-07XzNsBT5DGMHL0ay9uGoHW2cuXcbQSW3E_jJxEi5hJafbkWyGLF0fe4OSJ0R7ndX3ktS7CCgiv0vrgL-d0gJSRl1tmbNsGJl2ojmKAMopM6JnkJQJwLfV002v4DAJy0gOEqQyP39Lxc8msTgCTH8bS6c7KVJXHW6K6-4GOfdC-EHgNjQU5Wb1eKWxlKe74BNnKFJ3zbIm1FqLihmIeCK4Z20Yk" 
+                  src="https://images.unsplash.com/photo-1507692049790-de58290a4334?q=80&w=2070&auto=format&fit=crop" 
                   alt="Ministerial Visualization" 
                   className="hero-img"
                 />
@@ -77,11 +93,9 @@ const LandingPage: React.FC = () => {
         <div className="max-container">
           <p className="trusted-label">{t('trust.title')}</p>
           <div className="brand-logos-row">
-            <span className="brand-logo-item">ALPHA CHURCH</span>
-            <span className="brand-logo-item">REDEEMER GLOBAL</span>
-            <span className="brand-logo-item">GRACE FELLOWSHIP</span>
-            <span className="brand-logo-item">LIVING WATER</span>
-            <span className="brand-logo-item">THE SANCTUARY</span>
+            {trustedBrands.map((brand, idx) => (
+              <span key={idx} className="brand-logo-item">{brand}</span>
+            ))}
           </div>
 
           <div className="stats-summary-grid">
@@ -190,7 +204,7 @@ const LandingPage: React.FC = () => {
 
             <div className="use-case-visual">
               <img 
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqSYZNgwHXRZr-epXQuFf127h7ewU22wEqq2J18eo4uL2Rl5IT5aPOnY2Zyg8PDJN4TTanQyG_lbdOELe9W3ZCN4evCruk7QD4N9vWLPvgJ6czDB2bEdKsQtWQnYtuAmHlcJyEzBHgHrde2kv9cAt4snD0pCGTfnnWzi_HLLBu-piJhdlDF_A8LXDKhblOKC0YnKdyoqJO1aS_U9pjFk81kGf4cs3LYlUS423bqQd7AlL3yD86uuyzdlNWjvEVkuGTQwlob1o69uM" 
+                src="https://images.unsplash.com/photo-1490730141103-6cac27aaab94?q=80&w=2070&auto=format&fit=crop" 
                 alt="Study Environment" 
                 className="use-case-img-sacred"
               />
@@ -245,8 +259,8 @@ const LandingPage: React.FC = () => {
               <div className="testimonial-author">
                 <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCl_qUqNidn3819gOYd|6jvjSe-tnnX8xQ5-esTitglTe7IQm73vnpGJ2KjL2cMokScxpTv7fXcW81a0HX80CPHM_1A2dJ07ZJB6BXUF8-smuzIK-8k-stat8kfV7895yll5v3nXQCnp53IR_ht5z_es5G5KefRm9eQVt8MDz_LzU_6LL3Z5yPr_agPLk-O034fvq6MuJAZj_Alyg9lFPXMLPpaykfef1fceGR0mKk2hH7V0Z9ImEKj_u5ovb_J-22GayU12JAFapCA" alt="Doctor" className="author-img" />
                 <div>
-                  <div className="author-name">Dr. Roberto Peña</div>
-                  <div className="author-org">Seminario Bíblico Central</div>
+                  <div className="author-name">Dr. Ramiro Cabrera</div>
+                  <div className="author-org">Sozein Ministerios Ebenezer</div>
                 </div>
               </div>
             </div>

@@ -19,6 +19,7 @@ const Navbar: React.FC = () => {
     <nav className="navbar">
       <div className="navbar-content-sacred">
         <Link to="/" className="navbar-brand-sacred">
+          <span className="material-symbols-outlined brand-icon-sacred">church</span>
           PREACHER STUDIO
         </Link>
 
@@ -29,9 +30,6 @@ const Navbar: React.FC = () => {
           <Link to="/pricing" className={`navbar-link-sacred ${location.pathname === '/pricing' ? 'active' : ''}`}>
             {t('nav.pricing')}
           </Link>
-          <a href="#features" className="navbar-link-sacred">
-            {t('nav.features')}
-          </a>
         </div>
 
         <div className="navbar-actions-sacred">
