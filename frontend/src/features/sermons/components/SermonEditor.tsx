@@ -28,33 +28,43 @@ const SermonEditor: React.FC = () => {
 
   // Formatear nombre: Mauricio Diaz -> Mauricio D.
   const formatUserName = (fullName?: string, email?: string) => {
-    const nameToUse = fullName || email || '';
-    if (!nameToUse) return 'Usuario';
-    const parts = nameToUse.split(/[ @]/); 
+    const rawName = fullName || email || '';
+    if (!rawName) return 'Invitado';
+    const parts = rawName.split(/[ @\.]/);
     if (parts.length >= 2) {
       return `${parts[0].charAt(0).toUpperCase() + parts[0].slice(1)} ${parts[1][0].toUpperCase()}.`;
     }
-    return nameToUse.charAt(0).toUpperCase() + nameToUse.slice(1);
+    return rawName.charAt(0).toUpperCase() + rawName.slice(1);
   };
 
-  // Lógica de Admin y Créditos (Forzada por correo)
+  // Lógica de Admin y Créditos (Forzada)
   const userEmail = user?.email?.toLowerCase() || '';
-  const isAdmin = user?.role === 'admin' || userEmail === 'diazzabala@gmail.com' || userEmail.includes('diazzabala');
-  const credits = 25;
+  const isAdmin = userEmail === 'diazzabala@gmail.com' || user?.role === 'admin';
 
-  // Calcular tiempo relativo de guardado
-  const updateSavedLabel = (updatedAt?: string) => {
-    if (!updatedAt) {
-      setLastSavedLabel(language === 'es' ? 'Estudio nuevo' : 'New study');
-      return;
+  // Formatear tiempo relativo legible
+  const formatRelativeTime = (updatedAt?: string) => {
+    if (!updatedAt) return language === 'es' ? 'Sin guardar' : 'Not saved';
+    
+    const diffMs = new Date().getTime() - new Date(updatedAt).getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    
+    if (diffMins < 1) return language === 'es' ? 'Recién guardado' : 'Just saved';
+    if (diffMins < 60) return `${t('editor.saved_ago')} ${diffMins} min`;
+    
+    const diffHours = Math.floor(diffMins / 60);
+    if (diffHours < 24) {
+      const remainingMins = diffMins % 60;
+      return `${t('editor.saved_ago')} ${diffHours}h ${remainingMins}m`;
     }
-    const diff = Math.floor((new Date().getTime() - new Date(updatedAt).getTime()) / 60000);
-    if (diff < 1) setLastSavedLabel(language === 'es' ? 'Recién guardado' : 'Just saved');
-    else setLastSavedLabel(`${t('editor.saved_ago')} ${diff} min`);
+    
+    const diffDays = Math.floor(diffHours / 24);
+    const remainingHours = diffHours % 24;
+    return `${t('editor.saved_ago')} ${diffDays}d ${remainingHours}h`;
   };
 
   useEffect(() => {
-    const timer = setInterval(() => updateSavedLabel(sermon.updated_at), 60000);
+    const timer = setInterval(() => setLastSavedLabel(formatRelativeTime(sermon.updated_at)), 60000);
+    setLastSavedLabel(formatRelativeTime(sermon.updated_at));
     return () => clearInterval(timer);
   }, [sermon.updated_at, language]);
 
@@ -69,7 +79,6 @@ const SermonEditor: React.FC = () => {
       setLoading(true);
       const data = await sermonService.getById(sermonId);
       setSermon(data);
-      updateSavedLabel(data.updated_at);
     } catch (error) {
       addNotification('Error al cargar el estudio.', 'error');
     } finally {
@@ -107,7 +116,6 @@ const SermonEditor: React.FC = () => {
       if (id) {
         const updated = await sermonService.update(id, sermon);
         setSermon(updated);
-        updateSavedLabel(updated.updated_at);
         addNotification('Estudio actualizado.', 'success');
       } else {
         const created = await sermonService.create(sermon);
@@ -127,13 +135,13 @@ const SermonEditor: React.FC = () => {
     navigate('/login');
   };
 
-  // Formato correcto para Bible Hub Maps
+  // Formato Correcto para Bible Hub Atlas
   const getMapLink = (location: string) => {
     const formattedLoc = location.toLowerCase().trim().replace(/\s+/g, '_');
-    return `https://biblehub.com/maps/${formattedLoc}.htm`;
+    return `https://biblehub.com/atlas/${formattedLoc}.htm`;
   };
 
-  // Formato correcto para Blue Letter Bible Search
+  // Formato Correcto para Blue Letter Bible
   const getBLBLink = (passage: string) => {
     const query = passage.replace(/\s+/g, '+');
     return `https://www.blueletterbible.org/search/preSearch.cfm?Criteria=${query}&t=KJV`;
@@ -180,7 +188,7 @@ const SermonEditor: React.FC = () => {
             <div className="credits-display">
               <span className="credits-label">{t('nav.credits')}</span>
               <span className="credits-value">
-                {isAdmin ? t('nav.unlimited') : credits}
+                {isAdmin ? t('nav.unlimited') : '25'}
               </span>
             </div>
             
@@ -320,7 +328,7 @@ const SermonEditor: React.FC = () => {
                     </a>
                   ))
                 ) : (
-                  <p className="no-resource-text">{language === 'es' ? 'No hay lugares detectados' : 'No locations found'}</p>
+                  <p className="no-resource-text">{language === 'es' ? 'No hay lugares' : 'No locations'}</p>
                 )}
               </div>
             </div>
