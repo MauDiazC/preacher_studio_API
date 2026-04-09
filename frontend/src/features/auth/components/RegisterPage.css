@@ -1,98 +1,77 @@
-.register-container {
+.register-page-sacred {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
   position: relative;
   overflow-x: hidden;
   background-color: #111127;
-  padding: 3rem 1.5rem;
 }
 
-/* Celestial Orbits Decoration */
+/* Celestial Orbit Backgrounds */
 .celestial-orbit-container {
-  position: fixed;
+  position: absolute;
   inset: 0;
   overflow: hidden;
   pointer-events: none;
+  z-index: 0;
 }
 
 .celestial-orbit {
   position: absolute;
-  border-radius: 100%;
-  border: 1px solid rgba(176, 198, 255, 0.05);
-  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(176, 198, 255, 0.05) 0%, transparent 70%);
 }
 
 .orbit-reg-1 {
-  width: 800px;
-  height: 800px;
-  top: -400px;
-  left: -400px;
-  opacity: 0.2;
+  top: -10%;
+  right: -10%;
+  width: 60%;
+  height: 60%;
 }
 
 .orbit-reg-2 {
-  width: 600px;
-  height: 600px;
-  top: 50%;
-  right: -200px;
-  opacity: 0.1;
-}
-
-.glow-nebula-1 {
-  position: absolute;
-  top: 25%;
-  left: 33%;
-  width: 500px;
-  height: 500px;
-  background: rgba(176, 198, 255, 0.05);
-  border-radius: 9999px;
-  filter: blur(120px);
-}
-
-.glow-nebula-2 {
-  position: absolute;
-  bottom: 25%;
-  right: 25%;
-  width: 400px;
-  height: 400px;
-  background: rgba(194, 193, 255, 0.05);
-  border-radius: 9999px;
-  filter: blur(100px);
+  bottom: -20%;
+  left: -10%;
+  width: 70%;
+  height: 70%;
 }
 
 .register-main-canvas {
-  position: relative;
-  z-index: 10;
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  padding: 6rem 1.5rem 4rem; /* Top padding ensures navbar clearance */
+  position: relative;
+  z-index: 10;
   width: 100%;
-  max-width: 36rem;
+  max-width: 1280px;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
+/* Brand Identity Section */
 .brand-identity {
-  margin-bottom: 3rem;
   text-align: center;
+  margin-bottom: 2.5rem;
 }
 
 .brand-icon-wrapper {
-  width: 4rem;
-  height: 4rem;
-  border-radius: 9999px;
-  background: linear-gradient(to bottom right, #b0c6ff, #558dff);
+  width: 3.5rem;
+  height: 3.5rem;
+  background: rgba(176, 198, 255, 0.1);
+  border-radius: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 20px rgba(176, 198, 255, 0.3);
   margin: 0 auto 1.5rem;
+  color: #b0c6ff;
+  border: 1px solid rgba(176, 198, 255, 0.2);
 }
 
-.brand-icon-wrapper span {
-  color: #002661;
-  font-size: 2.25rem;
+.brand-icon-wrapper .material-symbols-outlined {
+  font-size: 2rem;
 }
 
 .brand-title {
@@ -100,99 +79,167 @@
   font-size: 2.5rem;
   font-weight: 700;
   color: #b0c6ff;
-  letter-spacing: -0.025em;
   margin-bottom: 0.5rem;
+  letter-spacing: -0.025em;
 }
 
 .brand-tagline {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.875rem;
   color: #c2c6d7;
-  font-size: 1.125rem;
-  max-width: 28rem;
+  max-width: 24rem;
   margin: 0 auto;
+  line-height: 1.5;
 }
 
+/* Registration Card */
 .glass-panel-reg {
   width: 100%;
+  max-width: 480px;
   background: rgba(29, 29, 52, 0.7);
   backdrop-filter: blur(24px);
   padding: 3rem;
-  border-radius: 0.75rem;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(176, 198, 255, 0.1);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  box-sizing: border-box;
   position: relative;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
 }
 
 .panel-accent-line {
   position: absolute;
   top: 0;
-  left: 0;
-  width: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4rem;
   height: 4px;
-  background: linear-gradient(to right, transparent, rgba(176, 198, 255, 0.2), transparent);
+  background: #b0c6ff;
+  border-radius: 0 0 4px 4px;
+}
+
+.reg-card-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
 }
 
 .reg-card-header h2 {
   font-family: 'Noto Serif', serif;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #e2dfff;
+  font-size: 1.75rem;
   margin-bottom: 0.5rem;
 }
 
 .reg-card-header p {
+  font-size: 0.875rem;
   color: #c2c6d7;
-  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
-.sacred-grid {
-  display: grid;
-  grid-template-columns: 1fr;
+/* Google Register Styling */
+.reg-google-container {
+  margin-bottom: 2rem;
+}
+
+.sacred-social-btn-google {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  background-color: #ffffff;
+  color: #1f1f1f;
+  padding: 0.875rem;
+  border-radius: 0.5rem;
+  border: 1px solid #dadce0;
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.sacred-social-btn-google:hover {
+  background-color: #f8f9fa;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.sacred-social-icon-img {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Form Styles */
+.sacred-form {
+  display: flex;
+  flex-direction: column;
   gap: 1.5rem;
 }
 
-@media (min-width: 768px) {
-  .sacred-grid {
-    grid-template-columns: 1fr 1fr;
-  }
+.sacred-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sacred-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #c2c6d7;
+  font-weight: 600;
+  margin-left: 0.25rem;
+}
+
+.sacred-input-wrapper {
+  width: 100%;
+}
+
+.sacred-input {
+  width: 100%;
+  background-color: #33324b;
+  border: 1px solid rgba(176, 198, 255, 0.1);
+  border-radius: 0.5rem;
+  padding: 0.875rem 1rem;
+  color: #e2dfff;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.sacred-input:focus {
+  outline: none;
+  border-color: #b0c6ff;
+  box-shadow: 0 0 0 3px rgba(176, 198, 255, 0.1);
 }
 
 .sacred-submit-reg {
   width: 100%;
-  background: linear-gradient(to bottom right, #b0c6ff, #558dff);
+  background: linear-gradient(135deg, #b0c6ff 0%, #558dff 100%);
   color: #002661;
-  font-weight: 600;
-  padding: 1rem;
-  border-radius: 0.75rem;
-  font-size: 1.125rem;
+  font-weight: 700;
+  padding: 1.125rem;
+  border-radius: 0.5rem;
   border: none;
   cursor: pointer;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  font-family: 'Plus Jakarta Sans', sans-serif;
   transition: all 0.3s;
   margin-top: 1rem;
 }
 
 .sacred-submit-reg:hover {
-  box-shadow: 0 8px 20px rgba(176, 198, 255, 0.2);
-  transform: scale(0.99);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(85, 141, 255, 0.3);
 }
 
-.sacred-submit-reg:active {
-  transform: scale(0.95);
-}
-
+/* Footer Link */
 .reg-footer-divider {
-  padding-top: 1.5rem;
   text-align: center;
-  border-top: 1px solid rgba(66, 70, 85, 0.1);
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(176, 198, 255, 0.05);
 }
 
 .reg-footer-text {
   color: #c2c6d7;
-  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.875rem;
 }
 
@@ -200,87 +247,82 @@
   color: #b0c6ff;
   font-weight: 600;
   text-decoration: none;
-  margin-left: 0.25rem;
-  transition: color 0.2s;
+  margin-left: 0.5rem;
 }
 
-.reg-footer-link:hover {
-  color: #e2dfff;
-  text-decoration: underline;
-  text-underline-offset: 4px;
+/* Divider inside card */
+.sacred-divider {
+  position: relative;
+  margin: 1.5rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.trust-badges-section {
-  margin-top: 3rem;
-  text-align: center;
-  opacity: 0.6;
+.sacred-divider::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  background-color: rgba(176, 198, 255, 0.1);
+}
+
+.sacred-divider-text {
+  position: relative;
+  padding: 0 1rem;
+  background-color: #1d1d34;
+  color: #8c90a0;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Footer Section - Unified Style */
+.sacred-footer-reg {
+  width: 100%;
+  padding: 2rem 5%;
+  background-color: #111127;
+  border-top: 1px solid rgba(176, 198, 255, 0.05);
+  box-sizing: border-box;
+}
+
+.sacred-footer-content {
+  max-width: 80rem;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 1rem;
 }
 
-.quote-icon {
-  color: #c2c1ff;
-  font-size: 1.875rem;
-  margin-bottom: 1rem;
-}
-
-.quote-text {
-  font-family: 'Noto Serif', serif;
-  font-size: 1.125rem;
-  font-style: italic;
-  color: #c2c1ff;
-  line-height: 1.6;
-  max-width: 32rem;
-  margin-bottom: 2rem;
-}
-
-.badges-container {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-}
-
-.badge-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  filter: grayscale(1);
-}
-
-.badge-item span:first-child {
-  font-size: 0.875rem;
-}
-
-.badge-item span:last-child {
-  font-family: 'Inter', sans-serif;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-
-/* Side decorative image */
-.reg-deco-side {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 33.333333%;
-  height: 100%;
-  overflow: hidden;
-  pointer-events: none;
-  opacity: 0.2;
-  display: none;
-}
-
-@media (min-width: 1024px) {
-  .reg-deco-side {
-    display: block;
+@media (min-width: 768px) {
+  .sacred-footer-content {
+    flex-direction: row;
+    justify-content: space-between;
   }
 }
 
-.reg-deco-side img {
-  object-fit: cover;
-  width: 100%;
-  height: 100%;
-  mix-blend-mode: overlay;
+.sacred-footer-copy {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(194, 193, 255, 0.4);
+}
+
+.sacred-footer-links {
+  display: flex;
+  gap: 2rem;
+}
+
+.sacred-footer-link {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(194, 193, 255, 0.5);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.sacred-footer-link:hover {
+  color: #b0c6ff;
 }

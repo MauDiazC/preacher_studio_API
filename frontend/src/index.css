@@ -24,7 +24,7 @@ html, body {
   width: 100%;
   max-width: 100vw;
   overflow-x: hidden; /* Prevents horizontal scroll globally */
-  background-color: #111127;
+  background-color: #111127; /* Matches app background for natural overscroll */
 }
 
 body {
