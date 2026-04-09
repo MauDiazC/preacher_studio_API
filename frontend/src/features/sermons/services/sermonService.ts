@@ -10,6 +10,11 @@ export interface Sermon {
   series?: string;
   tags?: string[];
   key_locations?: string[];
+  exegesis?: string;
+  homiletics?: string;
+  application?: string;
+  additional_notes?: string;
+  historical_context?: string;
   created_at: string;
   updated_at: string;
 }
@@ -41,5 +46,9 @@ export const sermonService = {
   },
   delete: async (id: string) => {
     await api.delete(`/sermons/${id}`);
+  },
+  generateAnalysis: async (passage: string) => {
+    const response = await api.post<any>('/sermons/analyze', { passage });
+    return response.data;
   },
 };

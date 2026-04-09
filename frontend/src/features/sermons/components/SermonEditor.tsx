@@ -257,9 +257,13 @@ const SermonEditor: React.FC = () => {
             <span>{t('editor.share_draft')}</span>
           </button>
           
-          <button className="tool-btn-sacred" onClick={handleSave}>
+          <button 
+            className="tool-btn-sacred" 
+            onClick={handleSave}
+            disabled={isSaving}
+          >
             <span className="material-symbols-outlined">save</span>
-            <span>Guardar Estudio</span>
+            <span>{isSaving ? '...' : 'Guardar Estudio'}</span>
           </button>
         </div>
 
