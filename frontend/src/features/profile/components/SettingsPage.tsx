@@ -7,7 +7,7 @@ import api from '../../../services/api';
 import './SettingsPage.css';
 
 const SettingsPage: React.FC = () => {
-  const { user, logout } = useAuthStore();
+  const { logout } = useAuthStore();
   const { t, language, toggleLanguage } = useLanguage();
   const { addNotification } = useNotificationStore();
   const navigate = useNavigate();
