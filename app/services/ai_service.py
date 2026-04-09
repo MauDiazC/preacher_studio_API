@@ -99,9 +99,11 @@ class AISermonService:
         user_prompt = f"""
         Realiza un análisis exegético profundo y académico del siguiente pasaje bíblico: "{verse_reference}"
         
-        IMPORTANTE: Responde TODO el contenido del JSON en el idioma: {language.upper()}.
+        IMPORTANTE: Responde el contenido del análisis en el idioma: {language.upper()}.
         
         {bible_instruction}
+        
+        REGLA CRÍTICA PARA LUGARES: En el campo "key_locations", los nombres de los lugares deben estar SIEMPRE en INGLÉS (ej: "Jerusalem" en lugar de "Jerusalén", "Bethlehem" en lugar de "Belén", "Land of Israel" en lugar de "Tierra de Israel") para compatibilidad técnica con atlas bíblicos.
         
         Tu análisis debe ser exhaustivo y teológicamente sólido.
         
@@ -116,7 +118,7 @@ class AISermonService:
             "version_nvi": "NIV text here if English, NVI if Spanish",
             "original_languages": "Análisis léxico-profesional. Para las 3 palabras más importantes del pasaje, incluye: 1) Palabra en original (Hebreo/Griego), 2) Transliteración, 3) Número de Strong, 4) Definición detallada basada en el Léxico de Thayer (si es NT) o Brown-Driver-Briggs (si es AT). Proporciona esto como una cadena de texto académica y estructurada.",
             "source_attribution": "...",
-            "key_locations": ["..."]
+            "key_locations": ["English name of place 1", "English name of place 2"]
         }}
         """
 

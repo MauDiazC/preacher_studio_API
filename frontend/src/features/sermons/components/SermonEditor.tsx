@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
 import { sermonService } from '../services/sermonService';
 import type { Sermon } from '../services/sermonService';
 import { useNotificationStore } from '../../../store/useNotificationStore';
@@ -11,18 +11,30 @@ import './SermonEditor.css';
 const SermonEditor: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { addNotification } = useNotificationStore();
   const { user, logout } = useAuthStore();
   const { t, language, toggleLanguage } = useLanguage();
 
-  const [sermon, setSermon] = useState<Partial<Sermon>>({
+  const initialState = {
     title: '', main_passage: '', content: '', additional_notes: '', key_locations: []
-  });
-  
+  };
+
+  const [sermon, setSermon] = useState<Partial<Sermon>>(initialState);
   const [userProfile, setUserProfile] = useState<{full_name?: string, is_admin?: boolean} | null>(null);
   const [loading, setLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [lastSavedLabel, setLastSavedLabel] = useState<string>('');
+
+  // RESET ESTADO SI CAMBIA A NUEVO ESTUDIO
+  useEffect(() => {
+    if (!id) {
+      setSermon(initialState);
+      setLastSavedLabel('');
+    } else {
+      loadSermon(id);
+    }
+  }, [id, location.pathname]);
 
   const loadProfile = async () => {
     try {
@@ -58,10 +70,6 @@ const SermonEditor: React.FC = () => {
     setLastSavedLabel(formatRelativeTime(sermon.updated_at));
   }, [sermon.updated_at, language]);
 
-  useEffect(() => {
-    if (id) { loadSermon(id); }
-  }, [id]);
-
   const loadSermon = async (sermonId: string) => {
     try {
       setLoading(true);
@@ -83,7 +91,6 @@ const SermonEditor: React.FC = () => {
     try {
       const res = await sermonService.generateAnalysis(sermon.main_passage);
       
-      // ESTRUCTURA ACADÉMICA DE 7 SECCIONES
       const fullExegesis = `VERSIÓN RVR1960:
 ${res.version_rv1960}
 
@@ -120,7 +127,7 @@ ${res.source_attribution}`;
 
       setSermon(newSermon);
       
-      // AUTO-GUARDADO TRAS GENERAR
+      // AUTO-GUARDADO
       if (id) {
         await sermonService.update(id, newSermon);
       } else {
@@ -155,22 +162,10 @@ ${res.source_attribution}`;
     }
   };
 
-  const anglicizeLocation = (loc: string) => {
-    const dict: Record<string, string> = {
-      'jerusalén': 'jerusalem', 'jerusalen': 'jerusalem', 'belén': 'bethlehem', 'belen': 'bethlehem',
-      'nazaret': 'nazareth', 'galilea': 'galilee', 'judea': 'judea', 'samaria': 'samaria',
-      'antioquía': 'antioch', 'antioquia': 'antioch', 'éfeso': 'ephesus', 'efeso': 'ephesus',
-      'corinto': 'corinth', 'filipos': 'philippi', 'tesalónica': 'thessalonica', 'tesalonica': 'thessalonica',
-      'egipto': 'egypt', 'roma': 'rome', 'jordán': 'jordan', 'nilo': 'nile'
-    };
-    const key = loc.toLowerCase().trim();
-    if (dict[key]) return dict[key];
-    // Fallback: quitar acentos y espacios
-    return key.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '_');
-  };
-
+  // Los lugares ahora vienen en inglés directamente desde la IA
   const getMapLink = (location: string) => {
-    return `https://biblehub.com/atlas/${anglicizeLocation(location)}.htm`;
+    const formatted = location.trim().replace(/\s+/g, '_').toLowerCase();
+    return `https://biblehub.com/atlas/${formatted}.htm`;
   };
 
   if (loading && !sermon.content) return (
@@ -201,8 +196,8 @@ ${res.source_attribution}`;
 
       <main className="editor-main-workspace">
         <header className="editor-header-sacred">
-          <div className="header-column-left">
-            <div className="verse-input-wrapper">
+          <div className="header-column-left-aligned">
+            <div className="verse-input-wrapper-aligned">
               <span className="material-symbols-outlined verse-icon">auto_awesome</span>
               <input type="text" className="verse-input-sacred" placeholder={t('editor.verse_placeholder')} value={sermon.main_passage} disabled={loading || !!id} onChange={(e) => setSermon({...sermon, main_passage: e.target.value})} />
             </div>

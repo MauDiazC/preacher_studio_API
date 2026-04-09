@@ -49,16 +49,17 @@
   box-sizing: border-box;
 }
 
-.header-column-left {
+.header-column-left-aligned {
   display: flex;
   align-items: center;
-  width: 300px;
+  width: 350px;
   flex-shrink: 0;
 }
 
-.verse-input-wrapper {
+.verse-input-wrapper-aligned {
   position: relative;
   width: 100%;
+  margin-left: 1.5rem; /* Aligns with the main study card start */
 }
 
 .verse-icon {
@@ -133,7 +134,7 @@
 }
 
 .header-column-right {
-  width: 250px;
+  width: 300px;
   display: flex;
   justify-content: flex-end;
   flex-shrink: 0;
@@ -146,7 +147,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 240px;
+  max-width: 280px;
 }
 
 /* Dashboard Integrated Grid */
@@ -357,7 +358,7 @@
   cursor: pointer;
 }
 
-/* Shared styles */
+/* Sidebar shared styles */
 .sidebar-brand { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 2.5rem; }
 .brand-icon-box { width: 2.25rem; height: 2.25rem; background: rgba(176, 198, 255, 0.1); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; color: #b0c6ff; }
 .brand-text-pulp { font-family: 'Noto Serif', serif; font-size: 1.125rem; font-weight: 700; color: #b0c6ff; margin: 0; }
