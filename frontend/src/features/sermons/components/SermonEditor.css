@@ -21,24 +21,20 @@
   left: 0;
 }
 
-/* Workspace */
+/* Workspace - Adjusted */
 .editor-main-workspace {
   flex: 1;
-  margin-left: 220px; /* Offset for fixed sidebar */
+  margin-left: 220px; /* Space for sidebar */
   display: flex;
   flex-direction: column;
   min-width: 0;
   height: 100vh;
 }
 
-/* Header - Definitive Grid Fix */
+/* Header - Absolute Blindage */
 .editor-header-sacred {
   height: 4.5rem;
   border-bottom: 1px solid rgba(176, 198, 255, 0.1);
-  display: grid;
-  grid-template-columns: 240px 1fr auto; /* 3 fixed columns to avoid overlap */
-  align-items: center;
-  padding: 0 2rem;
   background-color: #111127;
   position: sticky;
   top: 0;
@@ -47,21 +43,29 @@
   box-sizing: border-box;
 }
 
-.header-column-1 {
+.header-grid-absolute {
+  display: grid;
+  grid-template-columns: 260px 1fr 200px; /* Exact spaces */
+  align-items: center;
+  height: 100%;
+  padding: 0 2rem;
+  width: 100%;
+}
+
+.header-cell-left {
   display: flex;
   align-items: center;
 }
 
-.header-column-2 {
+.header-cell-center {
   display: flex;
   justify-content: flex-start;
-  padding-left: 1rem;
+  padding-left: 2rem;
 }
 
-.header-column-3 {
+.header-cell-right {
   display: flex;
   justify-content: flex-end;
-  min-width: 150px;
 }
 
 .verse-input-wrapper {
@@ -92,7 +96,7 @@
 
 .header-button-group {
   display: flex;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 .btn-generate-sacred {
@@ -110,7 +114,6 @@
 .btn-generate-sacred:disabled {
   background: rgba(176, 198, 255, 0.1);
   color: rgba(194, 198, 215, 0.3);
-  cursor: not-allowed;
 }
 
 .btn-save-top-sacred {
@@ -121,7 +124,6 @@
   border-radius: 0.5rem;
   font-weight: 600;
   cursor: pointer;
-  font-size: 0.875rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -132,8 +134,10 @@
   color: #b0c6ff;
   font-weight: 700;
   font-size: 0.875rem;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
 }
 
 /* Dashboard Integrated Grid */
@@ -190,7 +194,6 @@
   color: #e2dfff;
   white-space: pre-wrap;
   word-wrap: break-word;
-  overflow-wrap: break-word;
 }
 
 .editor-notes-section {
@@ -248,7 +251,6 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  margin-bottom: 3rem;
 }
 
 .tool-btn-sacred-link {
@@ -270,6 +272,14 @@
   background: rgba(176, 198, 255, 0.1);
   color: #b0c6ff;
   border-color: #b0c6ff;
+}
+
+.resource-sublabel {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  color: rgba(194, 198, 215, 0.4);
+  margin: 1.5rem 0 0.75rem;
+  font-weight: 800;
 }
 
 .map-link-item {
@@ -302,14 +312,14 @@
   margin-bottom: 2rem;
 }
 
-.export-icon-btn {
+.export-icon-btn-sacred {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
-  padding: 1rem 0.5rem;
+  padding: 1.25rem 0.5rem;
   background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(176, 198, 255, 0.05);
+  border: 1px solid rgba(176, 198, 255, 0.1);
   border-radius: 0.75rem;
   color: #c2c6d7;
   font-size: 0.7rem;
@@ -318,8 +328,8 @@
   transition: all 0.2s;
 }
 
-.export-icon-btn:hover {
-  background: rgba(176, 198, 255, 0.05);
+.export-icon-btn-sacred:hover {
+  background: rgba(176, 198, 255, 0.1);
   color: #b0c6ff;
 }
 
