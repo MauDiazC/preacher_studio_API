@@ -48,7 +48,7 @@ export const sermonService = {
     await api.delete(`/sermons/${id}`);
   },
   generateAnalysis: async (passage: string) => {
-    const response = await api.post<any>('/sermons/analyze', { passage });
+    const response = await api.post<any>('/sermons/exegesis', { verse_reference: passage });
     return response.data;
   },
 };

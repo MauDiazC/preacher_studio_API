@@ -91,13 +91,16 @@ const SermonEditor: React.FC = () => {
     }
     setLoading(true);
     try {
-      const analysis = await sermonService.generateAnalysis(sermon.main_passage);
-      const fullContent = `${analysis.exegesis}\n\n${analysis.homiletics}\n\n${analysis.application}`;
+      const result = await sermonService.generateAnalysis(sermon.main_passage);
+      // El backend devuelve literary_type, author, purpose, etc.
+      // Los unificamos en content para visualización académica.
+      const fullExegesis = `TIPO LITERARIO: ${result.literary_type}\nAUTOR: ${result.author}\nPROPÓSITO: ${result.purpose}\n\nCONTEXTO HISTÓRICO:\n${result.historical_context}\n\nSIGNIFICANCIA:\n${result.significance_context}\n\nORIGINAL LANGUAGES:\n${result.original_languages}`;
+      
       setSermon(prev => ({
         ...prev,
         title: `${t('editor.exegesis')} - ${sermon.main_passage}`,
-        content: fullContent,
-        key_locations: analysis.key_locations
+        content: fullExegesis,
+        key_locations: result.key_locations
       }));
       addNotification('Análisis generado con éxito.', 'success');
     } catch (error) {
@@ -171,7 +174,7 @@ const SermonEditor: React.FC = () => {
         <nav className="sacred-nav">
           <Link to="/sermons" className="nav-item"><span className="material-symbols-outlined nav-icon">book_2</span><span>{t('nav.library')}</span></Link>
           <Link to="/sermons/new" className="nav-item active"><span className="material-symbols-outlined nav-icon">edit_note</span><span>{t('nav.sermon_prep')}</span></Link>
-          <a href="#" className="nav-item"><span className="material-symbols-outlined nav-icon">settings</span><span>{t('nav.settings')}</span></a>
+          <Link to="/settings" className="nav-item"><span className="material-symbols-outlined nav-icon">settings</span><span>{t('nav.settings')}</span></Link>
         </nav>
         <div className="sidebar-footer-sacred">
           <div className="sidebar-user-stats">
@@ -179,10 +182,7 @@ const SermonEditor: React.FC = () => {
               <span className="credits-label">{t('nav.credits')}</span>
               <span className="credits-value">{isAdmin ? t('nav.unlimited') : '25'}</span>
             </div>
-            <button className="lang-toggle-sidebar" onClick={toggleLanguage}>
-              <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>language</span>
-              {language.toUpperCase()}
-            </button>
+            <button className="lang-toggle-sidebar" onClick={toggleLanguage}><span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>language</span>{language.toUpperCase()}</button>
           </div>
           <button className="logout-btn-sidebar" onClick={handleLogout}>
             <span className="material-symbols-outlined">logout</span>
@@ -197,34 +197,36 @@ const SermonEditor: React.FC = () => {
 
       <main className="editor-main-workspace">
         <header className="editor-header-sacred">
-          <div className="header-column-1">
-            <div className="verse-input-wrapper">
-              <span className="material-symbols-outlined verse-icon">auto_awesome</span>
-              <input 
-                type="text" 
-                className="verse-input-sacred"
-                placeholder={t('editor.verse_placeholder')}
-                value={sermon.main_passage}
-                disabled={loading || !!id} // DISABLED IF ALREADY HAS ID
-                onChange={(e) => setSermon({...sermon, main_passage: e.target.value})}
-              />
+          <div className="header-grid-absolute">
+            <div className="header-cell-left">
+              <div className="verse-input-wrapper">
+                <span className="material-symbols-outlined verse-icon">auto_awesome</span>
+                <input 
+                  type="text" 
+                  className="verse-input-sacred"
+                  placeholder={t('editor.verse_placeholder')}
+                  value={sermon.main_passage}
+                  disabled={loading || !!id}
+                  onChange={(e) => setSermon({...sermon, main_passage: e.target.value})}
+                />
+              </div>
             </div>
-          </div>
-          <div className="header-column-2">
-            <div className="header-button-group">
-              <button className="btn-generate-sacred" onClick={handleGenerateAnalysis} disabled={loading || !!id}>
-                {loading ? '...' : t('editor.analyze_btn')}
-              </button>
-              <button className="btn-save-top-sacred" onClick={handleSave} disabled={isSaving}>
-                <span className="material-symbols-outlined">save</span>
-                {isSaving ? '...' : language === 'es' ? 'Guardar' : 'Save'}
-              </button>
+            <div className="header-cell-center">
+              <div className="header-button-group">
+                <button className="btn-generate-sacred" onClick={handleGenerateAnalysis} disabled={loading || !!id}>
+                  {loading ? '...' : t('editor.analyze_btn')}
+                </button>
+                <button className="btn-save-top-sacred" onClick={handleSave} disabled={isSaving}>
+                  <span className="material-symbols-outlined">save</span>
+                  {isSaving ? '...' : language === 'es' ? 'Guardar' : 'Save'}
+                </button>
+              </div>
             </div>
-          </div>
-          <div className="header-column-3">
-            <span className="user-name-display-header">
-              {userProfile?.full_name || 'Admin'}
-            </span>
+            <div className="header-cell-right">
+              <span className="user-name-display-header">
+                {userProfile?.full_name || 'Admin'}
+              </span>
+            </div>
           </div>
         </header>
 
