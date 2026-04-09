@@ -5,111 +5,90 @@ import './PricingPage.css';
 
 const PricingPage: React.FC = () => {
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
+  const isEn = language === 'en';
+  const currency = isEn ? 'USD' : 'MXN';
+  
   const plans = [
     {
       id: 'free',
-      label: t('pricing.essential'),
       name: t('plan.free'),
-      price: '$0',
-      period: t('pricing.month'),
+      price: 0,
+      description: t('plan.free_desc'),
       features: [
-        'Hasta 3 bosquejos mensuales',
-        'Biblioteca de referencias básica',
-        'Exportación en PDF'
+        t('plan.free_desc'),
+        isEn ? 'Basic literary analysis' : 'Análisis literario básico',
+        isEn ? 'Personal study library' : 'Biblioteca de estudios personal'
       ],
-      disabledFeatures: ['Colaboración en equipo'],
       buttonText: t('btn.start_free'),
       recommended: false
     },
     {
       id: 'mentor',
-      label: t('pricing.advanced'),
       name: t('plan.pro'),
-      price: '$19',
-      period: t('pricing.month'),
-      tagline: t('pricing.deep_prep'),
+      price: isEn ? 9.99 : 180,
+      description: t('plan.pro_desc'),
       features: [
-        'Bosquejos ilimitados',
-        'Acceso a Lexicones Griegos y Hebreos',
-        'Nube de almacenamiento segura',
-        'Soporte prioritario 24/7',
-        'Modo "Lectura en Púlpito"'
+        t('pricing.includes_prev'),
+        t('plan.pro_desc'),
+        isEn ? 'Access to Strong Lexicons' : 'Acceso a Léxicos Strong',
+        isEn ? 'Biblical Maps & Geography' : 'Mapas Bíblicos y Geografía'
       ],
-      buttonText: t('hero.start'),
+      buttonText: t('btn.choose'),
       recommended: true
     },
     {
-      id: 'exegete',
-      label: t('pricing.teams'),
-      name: t('auth.ministerio'),
-      price: '$49',
-      period: t('pricing.month'),
+      id: 'unlimited',
+      name: t('plan.unlimited'),
+      price: isEn ? 19.99 : 360,
+      description: t('plan.unlimited_desc'),
       features: [
-        'Hasta 10 usuarios incluidos',
-        'Espacios de trabajo compartidos',
-        'Control administrativo de roles',
-        'Integración con presentaciones'
+        t('pricing.includes_all'),
+        t('plan.unlimited_desc'),
+        t('pricing.pptx_keynote'),
+        isEn ? 'Priority Ministerial Support' : 'Soporte Ministerial Prioritario'
       ],
-      buttonText: t('pricing.contact_sales'),
+      buttonText: t('pricing.start_now'),
       recommended: false
     }
   ];
 
   return (
     <div className="pricing-page-container">
-      {/* Background Decorative Orbits */}
       <div className="pricing-orbit-bg">
         <div className="pricing-orbit-1"></div>
         <div className="pricing-orbit-2"></div>
       </div>
 
-      <main className="pricing-content-wrapper">
-        {/* Header Section */}
-        <div className="pricing-hero-section">
+      <div className="pricing-content-wrapper">
+        <header className="pricing-hero-section">
           <h1 className="pricing-hero-title">
-            {t('pricing.investment')} <span className="highlight">{t('pricing.ministerio')}</span>
+            <span className="highlight">{t('pricing.title')}</span> {t('pricing.title_gradient')}
           </h1>
-          <p className="pricing-hero-desc">
-            {t('pricing.investment_desc')}
-          </p>
-        </div>
+          <p className="pricing-hero-desc">{t('pricing.subtitle')}</p>
+        </header>
 
-        {/* Pricing Grid */}
         <div className="pricing-main-grid">
-          {plans.map((plan, index) => (
-            <div key={index} className={`pricing-card-sacred ${plan.recommended ? 'recommended' : ''}`}>
-              {plan.recommended && (
-                <div className="recommended-badge">{t('plan.popular')}</div>
-              )}
-              
+          {plans.map((plan) => (
+            <div key={plan.id} className={`pricing-card-sacred ${plan.recommended ? 'recommended' : ''}`}>
+              {plan.recommended && <div className="recommended-badge">{t('plan.popular')}</div>}
               <div className="card-header">
-                <span className="card-label">{plan.label}</span>
-                <h3 className="card-plan-name">{plan.name}</h3>
+                <span className="card-label">{t('pricing.badge')}</span>
+                <h2 className="card-plan-name">{plan.name}</h2>
                 <div className="card-price-row">
-                  <span className="price-amount">{plan.price}</span>
-                  <span className="price-period">{plan.period}</span>
+                  <span className="price-amount">
+                    {plan.price === 0 ? t('plan.free_price') : `$${plan.price}`}
+                  </span>
+                  {plan.price !== 0 && <span className="price-period">{currency}{t('pricing.month')}</span>}
                 </div>
-                {plan.tagline && (
-                  <p style={{ color: '#b0c6ff', fontSize: '0.875rem', marginTop: '-1rem', marginBottom: '1.5rem', fontStyle: 'italic' }}>
-                    {plan.tagline}
-                  </p>
-                )}
+                <p style={{ color: '#c2c6d7', fontSize: '0.875rem' }}>{plan.description}</p>
               </div>
 
               <ul className="card-features-list">
-                {plan.features.map((feature, fIndex) => (
-                  <li key={fIndex} className="feature-item">
-                    <span className="material-symbols-outlined feature-icon">
-                      {plan.recommended ? 'auto_awesome' : 'check_circle'}
-                    </span>
-                    <span>{feature}</span>
-                  </li>
-                ))}
-                {plan.disabledFeatures?.map((feature, dIndex) => (
-                  <li key={dIndex} className="feature-item" style={{ opacity: 0.4 }}>
-                    <span className="material-symbols-outlined feature-icon" style={{ color: 'inherit' }}>block</span>
+                {plan.features.map((feature, idx) => (
+                  <li key={idx} className="feature-item">
+                    <span className="material-symbols-outlined feature-icon">check_circle</span>
                     <span>{feature}</span>
                   </li>
                 ))}
@@ -125,54 +104,39 @@ const PricingPage: React.FC = () => {
           ))}
         </div>
 
-        {/* Bento Grid - Why choose us */}
+        {/* Bento Details */}
         <div className="pricing-bento-section">
           <div className="bento-item bento-library">
-            <img 
-              className="bento-bg-img" 
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBc6QB3jgAw13LZExCBs_FoQXVc0DyMB8ac6uzzbRoEdqJUleuIeBIwSD_W3KJ7HO5aZczcPImK8r546e-RMNTT3mwDqjyPmEV7CerIWWE1lKfvQdcfifLAZqSkX-zrkH2_AFU1PXI6TsLjMhTkrJ8DDlfyZCtwdDZJw8kRjs8ZakTDDZs4Cw2PN2vpAO9gfOzza6FXPrpKAvM9VH5JhNjYpEUqfPCCHl0hlc_9uWgQnGlRRBiS68krU7GW6jv3VDpZBlPCILjlo4A" 
-              alt="Library" 
-            />
+            <img src="https://images.unsplash.com/photo-1507692049790-de58290a4334?q=80&w=2070&auto=format&fit=crop" alt="Library" className="bento-bg-img" />
             <div className="bento-content">
-              <h4 className="bento-title-lg">{t('pricing.bento_library_title')}</h4>
-              <p style={{ color: '#c2c6d7' }}>{t('pricing.bento_library_desc')}</p>
+              <h3 className="bento-title-lg">{t('pricing.bento_library_title')}</h3>
+              <p className="text-sm opacity-70">{t('pricing.bento_library_desc')}</p>
             </div>
           </div>
-
           <div className="bento-item bento-sync">
             <div className="bento-sync-content">
-              <div className="bento-icon-wrapper">
-                <span className="material-symbols-outlined" style={{ fontSize: '2.5rem' }}>cloud_sync</span>
-              </div>
+              <div className="bento-icon-wrapper"><span className="material-symbols-outlined" style={{fontSize: '2rem'}}>sync_saved_locally</span></div>
               <div>
-                <h5 style={{ fontFamily: 'Noto Serif', fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem' }}>
-                  {t('pricing.bento_sync_title')}
-                </h5>
-                <p style={{ color: '#c2c6d7', fontSize: '0.875rem' }}>{t('pricing.bento_sync_desc')}</p>
+                <h3 className="font-bold">{t('pricing.bento_sync_title')}</h3>
+                <p className="text-xs opacity-60">{t('pricing.bento_sync_desc')}</p>
               </div>
             </div>
           </div>
-
           <div className="bento-item bento-stats">
             <span className="stats-value">99.9%</span>
             <span className="stats-label">{t('pricing.bento_uptime')}</span>
           </div>
-
           <div className="bento-item bento-stats">
-            <span className="stats-value">+5k</span>
+            <span className="stats-value">+10k</span>
             <span className="stats-label">{t('pricing.bento_pastors')}</span>
           </div>
         </div>
 
-        {/* Admin Note Section */}
         <div className="admin-note-section">
-          <p>
-            ¿Eres administrador? <span className="link" onClick={() => navigate('/login')}>Inicia sesión</span> para acceso bypass.
-          </p>
+          <p>{language === 'es' ? '¿Necesita un plan para su organización?' : 'Need a plan for your organization?'} <span className="link">{t('pricing.contact_sales')}</span></p>
         </div>
-      </main>
+      </div>
 
-      {/* Footer Section */}
       <footer className="sacred-footer-pricing">
         <div className="sacred-footer-content">
           <p className="sacred-footer-copy">© 2026 Preacher Studio. {t('auth.inspired_prep')}.</p>
