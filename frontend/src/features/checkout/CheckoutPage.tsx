@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useLanguage } from '../../../context/LanguageContext';
+import { useLanguage } from '../../context/LanguageContext';
 import './CheckoutPage.css';
 
 const CheckoutPage: React.FC = () => {
