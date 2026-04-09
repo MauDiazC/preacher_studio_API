@@ -78,7 +78,7 @@ const LandingPage: React.FC = () => {
               ))}
               <div className="hero-img-mask">
                 <img 
-                  src="https://images.unsplash.com/photo-1507692049790-de58290a4334?q=80&w=2070&auto=format&fit=crop" 
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuALFG_fDfcSfQWj6_QR3yEjl754IWUhjqST_uZ71myGm7s39rdiro6uh4T27qM2ZdvbTqoEuZ1SFFspGEuf9TG2mjlNNABCCSBojIV4uoFiox7nVJw1UZDimScfRfmTQPc_UOFK2aB_NqPHCL9so4YMfHDKNyjecBewsCe9Tq0vZKOvPCWG2vp49M_CzZd5qIrLVVhu92dL2M1Q-DvDHn3Dxio42PKleC_uaUdO-D4aP8gGCNQ0Rioz8EL-3Kp9EUJrhjKUDCMVFs" 
                   alt="Ministerial Visualization" 
                   className="hero-img"
                 />

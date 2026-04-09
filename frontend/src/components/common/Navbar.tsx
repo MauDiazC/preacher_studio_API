@@ -19,7 +19,7 @@ const Navbar: React.FC = () => {
     <nav className="navbar">
       <div className="navbar-content-sacred">
         <Link to="/" className="navbar-brand-sacred">
-          <span className="material-symbols-outlined brand-icon-sacred">church</span>
+          <span className="material-symbols-outlined brand-icon-sacred">menu_book</span>
           PREACHER STUDIO
         </Link>
 
