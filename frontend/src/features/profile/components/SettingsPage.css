@@ -42,7 +42,7 @@
 
 .display-title {
   font-family: 'Noto Serif', serif;
-  font-size: 3.5rem;
+  font-size: 3rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
   color: #ffffff;
@@ -54,6 +54,55 @@
   opacity: 0.8;
 }
 
+.settings-grid-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Avatar Section - Initials */
+.profile-avatar-section {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 2.5rem !important;
+}
+
+.initials-avatar-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #b0c6ff 0%, #558dff 100%);
+  color: #002661;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Noto Serif', serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  box-shadow: 0 10px 30px rgba(176, 198, 255, 0.2);
+  border: 4px solid rgba(176, 198, 255, 0.1);
+}
+
+.avatar-info-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.headline-text-small {
+  font-family: 'Noto Serif', serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #b0c6ff;
+}
+
+.label-text-sm {
+  font-size: 0.8125rem;
+  color: rgba(194, 198, 215, 0.6);
+}
+
+/* Glass Card */
 .glass-card-settings {
   background: rgba(29, 29, 52, 0.7);
   backdrop-filter: blur(24px);
@@ -85,7 +134,7 @@
 .form-grid-settings {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2rem;
+  gap: 2.5rem;
 }
 
 .input-group-sacred {
@@ -111,16 +160,17 @@
   background-color: #33324b;
   border: none;
   border-radius: 0.75rem;
-  padding: 1rem 1.25rem;
+  padding: 1.125rem 1.25rem;
   color: #e2dfff;
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.875rem;
   transition: all 0.2s;
+  outline: none;
 }
 
 .input-sacred:focus {
-  outline: 2px solid rgba(176, 198, 255, 0.3);
   background-color: #3d3c5a;
+  box-shadow: 0 0 0 2px rgba(176, 198, 255, 0.3);
 }
 
 .input-sacred.disabled {
@@ -138,10 +188,11 @@
   font-size: 0.875rem;
   resize: none;
   transition: all 0.2s;
+  outline: none;
 }
 
 .textarea-sacred:focus {
-  outline: 2px solid rgba(176, 198, 255, 0.3);
+  box-shadow: 0 0 0 2px rgba(176, 198, 255, 0.3);
 }
 
 .actions-footer-settings {
@@ -154,7 +205,7 @@
   background: linear-gradient(135deg, #b0c6ff 0%, #558dff 100%);
   color: #002661;
   font-weight: 700;
-  padding: 1.125rem 2.5rem;
+  padding: 1.125rem 3rem;
   border-radius: 0.75rem;
   border: none;
   cursor: pointer;
@@ -164,7 +215,7 @@
 }
 
 .btn-save-sacred:hover {
-  transform: scale(1.05);
+  transform: translateY(-2px);
   box-shadow: 0px 12px 32px rgba(176, 198, 255, 0.3);
 }
 
@@ -177,7 +228,7 @@
   color: #b0c6ff;
 }
 
-/* Sidebar Styles - Shared */
+/* Sidebar shared styles */
 .sidebar-brand { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 2.5rem; }
 .brand-icon-box { width: 2.25rem; height: 2.25rem; background: rgba(176, 198, 255, 0.1); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; color: #b0c6ff; }
 .brand-text-pulp { font-family: 'Noto Serif', serif; font-size: 1.125rem; font-weight: 700; color: #b0c6ff; margin: 0; }

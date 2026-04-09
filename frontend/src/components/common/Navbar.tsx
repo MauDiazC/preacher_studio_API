@@ -11,7 +11,7 @@ const Navbar: React.FC = () => {
   const location = useLocation();
 
   // Ocultar Navbar en las rutas internas de la aplicación que ya tienen Sidebar
-  if (location.pathname.startsWith('/sermons')) {
+  if (location.pathname.startsWith('/sermons') || location.pathname.startsWith('/settings')) {
     return null;
   }
 
