@@ -12,6 +12,7 @@ const SermonList: React.FC = () => {
   const [sermons, setSermons] = useState<Sermon[]>([]);
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
+  const [page] = useState(1); // Restaurado como constante de estado para el build
   const [searchTerm, setSearchText] = useState('');
   const [userProfile, setUserProfile] = useState<{full_name?: string, is_admin?: boolean} | null>(null);
   const limit = 10;
