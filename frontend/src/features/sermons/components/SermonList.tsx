@@ -18,10 +18,11 @@ const SermonList: React.FC = () => {
   const navigate = useNavigate();
   const { addNotification } = useNotificationStore();
   const { t, language, toggleLanguage } = useLanguage();
-  const { logout } = useAuthStore();
+  const { logout, user } = useAuthStore();
 
-  // Créditos dummy para visualización (en una versión real vendrían del perfil)
+  // Créditos dummy para visualización
   const credits = 25; 
+  const isAdmin = user?.role === 'admin' || user?.email === 'diazzabala@gmail.com'; // Fallback por si el rol no viene explícito
 
   const handleLogout = () => {
     logout();
@@ -31,11 +32,8 @@ const SermonList: React.FC = () => {
   const fetchSermons = async () => {
     try {
       setLoading(true);
-      // Calculamos el offset basado en la página actual
       const currentOffset = (page - 1) * limit;
       const data = await sermonService.getAll(limit, currentOffset);
-      
-      // El backend devuelve { data: [...], total: X }
       setSermons(data.data || []);
       setTotal(data.total || 0);
     } catch (error) {
@@ -84,11 +82,11 @@ const SermonList: React.FC = () => {
       <aside className="sacred-sidebar">
         <div className="sidebar-brand">
           <div className="brand-icon-box">
-            <span className="material-symbols-outlined">auto_stories</span>
+            <span className="material-symbols-outlined">menu_book</span>
           </div>
           <div>
-            <h1 className="brand-text-pulpit">The Pulpit</h1>
-            <p className="brand-tagline-sm">Inspired Preparation</p>
+            <h1 className="brand-text-pulp">Preacher Studio</h1>
+            <p className="brand-tagline-sm">{t('auth.inspired_prep')}</p>
           </div>
         </div>
 
@@ -102,14 +100,6 @@ const SermonList: React.FC = () => {
             <span>{t('nav.sermon_prep')}</span>
           </Link>
           <a href="#" className="nav-item">
-            <span className="material-symbols-outlined nav-icon">menu_book</span>
-            <span>{t('nav.theology')}</span>
-          </a>
-          <a href="#" className="nav-item">
-            <span className="material-symbols-outlined nav-icon">inventory_2</span>
-            <span>{t('nav.archives')}</span>
-          </a>
-          <a href="#" className="nav-item">
             <span className="material-symbols-outlined nav-icon">settings</span>
             <span>{t('nav.settings')}</span>
           </a>
@@ -117,9 +107,13 @@ const SermonList: React.FC = () => {
 
         <div className="sidebar-footer-sacred">
           <div className="sidebar-user-stats">
-            <div className="stat-pill-mini">
-              <span>✨ {credits}</span>
+            <div className="credits-display">
+              <span className="credits-label">{t('nav.credits')}</span>
+              <span className="credits-value">
+                {isAdmin ? t('nav.unlimited') : credits}
+              </span>
             </div>
+            
             <button className="lang-toggle-sidebar" onClick={toggleLanguage}>
               <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>language</span>
               {language.toUpperCase()}
@@ -180,20 +174,6 @@ const SermonList: React.FC = () => {
               <div className="stat-value-row">
                 <span className="stat-number">--</span>
                 <span className="material-symbols-outlined stat-icon">calendar_month</span>
-              </div>
-            </div>
-            <div className="stat-card-sacred tertiary">
-              <span className="stat-label">{t('list.drafts')}</span>
-              <div className="stat-value-row">
-                <span className="stat-number">--</span>
-                <span className="material-symbols-outlined stat-icon">draw</span>
-              </div>
-            </div>
-            <div className="stat-card-sacred info">
-              <span className="stat-label">{t('list.archived')}</span>
-              <div className="stat-value-row">
-                <span className="stat-number">--</span>
-                <span className="material-symbols-outlined stat-icon">archive</span>
               </div>
             </div>
           </div>
