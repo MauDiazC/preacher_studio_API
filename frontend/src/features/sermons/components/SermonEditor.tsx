@@ -20,25 +20,32 @@ const SermonEditor: React.FC = () => {
     exegesis: '',
     homiletics: '',
     application: '',
-    additional_notes: ''
+    additional_notes: '',
+    content: ''
   });
   
   const [loading, setLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [lastSavedLabel, setLastSavedLabel] = useState<string>('');
 
-  // Formatear nombre: Mauricio Diaz -> Mauricio D. (Sin icono)
-  const formatUserName = (fullName?: string) => {
-    if (!fullName) return '';
-    const parts = fullName.split(' ');
-    if (parts.length < 2) return parts[0];
-    return `${parts[0]} ${parts[1][0]}.`;
+  // Formatear nombre: Mauricio Diaz -> Mauricio D.
+  const formatUserName = (fullName?: string, email?: string) => {
+    if (fullName) {
+      const parts = fullName.split(' ');
+      return parts.length >= 2 ? `${parts[0]} ${parts[1][0]}.` : parts[0];
+    }
+    return email ? email.split('@')[0] : '';
   };
+
+  // Lógica de Admin y Créditos
+  const userEmail = user?.email || '';
+  const isAdmin = user?.role === 'admin' || userEmail === 'diazzabala@gmail.com';
+  const credits = 25;
 
   // Calcular tiempo relativo de guardado
   const updateSavedLabel = (updatedAt?: string) => {
     if (!updatedAt) {
-      setLastSavedLabel(language === 'es' ? 'Sin guardar' : 'Not saved');
+      setLastSavedLabel(language === 'es' ? 'Estudio nuevo' : 'New study');
       return;
     }
     const diff = Math.floor((new Date().getTime() - new Date(updatedAt).getTime()) / 60000);
@@ -50,9 +57,6 @@ const SermonEditor: React.FC = () => {
     const timer = setInterval(() => updateSavedLabel(sermon.updated_at), 60000);
     return () => clearInterval(timer);
   }, [sermon.updated_at, language]);
-
-  const isAdmin = user?.role === 'admin' || user?.email === 'diazzabala@gmail.com';
-  const credits = 25;
 
   useEffect(() => {
     if (id) {
@@ -125,7 +129,7 @@ const SermonEditor: React.FC = () => {
     navigate('/login');
   };
 
-  if (loading && !sermon.exegesis) return (
+  if (loading && !sermon.exegesis && !sermon.content) return (
     <div className="loading-screen-editor">
       <div className="loader-ministerial"></div>
       <p>{t('list.loading')}</p>
@@ -190,7 +194,7 @@ const SermonEditor: React.FC = () => {
 
       {/* Main Workspace */}
       <main className="editor-main-workspace">
-        {/* Editor Top Bar - Fixed size inputs */}
+        {/* Editor Top Bar */}
         <header className="editor-header-sacred">
           <div className="verse-input-aligned-group">
             <div className="verse-input-wrapper">
@@ -222,7 +226,7 @@ const SermonEditor: React.FC = () => {
           </div>
 
           <div className="editor-user-info">
-            <span className="user-name-display">{formatUserName(user?.full_name)}</span>
+            <span className="user-name-display">{formatUserName(user?.full_name, user?.email)}</span>
           </div>
         </header>
 
@@ -246,7 +250,9 @@ const SermonEditor: React.FC = () => {
             <div className="analysis-grid-uniform">
               <section className="analysis-box">
                 <h4 className="analysis-label">{t('editor.exegesis')}</h4>
-                <div className="analysis-text">{sermon.exegesis || t('editor.write_here')}</div>
+                <div className="analysis-text">
+                  {sermon.exegesis || sermon.content || t('editor.write_here')}
+                </div>
               </section>
 
               <section className="analysis-box">
@@ -289,6 +295,11 @@ const SermonEditor: React.FC = () => {
           <button className="tool-btn-sacred">
             <span className="material-symbols-outlined">menu_book</span>
             <span>Léxicos Strong</span>
+          </button>
+
+          <button className="tool-btn-sacred">
+            <span className="material-symbols-outlined">map</span>
+            <span>Mapas Bíblicos</span>
           </button>
         </div>
 
