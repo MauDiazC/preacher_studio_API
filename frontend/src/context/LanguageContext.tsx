@@ -157,7 +157,7 @@ const translations = {
     'editor.homiletics': 'Homilética',
     'editor.application': 'Aplicación',
     'editor.prep_note': 'Nota de Preparación',
-    'editor.write_here': 'Escriba aquí para continuar con su preparación inspirada...',
+    'editor.write_here': 'Puedes seguir escribiendo notas:',
     'editor.visual_interlinear': 'Interlineal Visual',
     'editor.previous_versions': 'Versiones anteriores',
     'editor.share_draft': 'Compartir borrador',
