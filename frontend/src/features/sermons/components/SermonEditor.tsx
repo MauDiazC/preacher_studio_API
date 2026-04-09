@@ -25,14 +25,31 @@ const SermonEditor: React.FC = () => {
   
   const [loading, setLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [lastSavedLabel, setLastSavedLabel] = useState<string>('');
 
-  // Formatear nombre: Mauricio Diaz -> Mauricio D.
+  // Formatear nombre: Mauricio Diaz -> Mauricio D. (Sin icono)
   const formatUserName = (fullName?: string) => {
     if (!fullName) return '';
     const parts = fullName.split(' ');
     if (parts.length < 2) return parts[0];
     return `${parts[0]} ${parts[1][0]}.`;
   };
+
+  // Calcular tiempo relativo de guardado
+  const updateSavedLabel = (updatedAt?: string) => {
+    if (!updatedAt) {
+      setLastSavedLabel(language === 'es' ? 'Sin guardar' : 'Not saved');
+      return;
+    }
+    const diff = Math.floor((new Date().getTime() - new Date(updatedAt).getTime()) / 60000);
+    if (diff < 1) setLastSavedLabel(language === 'es' ? 'Recién guardado' : 'Just saved');
+    else setLastSavedLabel(`${t('editor.saved_ago')} ${diff} min`);
+  };
+
+  useEffect(() => {
+    const timer = setInterval(() => updateSavedLabel(sermon.updated_at), 60000);
+    return () => clearInterval(timer);
+  }, [sermon.updated_at, language]);
 
   const isAdmin = user?.role === 'admin' || user?.email === 'diazzabala@gmail.com';
   const credits = 25;
@@ -48,6 +65,7 @@ const SermonEditor: React.FC = () => {
       setLoading(true);
       const data = await sermonService.getById(sermonId);
       setSermon(data);
+      updateSavedLabel(data.updated_at);
     } catch (error) {
       addNotification('Error al cargar el estudio.', 'error');
     } finally {
@@ -85,10 +103,13 @@ const SermonEditor: React.FC = () => {
     setIsSaving(true);
     try {
       if (id) {
-        await sermonService.update(id, sermon);
+        const updated = await sermonService.update(id, sermon);
+        setSermon(updated);
+        updateSavedLabel(updated.updated_at);
         addNotification('Estudio actualizado.', 'success');
       } else {
         const created = await sermonService.create(sermon);
+        setSermon(created);
         addNotification('Estudio guardado.', 'success');
         navigate(`/sermons/${created.id}`);
       }
@@ -113,7 +134,7 @@ const SermonEditor: React.FC = () => {
 
   return (
     <div className="sermon-editor-page">
-      {/* Sidebar - Narrorwer version */}
+      {/* Side Navigation - Fixed */}
       <aside className="sacred-sidebar-editor">
         <div className="sidebar-brand">
           <div className="brand-icon-box">
@@ -169,7 +190,7 @@ const SermonEditor: React.FC = () => {
 
       {/* Main Workspace */}
       <main className="editor-main-workspace">
-        {/* Editor Top Bar - Aligned and Responsive */}
+        {/* Editor Top Bar - Fixed size inputs */}
         <header className="editor-header-sacred">
           <div className="verse-input-aligned-group">
             <div className="verse-input-wrapper">
@@ -189,10 +210,18 @@ const SermonEditor: React.FC = () => {
             >
               {loading ? '...' : t('editor.analyze_btn')}
             </button>
+            
+            <button 
+              className="btn-save-top-sacred" 
+              onClick={handleSave}
+              disabled={isSaving}
+            >
+              <span className="material-symbols-outlined">save</span>
+              {isSaving ? '...' : language === 'es' ? 'Guardar' : 'Save'}
+            </button>
           </div>
 
           <div className="editor-user-info">
-            <span className="material-symbols-outlined">account_circle</span>
             <span className="user-name-display">{formatUserName(user?.full_name)}</span>
           </div>
         </header>
@@ -210,7 +239,7 @@ const SermonEditor: React.FC = () => {
               />
               <div className="save-status">
                 <span className="material-symbols-outlined">cloud_done</span>
-                {t('editor.saved_ago')} 2 min
+                {lastSavedLabel}
               </div>
             </div>
 
@@ -244,7 +273,7 @@ const SermonEditor: React.FC = () => {
         </div>
       </main>
 
-      {/* Right Tools Panel - Simplified */}
+      {/* Right Tools Panel - Fixed */}
       <aside className="editor-right-tools">
         <div className="tools-header-sacred">
           <span className="material-symbols-outlined">construction</span>
@@ -253,17 +282,13 @@ const SermonEditor: React.FC = () => {
 
         <div className="tool-actions-vertical">
           <button className="tool-btn-sacred">
-            <span className="material-symbols-outlined">share</span>
-            <span>{t('editor.share_draft')}</span>
+            <span className="material-symbols-outlined">auto_stories</span>
+            <span>Versiones Bíblicas</span>
           </button>
           
-          <button 
-            className="tool-btn-sacred" 
-            onClick={handleSave}
-            disabled={isSaving}
-          >
-            <span className="material-symbols-outlined">save</span>
-            <span>{isSaving ? '...' : 'Guardar Estudio'}</span>
+          <button className="tool-btn-sacred">
+            <span className="material-symbols-outlined">menu_book</span>
+            <span>Léxicos Strong</span>
           </button>
         </div>
 
@@ -276,10 +301,15 @@ const SermonEditor: React.FC = () => {
             </button>
             <button className="export-icon-btn">
               <span className="material-symbols-outlined">present_to_all</span>
-              PPTX
+              PPTX/Keynote
             </button>
           </div>
         </div>
+
+        <button className="btn-share-bottom">
+          <span className="material-symbols-outlined">share</span>
+          <span>{language === 'es' ? 'Compartir' : 'Share'}</span>
+        </button>
       </aside>
     </div>
   );

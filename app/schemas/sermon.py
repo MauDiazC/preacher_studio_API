@@ -27,6 +27,11 @@ class SermonBase(BaseModel):
             "En este sermón exploramos la importancia de un corazón receptivo..."
         ],
     )
+    exegesis: Optional[str] = None
+    homiletics: Optional[str] = None
+    application: Optional[str] = None
+    additional_notes: Optional[str] = None
+    historical_context: Optional[str] = None
     status: Optional[str] = Field(
         "seed",
         pattern="^(seed|draft|final)$",
@@ -43,9 +48,6 @@ class SermonBase(BaseModel):
     def sanitize_html(cls, v: Optional[str]) -> Optional[str]:
         if v is None:
             return v
-        # Ya no eliminamos los tags HTML para permitir el formato del editor (innerHTML)
-        # En una versión futura podríamos usar una librería como nh3 o bleach para sanitizar 
-        # sin eliminar tags básicos (b, i, u, span, br, h1, h2, h3).
         return v.strip()
 
 
@@ -65,6 +67,11 @@ class SermonUpdate(BaseModel):
         None, max_length=50000, examples=["Contenido actualizado..."]
     )
     main_passage: Optional[str] = Field(None, max_length=100, examples=["Juan 3:16"])
+    exegesis: Optional[str] = None
+    homiletics: Optional[str] = None
+    application: Optional[str] = None
+    additional_notes: Optional[str] = None
+    historical_context: Optional[str] = None
     status: Optional[str] = Field(
         None, pattern="^(seed|draft|final)$", examples=["final"]
     )
