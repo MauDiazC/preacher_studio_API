@@ -17,11 +17,8 @@ const SermonEditor: React.FC = () => {
   const [sermon, setSermon] = useState<Partial<Sermon>>({
     title: '',
     main_passage: '',
-    exegesis: '',
-    homiletics: '',
-    application: '',
-    additional_notes: '',
     content: '',
+    additional_notes: '',
     key_locations: []
   });
   
@@ -87,14 +84,13 @@ const SermonEditor: React.FC = () => {
     setLoading(true);
     try {
       const analysis = await sermonService.generateAnalysis(sermon.main_passage);
+      // Combinamos el análisis en el campo content como antes
+      const fullContent = `${analysis.exegesis}\n\n${analysis.homiletics}\n\n${analysis.application}`;
       setSermon(prev => ({
         ...prev,
         title: `${t('editor.exegesis')} - ${sermon.main_passage}`,
-        exegesis: analysis.exegesis,
-        homiletics: analysis.homiletics,
-        application: analysis.application,
-        key_locations: analysis.key_locations,
-        historical_context: analysis.historical_context
+        content: fullContent,
+        key_locations: analysis.key_locations
       }));
       addNotification('Análisis generado con éxito.', 'success');
     } catch (error) {
@@ -134,7 +130,7 @@ const SermonEditor: React.FC = () => {
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location + ' biblical location')}`;
   };
 
-  if (loading && !sermon.exegesis && !sermon.content) return (
+  if (loading && !sermon.content) return (
     <div className="loading-screen-editor">
       <div className="loader-ministerial"></div>
       <p>{t('list.loading')}</p>
@@ -143,7 +139,7 @@ const SermonEditor: React.FC = () => {
 
   return (
     <div className="sermon-editor-page">
-      {/* Side Navigation - Fixed */}
+      {/* Sidebar - Fixed */}
       <aside className="sacred-sidebar-editor">
         <div className="sidebar-brand">
           <div className="brand-icon-box">
@@ -215,7 +211,7 @@ const SermonEditor: React.FC = () => {
             <button 
               className="btn-generate-sacred" 
               onClick={handleGenerateAnalysis}
-              disabled={loading}
+              disabled={loading || !!id} // DISABLED IF ALREADY HAS ID
             >
               {loading ? '...' : t('editor.analyze_btn')}
             </button>
@@ -255,13 +251,7 @@ const SermonEditor: React.FC = () => {
 
               <div className="analysis-grid-uniform">
                 <div className="analysis-text-pure">
-                  {sermon.exegesis || sermon.content || t('editor.write_here')}
-                </div>
-                <div className="analysis-text-pure">
-                  {sermon.homiletics}
-                </div>
-                <div className="analysis-text-pure">
-                  {sermon.application}
+                  {sermon.content || t('editor.write_here')}
                 </div>
               </div>
 
