@@ -25,7 +25,7 @@
   flex: 1;
   margin-left: 220px;
   overflow-y: auto;
-  padding: 4rem 3rem;
+  padding: 2rem 3rem 4rem; /* REDUCED TOP PADDING TO MOVE CONTENT UP */
   position: relative;
   background: radial-gradient(circle at top right, rgba(176, 198, 255, 0.05) 0%, transparent 50%),
               radial-gradient(circle at bottom left, rgba(85, 141, 255, 0.03) 0%, transparent 50%);
@@ -37,40 +37,35 @@
 }
 
 .settings-header {
-  margin-bottom: 4rem;
+  margin-bottom: 2.5rem; /* REDUCED MARGIN */
 }
 
 .display-title {
   font-family: 'Noto Serif', serif;
-  font-size: 3rem;
+  font-size: 2.5rem; /* SLIGHTLY SMALLER TO FIT HIGHER */
   font-weight: 700;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
   color: #ffffff;
 }
 
 .subtitle-text {
   color: #c2c1ff;
-  font-size: 1rem;
-  opacity: 0.8;
+  font-size: 0.9375rem;
+  opacity: 0.7;
 }
 
-.settings-grid-layout {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-/* Avatar Section - Initials */
-.profile-avatar-section {
+/* Avatar Section - Floating on Dashboard */
+.profile-avatar-dashboard-floating {
   display: flex;
   align-items: center;
-  gap: 2rem;
-  padding: 2.5rem !important;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+  padding: 0 1rem;
 }
 
 .initials-avatar-circle {
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   background: linear-gradient(135deg, #b0c6ff 0%, #558dff 100%);
   color: #002661;
@@ -78,35 +73,31 @@
   align-items: center;
   justify-content: center;
   font-family: 'Noto Serif', serif;
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 700;
   box-shadow: 0 10px 30px rgba(176, 198, 255, 0.2);
-  border: 4px solid rgba(176, 198, 255, 0.1);
+  border: 3px solid rgba(176, 198, 255, 0.1);
 }
 
 .avatar-info-text {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
 }
 
 .headline-text-small {
   font-family: 'Noto Serif', serif;
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   font-weight: 600;
   color: #b0c6ff;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
-.label-text-sm {
-  font-size: 0.8125rem;
-  color: rgba(194, 198, 215, 0.6);
-}
-
-/* Glass Card */
+/* Form Card */
 .glass-card-settings {
   background: rgba(29, 29, 52, 0.7);
   backdrop-filter: blur(24px);
-  padding: 3.5rem;
+  padding: 3rem;
   border-radius: 1.25rem;
   position: relative;
   box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.4);
@@ -125,22 +116,22 @@
 
 .headline-text {
   font-family: 'Noto Serif', serif;
-  font-size: 1.75rem;
+  font-size: 1.5rem;
   font-weight: 600;
-  margin-bottom: 3rem;
+  margin-bottom: 2.5rem;
   color: #b0c6ff;
 }
 
 .form-grid-settings {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2.5rem;
+  gap: 2rem;
 }
 
 .input-group-sacred {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.6rem;
 }
 
 .input-group-sacred.full-width {
@@ -149,10 +140,10 @@
 
 .label-text {
   font-family: 'Inter', sans-serif;
-  font-size: 0.6875rem;
+  font-size: 0.65rem;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: rgba(194, 198, 215, 0.6);
+  letter-spacing: 0.12em;
+  color: rgba(194, 198, 215, 0.5);
   padding-left: 0.25rem;
 }
 
@@ -160,7 +151,7 @@
   background-color: #33324b;
   border: none;
   border-radius: 0.75rem;
-  padding: 1.125rem 1.25rem;
+  padding: 1rem 1.25rem;
   color: #e2dfff;
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.875rem;
@@ -196,7 +187,7 @@
 }
 
 .actions-footer-settings {
-  margin-top: 4rem;
+  margin-top: 3rem;
   display: flex;
   justify-content: flex-end;
 }
@@ -205,7 +196,7 @@
   background: linear-gradient(135deg, #b0c6ff 0%, #558dff 100%);
   color: #002661;
   font-weight: 700;
-  padding: 1.125rem 3rem;
+  padding: 1rem 2.5rem;
   border-radius: 0.75rem;
   border: none;
   cursor: pointer;
@@ -228,7 +219,7 @@
   color: #b0c6ff;
 }
 
-/* Sidebar shared styles */
+/* Sidebar styles - keep shared */
 .sidebar-brand { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 2.5rem; }
 .brand-icon-box { width: 2.25rem; height: 2.25rem; background: rgba(176, 198, 255, 0.1); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; color: #b0c6ff; }
 .brand-text-pulp { font-family: 'Noto Serif', serif; font-size: 1.125rem; font-weight: 700; color: #b0c6ff; margin: 0; }

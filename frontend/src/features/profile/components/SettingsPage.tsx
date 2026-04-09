@@ -60,7 +60,6 @@ const SettingsPage: React.FC = () => {
     navigate('/login');
   };
 
-  // Función para obtener iniciales
   const getInitials = (name: string) => {
     if (!name) return 'GS';
     const parts = name.split(' ');
@@ -108,18 +107,17 @@ const SettingsPage: React.FC = () => {
             </p>
           </header>
 
-          <div className="settings-grid-layout">
-            {/* Avatar Section - Initials Circle */}
-            <section className="glass-card-settings profile-avatar-section">
-              <div className="initials-avatar-circle">
-                {getInitials(profile.full_name)}
-              </div>
-              <div className="avatar-info-text">
-                <h2 className="headline-text-small">{language === 'es' ? 'Identidad Ministerial' : 'Ministerial Identity'}</h2>
-                <p className="label-text-sm">{language === 'es' ? 'Basada en su nombre registrado' : 'Based on your registered name'}</p>
-              </div>
-            </section>
+          {/* Avatar Section - NOW OUTSIDE THE CARD */}
+          <div className="profile-avatar-dashboard-floating">
+            <div className="initials-avatar-circle">
+              {getInitials(profile.full_name)}
+            </div>
+            <div className="avatar-info-text">
+              <h2 className="headline-text-small">{language === 'es' ? 'Identidad Ministerial' : 'Ministerial Identity'}</h2>
+            </div>
+          </div>
 
+          <div className="settings-grid-layout">
             {/* Form Card */}
             <section className="glass-card-settings">
               <div className="panel-accent-line"></div>
