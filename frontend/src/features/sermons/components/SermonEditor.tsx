@@ -29,15 +29,15 @@ const SermonEditor: React.FC = () => {
   // Formatear nombre: Mauricio Diaz -> Mauricio D.
   const formatUserName = (fullName?: string, email?: string) => {
     const nameToUse = fullName || email || '';
-    if (!nameToUse) return '';
-    const parts = nameToUse.split(/[ @]/); // Divide por espacio o @
+    if (!nameToUse) return 'Usuario';
+    const parts = nameToUse.split(/[ @]/); 
     if (parts.length >= 2) {
       return `${parts[0].charAt(0).toUpperCase() + parts[0].slice(1)} ${parts[1][0].toUpperCase()}.`;
     }
     return nameToUse.charAt(0).toUpperCase() + nameToUse.slice(1);
   };
 
-  // Lógica de Admin y Créditos Forzada para tu correo
+  // Lógica de Admin y Créditos (Forzada por correo)
   const userEmail = user?.email?.toLowerCase() || '';
   const isAdmin = user?.role === 'admin' || userEmail === 'diazzabala@gmail.com' || userEmail.includes('diazzabala');
   const credits = 25;
@@ -127,8 +127,16 @@ const SermonEditor: React.FC = () => {
     navigate('/login');
   };
 
+  // Formato correcto para Bible Hub Maps
   const getMapLink = (location: string) => {
-    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location + ' biblical location')}`;
+    const formattedLoc = location.toLowerCase().trim().replace(/\s+/g, '_');
+    return `https://biblehub.com/maps/${formattedLoc}.htm`;
+  };
+
+  // Formato correcto para Blue Letter Bible Search
+  const getBLBLink = (passage: string) => {
+    const query = passage.replace(/\s+/g, '+');
+    return `https://www.blueletterbible.org/search/preSearch.cfm?Criteria=${query}&t=KJV`;
   };
 
   if (loading && !sermon.content) return (
@@ -196,7 +204,7 @@ const SermonEditor: React.FC = () => {
 
       {/* Main Workspace */}
       <main className="editor-main-workspace">
-        {/* Editor Top Bar - Liberated */}
+        {/* Editor Top Bar */}
         <header className="editor-header-sacred">
           <div className="verse-input-aligned-group">
             <div className="verse-input-wrapper">
@@ -227,8 +235,8 @@ const SermonEditor: React.FC = () => {
             </button>
           </div>
 
-          <div className="editor-user-info">
-            <span className="user-name-display">{formatUserName(user?.full_name, user?.email)}</span>
+          <div className="editor-user-info-box">
+            <span className="user-name-header">{formatUserName(user?.full_name, user?.email)}</span>
           </div>
         </header>
 
@@ -287,7 +295,7 @@ const SermonEditor: React.FC = () => {
               </a>
               
               <a 
-                href={`https://www.blueletterbible.org/search/search.cfm?Criteria=${encodeURIComponent(sermon.main_passage || '')}`} 
+                href={getBLBLink(sermon.main_passage || '')} 
                 target="_blank" 
                 rel="noreferrer"
                 className="tool-btn-sacred-link"

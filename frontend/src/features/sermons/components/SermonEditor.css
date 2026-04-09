@@ -6,7 +6,7 @@
   overflow: hidden;
 }
 
-/* Sidebar - Fixed and Narrow */
+/* Sidebar - Fixed */
 .sacred-sidebar-editor {
   width: 220px;
   background-color: #1a1a33;
@@ -21,7 +21,7 @@
   left: 0;
 }
 
-/* Workspace - Adjusted for fixed sidebar */
+/* Workspace - Adjusted */
 .editor-main-workspace {
   flex: 1;
   margin-left: 220px;
@@ -48,12 +48,12 @@
 .verse-input-aligned-group {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem; /* Increased gap */
 }
 
 .verse-input-wrapper {
   position: relative;
-  width: 220px;
+  width: 200px; /* Reduced width to clear button */
 }
 
 .verse-icon {
@@ -87,6 +87,12 @@
   font-size: 0.875rem;
 }
 
+.btn-generate-sacred:disabled {
+  background: rgba(176, 198, 255, 0.1);
+  color: rgba(194, 198, 215, 0.3);
+  cursor: not-allowed;
+}
+
 .btn-save-top-sacred {
   background: rgba(176, 198, 255, 0.1);
   border: 1px solid rgba(176, 198, 255, 0.3);
@@ -101,16 +107,23 @@
   gap: 0.5rem;
 }
 
-.editor-user-info {
+.editor-user-info-box {
+  display: flex;
+  align-items: center;
+  padding-left: 1rem;
+}
+
+.user-name-header {
   color: #b0c6ff;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.875rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
 /* Dashboard Integrated Grid */
 .editor-dashboard-integrated {
   display: grid;
-  grid-template-columns: 1fr 260px; /* Main content + fixed tools column */
+  grid-template-columns: 1fr 260px; 
   flex: 1;
   overflow: hidden;
 }
@@ -155,19 +168,12 @@
   margin-bottom: 3rem;
 }
 
-.analysis-grid-uniform {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  margin-bottom: 3rem;
-}
-
 .analysis-text-pure {
   font-size: 1.1rem;
   line-height: 1.8;
   color: #e2dfff;
   white-space: pre-wrap;
-  word-wrap: break-word; /* Fix for text overflow */
+  word-wrap: break-word;
   overflow-wrap: break-word;
 }
 
@@ -201,7 +207,7 @@
   outline: none;
 }
 
-/* Integrated Right Panel - Not Fixed anymore! */
+/* Integrated Right Panel */
 .editor-right-tools-integrated {
   background-color: #1a1a33;
   border-left: 1px solid rgba(176, 198, 255, 0.1);
@@ -266,46 +272,12 @@
   font-size: 0.8125rem;
   text-decoration: underline;
   margin-bottom: 0.5rem;
-  transition: opacity 0.2s;
-}
-
-.map-link-item:hover {
-  opacity: 0.8;
 }
 
 .export-section-sacred {
   border-top: 1px solid rgba(176, 198, 255, 0.05);
   padding-top: 2rem;
   margin-top: auto;
-}
-
-.section-subtitle-sacred {
-  font-size: 0.65rem;
-  font-weight: 800;
-  color: rgba(194, 198, 215, 0.4);
-  margin-bottom: 1rem;
-}
-
-.export-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
-  margin-bottom: 2rem;
-}
-
-.export-icon-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 1rem 0.5rem;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(176, 198, 255, 0.05);
-  border-radius: 0.75rem;
-  color: #c2c6d7;
-  font-size: 0.7rem;
-  font-weight: 700;
-  cursor: pointer;
 }
 
 .btn-share-integrated {
@@ -322,7 +294,7 @@
   cursor: pointer;
 }
 
-/* Sidebar Brand and Nav - Shared */
+/* Sidebar shared styles */
 .sidebar-brand { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 2.5rem; }
 .brand-icon-box { width: 2.25rem; height: 2.25rem; background: rgba(176, 198, 255, 0.1); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; color: #b0c6ff; }
 .brand-text-pulp { font-family: 'Noto Serif', serif; font-size: 1.125rem; font-weight: 700; color: #b0c6ff; margin: 0; }
@@ -335,8 +307,3 @@
 .credits-value { font-size: 0.8125rem; font-weight: 700; color: #b0c6ff; }
 .logout-btn-sidebar { background: transparent; border: 1px solid rgba(255, 180, 171, 0.2); color: #ffb4ab; padding: 0.6rem; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 0.7rem; font-weight: 700; cursor: pointer; margin-bottom: 1.5rem; }
 .new-study-btn-sidebar { background: linear-gradient(135deg, #b0c6ff 0%, #558dff 100%); color: #002661; border: none; padding: 0.875rem; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-weight: 700; cursor: pointer; font-size: 0.875rem; margin-bottom: 1rem; }
-
-/* Loader */
-.loading-screen-editor { position: fixed; inset: 0; background-color: #111127; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #b0c6ff; z-index: 1000; }
-.loader-ministerial { width: 40px; height: 40px; border: 3px solid rgba(176, 198, 255, 0.1); border-top-color: #b0c6ff; border-radius: 50%; animation: spin 1s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
