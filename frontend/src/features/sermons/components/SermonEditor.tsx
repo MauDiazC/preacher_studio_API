@@ -28,16 +28,18 @@ const SermonEditor: React.FC = () => {
 
   // Formatear nombre: Mauricio Diaz -> Mauricio D.
   const formatUserName = (fullName?: string, email?: string) => {
-    if (fullName) {
-      const parts = fullName.split(' ');
-      return parts.length >= 2 ? `${parts[0]} ${parts[1][0]}.` : parts[0];
+    const nameToUse = fullName || email || '';
+    if (!nameToUse) return '';
+    const parts = nameToUse.split(/[ @]/); // Divide por espacio o @
+    if (parts.length >= 2) {
+      return `${parts[0].charAt(0).toUpperCase() + parts[0].slice(1)} ${parts[1][0].toUpperCase()}.`;
     }
-    return email ? email.split('@')[0] : '';
+    return nameToUse.charAt(0).toUpperCase() + nameToUse.slice(1);
   };
 
-  // Lógica de Admin y Créditos
-  const userEmail = user?.email || '';
-  const isAdmin = user?.role === 'admin' || userEmail === 'diazzabala@gmail.com';
+  // Lógica de Admin y Créditos Forzada para tu correo
+  const userEmail = user?.email?.toLowerCase() || '';
+  const isAdmin = user?.role === 'admin' || userEmail === 'diazzabala@gmail.com' || userEmail.includes('diazzabala');
   const credits = 25;
 
   // Calcular tiempo relativo de guardado
@@ -84,7 +86,6 @@ const SermonEditor: React.FC = () => {
     setLoading(true);
     try {
       const analysis = await sermonService.generateAnalysis(sermon.main_passage);
-      // Combinamos el análisis en el campo content como antes
       const fullContent = `${analysis.exegesis}\n\n${analysis.homiletics}\n\n${analysis.application}`;
       setSermon(prev => ({
         ...prev,
@@ -139,7 +140,7 @@ const SermonEditor: React.FC = () => {
 
   return (
     <div className="sermon-editor-page">
-      {/* Sidebar - Fixed */}
+      {/* Side Navigation - Fixed */}
       <aside className="sacred-sidebar-editor">
         <div className="sidebar-brand">
           <div className="brand-icon-box">
@@ -211,7 +212,7 @@ const SermonEditor: React.FC = () => {
             <button 
               className="btn-generate-sacred" 
               onClick={handleGenerateAnalysis}
-              disabled={loading || !!id} // DISABLED IF ALREADY HAS ID
+              disabled={loading || !!id}
             >
               {loading ? '...' : t('editor.analyze_btn')}
             </button>
