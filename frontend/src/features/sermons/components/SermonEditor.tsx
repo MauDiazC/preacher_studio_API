@@ -28,7 +28,6 @@ const SermonEditor: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [lastSavedLabel, setLastSavedLabel] = useState<string>('');
 
-  // Cargar Perfil Real (Corregido el endpoint a /profile/)
   const loadProfile = async () => {
     try {
       const response = await api.get('/profile/');
@@ -38,11 +37,9 @@ const SermonEditor: React.FC = () => {
     }
   };
 
-  // Lógica de Admin y Créditos
   const userEmail = user?.email?.toLowerCase() || '';
   const isAdmin = userProfile?.is_admin || userEmail === 'diazzabala@gmail.com';
 
-  // Formatear tiempo relativo
   const formatRelativeTime = (updatedAt?: string) => {
     if (!updatedAt) return language === 'es' ? 'Estudio nuevo' : 'New study';
     const diffMs = new Date().getTime() - new Date(updatedAt).getTime();
@@ -79,10 +76,7 @@ const SermonEditor: React.FC = () => {
     try {
       setLoading(true);
       const data = await sermonService.getById(sermonId);
-      setSermon({
-        ...data,
-        additional_notes: data.additional_notes || ''
-      });
+      setSermon({ ...data, additional_notes: data.additional_notes || '' });
     } catch (error) {
       addNotification('Error al cargar el estudio.', 'error');
     } finally {
@@ -133,10 +127,7 @@ const SermonEditor: React.FC = () => {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
+  const handleLogout = () => { logout(); navigate('/login'); };
 
   const anglicizeLocation = (loc: string) => {
     const translations: Record<string, string> = {
@@ -206,35 +197,34 @@ const SermonEditor: React.FC = () => {
 
       <main className="editor-main-workspace">
         <header className="editor-header-sacred">
-          <div className="header-grid-absolute">
-            <div className="header-cell-left">
-              <div className="verse-input-wrapper">
-                <span className="material-symbols-outlined verse-icon">auto_awesome</span>
-                <input 
-                  type="text" 
-                  className="verse-input-sacred"
-                  placeholder={t('editor.verse_placeholder')}
-                  value={sermon.main_passage}
-                  onChange={(e) => setSermon({...sermon, main_passage: e.target.value})}
-                />
-              </div>
+          <div className="header-column-1">
+            <div className="verse-input-wrapper">
+              <span className="material-symbols-outlined verse-icon">auto_awesome</span>
+              <input 
+                type="text" 
+                className="verse-input-sacred"
+                placeholder={t('editor.verse_placeholder')}
+                value={sermon.main_passage}
+                disabled={loading || !!id} // DISABLED IF ALREADY HAS ID
+                onChange={(e) => setSermon({...sermon, main_passage: e.target.value})}
+              />
             </div>
-            <div className="header-cell-center">
-              <div className="header-button-group">
-                <button className="btn-generate-sacred" onClick={handleGenerateAnalysis} disabled={loading || !!id}>
-                  {loading ? '...' : t('editor.analyze_btn')}
-                </button>
-                <button className="btn-save-top-sacred" onClick={handleSave} disabled={isSaving}>
-                  <span className="material-symbols-outlined">save</span>
-                  {isSaving ? '...' : language === 'es' ? 'Guardar' : 'Save'}
-                </button>
-              </div>
+          </div>
+          <div className="header-column-2">
+            <div className="header-button-group">
+              <button className="btn-generate-sacred" onClick={handleGenerateAnalysis} disabled={loading || !!id}>
+                {loading ? '...' : t('editor.analyze_btn')}
+              </button>
+              <button className="btn-save-top-sacred" onClick={handleSave} disabled={isSaving}>
+                <span className="material-symbols-outlined">save</span>
+                {isSaving ? '...' : language === 'es' ? 'Guardar' : 'Save'}
+              </button>
             </div>
-            <div className="header-cell-right">
-              <span className="user-name-display-header">
-                {userProfile?.full_name || user?.email?.split('@')[0] || 'Admin'}
-              </span>
-            </div>
+          </div>
+          <div className="header-column-3">
+            <span className="user-name-display-header">
+              {userProfile?.full_name || 'Admin'}
+            </span>
           </div>
         </header>
 
@@ -242,29 +232,15 @@ const SermonEditor: React.FC = () => {
           <div className="editor-canvas-container">
             <div className="studio-main-card">
               <div className="card-top-header">
-                <input 
-                  type="text" 
-                  className="editor-title-input"
-                  placeholder={t('list.col_reference')}
-                  value={sermon.title}
-                  onChange={(e) => setSermon({...sermon, title: e.target.value})}
-                />
-                <div className="save-status">
-                  <span className="material-symbols-outlined">cloud_done</span>
-                  {lastSavedLabel}
-                </div>
+                <input type="text" className="editor-title-input" placeholder={t('list.col_reference')} value={sermon.title} onChange={(e) => setSermon({...sermon, title: e.target.value})} />
+                <div className="save-status"><span className="material-symbols-outlined">cloud_done</span>{lastSavedLabel}</div>
               </div>
               <div className="analysis-grid-uniform">
                 <div className="analysis-text-pure">{sermon.content || t('editor.write_here')}</div>
               </div>
               <div className="editor-notes-section">
                 <label className="notes-label">{t('editor.write_here')}</label>
-                <textarea 
-                  className="editor-textarea-sacred"
-                  placeholder="..."
-                  value={sermon.additional_notes}
-                  onChange={(e) => setSermon({...sermon, additional_notes: e.target.value})}
-                ></textarea>
+                <textarea className="editor-textarea-sacred" placeholder="..." value={sermon.additional_notes} onChange={(e) => setSermon({...sermon, additional_notes: e.target.value})}></textarea>
               </div>
             </div>
           </div>

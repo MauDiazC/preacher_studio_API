@@ -94,6 +94,11 @@
   outline: none;
 }
 
+.verse-input-sacred:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .header-button-group {
   display: flex;
   gap: 1rem;
@@ -114,6 +119,7 @@
 .btn-generate-sacred:disabled {
   background: rgba(176, 198, 255, 0.1);
   color: rgba(194, 198, 215, 0.3);
+  cursor: not-allowed;
 }
 
 .btn-save-top-sacred {
@@ -347,7 +353,7 @@
   cursor: pointer;
 }
 
-/* Sidebar brand and shared items */
+/* Sidebar shared items */
 .sidebar-brand { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 2.5rem; }
 .brand-icon-box { width: 2.25rem; height: 2.25rem; background: rgba(176, 198, 255, 0.1); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; color: #b0c6ff; }
 .brand-text-pulp { font-family: 'Noto Serif', serif; font-size: 1.125rem; font-weight: 700; color: #b0c6ff; margin: 0; }
