@@ -21,7 +21,8 @@ const SermonEditor: React.FC = () => {
     homiletics: '',
     application: '',
     additional_notes: '',
-    content: ''
+    content: '',
+    key_locations: []
   });
   
   const [loading, setLoading] = useState(false);
@@ -129,6 +130,10 @@ const SermonEditor: React.FC = () => {
     navigate('/login');
   };
 
+  const getMapLink = (location: string) => {
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location + ' biblical location')}`;
+  };
+
   if (loading && !sermon.exegesis && !sermon.content) return (
     <div className="loading-screen-editor">
       <div className="loader-ministerial"></div>
@@ -194,7 +199,7 @@ const SermonEditor: React.FC = () => {
 
       {/* Main Workspace */}
       <main className="editor-main-workspace">
-        {/* Editor Top Bar */}
+        {/* Editor Top Bar - Liberated */}
         <header className="editor-header-sacred">
           <div className="verse-input-aligned-group">
             <div className="verse-input-wrapper">
@@ -230,98 +235,118 @@ const SermonEditor: React.FC = () => {
           </div>
         </header>
 
-        {/* Studio Content Canvas */}
-        <div className="editor-canvas-container">
-          <div className="studio-main-card">
-            <div className="card-top-header">
-              <input 
-                type="text" 
-                className="editor-title-input"
-                placeholder={t('list.col_reference')}
-                value={sermon.title}
-                onChange={(e) => setSermon({...sermon, title: e.target.value})}
-              />
-              <div className="save-status">
-                <span className="material-symbols-outlined">cloud_done</span>
-                {lastSavedLabel}
+        <div className="editor-dashboard-integrated">
+          {/* Studio Content Canvas */}
+          <div className="editor-canvas-container">
+            <div className="studio-main-card">
+              <div className="card-top-header">
+                <input 
+                  type="text" 
+                  className="editor-title-input"
+                  placeholder={t('list.col_reference')}
+                  value={sermon.title}
+                  onChange={(e) => setSermon({...sermon, title: e.target.value})}
+                />
+                <div className="save-status">
+                  <span className="material-symbols-outlined">cloud_done</span>
+                  {lastSavedLabel}
+                </div>
+              </div>
+
+              <div className="analysis-grid-uniform">
+                <div className="analysis-text-pure">
+                  {sermon.exegesis || sermon.content || t('editor.write_here')}
+                </div>
+                <div className="analysis-text-pure">
+                  {sermon.homiletics}
+                </div>
+                <div className="analysis-text-pure">
+                  {sermon.application}
+                </div>
+              </div>
+
+              <div className="editor-notes-section">
+                <label className="notes-label">{t('editor.write_here')}</label>
+                <textarea 
+                  className="editor-textarea-sacred"
+                  placeholder="..."
+                  value={sermon.additional_notes}
+                  onChange={(e) => setSermon({...sermon, additional_notes: e.target.value})}
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Tools - Integrated Column */}
+          <aside className="editor-right-tools-integrated">
+            <div className="tools-header-sacred">
+              <span className="material-symbols-outlined">construction</span>
+              {t('editor.resources')}
+            </div>
+
+            <div className="tool-actions-vertical">
+              <a 
+                href={`https://www.biblegateway.com/passage/?search=${encodeURIComponent(sermon.main_passage || '')}&version=${language === 'es' ? 'RVR1960' : 'NIV'}`} 
+                target="_blank" 
+                rel="noreferrer"
+                className="tool-btn-sacred-link"
+              >
+                <span className="material-symbols-outlined">auto_stories</span>
+                <span>{t('editor.bible_versions')}</span>
+              </a>
+              
+              <a 
+                href={`https://www.blueletterbible.org/search/search.cfm?Criteria=${encodeURIComponent(sermon.main_passage || '')}`} 
+                target="_blank" 
+                rel="noreferrer"
+                className="tool-btn-sacred-link"
+              >
+                <span className="material-symbols-outlined">menu_book</span>
+                <span>{t('editor.strong_lexicon')}</span>
+              </a>
+
+              <div className="maps-resource-group">
+                <p className="resource-sublabel">{t('editor.biblical_maps')}</p>
+                {sermon.key_locations && sermon.key_locations.length > 0 ? (
+                  sermon.key_locations.map((loc, idx) => (
+                    <a 
+                      key={idx}
+                      href={getMapLink(loc)} 
+                      target="_blank" 
+                      rel="noreferrer"
+                      className="map-link-item"
+                    >
+                      <span className="material-symbols-outlined">map</span>
+                      <span>{loc}</span>
+                    </a>
+                  ))
+                ) : (
+                  <p className="no-resource-text">{language === 'es' ? 'No hay lugares detectados' : 'No locations found'}</p>
+                )}
               </div>
             </div>
 
-            <div className="analysis-grid-uniform">
-              <section className="analysis-box">
-                <h4 className="analysis-label">{t('editor.exegesis')}</h4>
-                <div className="analysis-text">
-                  {sermon.exegesis || sermon.content || t('editor.write_here')}
-                </div>
-              </section>
-
-              <section className="analysis-box">
-                <h4 className="analysis-label">{t('editor.homiletics')}</h4>
-                <div className="analysis-text">{sermon.homiletics || t('editor.write_here')}</div>
-              </section>
-
-              <section className="analysis-box">
-                <h4 className="analysis-label">{t('editor.application')}</h4>
-                <div className="analysis-text">{sermon.application || t('editor.write_here')}</div>
-              </section>
+            <div className="export-section-sacred">
+              <p className="section-subtitle-sacred">EXPORTAR</p>
+              <div className="export-grid">
+                <button className="export-icon-btn">
+                  <span className="material-symbols-outlined">picture_as_pdf</span>
+                  PDF
+                </button>
+                <button className="export-icon-btn">
+                  <span className="material-symbols-outlined">present_to_all</span>
+                  PPTX/Keynote
+                </button>
+              </div>
             </div>
 
-            <div className="editor-notes-section">
-              <label className="notes-label">{t('editor.write_here')}</label>
-              <textarea 
-                className="editor-textarea-sacred"
-                placeholder="..."
-                value={sermon.additional_notes}
-                onChange={(e) => setSermon({...sermon, additional_notes: e.target.value})}
-              ></textarea>
-            </div>
-          </div>
+            <button className="btn-share-integrated">
+              <span className="material-symbols-outlined">share</span>
+              <span>{t('editor.share_btn')}</span>
+            </button>
+          </aside>
         </div>
       </main>
-
-      {/* Right Tools Panel - Fixed */}
-      <aside className="editor-right-tools">
-        <div className="tools-header-sacred">
-          <span className="material-symbols-outlined">construction</span>
-          {t('editor.resources')}
-        </div>
-
-        <div className="tool-actions-vertical">
-          <button className="tool-btn-sacred">
-            <span className="material-symbols-outlined">auto_stories</span>
-            <span>Versiones Bíblicas</span>
-          </button>
-          
-          <button className="tool-btn-sacred">
-            <span className="material-symbols-outlined">menu_book</span>
-            <span>Léxicos Strong</span>
-          </button>
-
-          <button className="tool-btn-sacred">
-            <span className="material-symbols-outlined">map</span>
-            <span>Mapas Bíblicos</span>
-          </button>
-        </div>
-
-        <div className="export-section-sacred">
-          <p className="section-subtitle-sacred">EXPORTAR</p>
-          <div className="export-grid">
-            <button className="export-icon-btn">
-              <span className="material-symbols-outlined">picture_as_pdf</span>
-              PDF
-            </button>
-            <button className="export-icon-btn">
-              <span className="material-symbols-outlined">present_to_all</span>
-              PPTX/Keynote
-            </button>
-          </div>
-        </div>
-
-        <button className="btn-share-bottom">
-          <span className="material-symbols-outlined">share</span>
-          <span>{language === 'es' ? 'Compartir' : 'Share'}</span>
-        </button>
-      </aside>
     </div>
   );
 };
