@@ -5,7 +5,7 @@ import type { Sermon } from '../services/sermonService';
 import { useNotificationStore } from '../../../store/useNotificationStore';
 import { useAuthStore } from '../../../store/authStore';
 import { useLanguage } from '../../../context/LanguageContext';
-import api from '../../../services/api'; // Para consulta directa de perfil
+import api from '../../../services/api';
 import './SermonEditor.css';
 
 const SermonEditor: React.FC = () => {
@@ -19,7 +19,7 @@ const SermonEditor: React.FC = () => {
     title: '',
     main_passage: '',
     content: '',
-    additional_notes: '',
+    additional_notes: '', // IMPORTANTE: Inicializar
     key_locations: []
   });
   
@@ -28,7 +28,7 @@ const SermonEditor: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [lastSavedLabel, setLastSavedLabel] = useState<string>('');
 
-  // Cargar Perfil Real desde la BD
+  // Cargar Perfil Real
   const loadProfile = async () => {
     try {
       const response = await api.get('/profile/me');
@@ -38,10 +38,10 @@ const SermonEditor: React.FC = () => {
     }
   };
 
-  // Formatear nombre: Mauricio Diaz -> Mauricio D.
-  const formatUserName = () => {
-    const rawName = userProfile?.full_name || user?.full_name || user?.email || '';
-    if (!rawName) return '...';
+  // Formatear nombre: Mauricio Diaz -> Mauricio D. (Defensivo)
+  const formatUserName = (fullName?: string, email?: string) => {
+    const rawName = fullName || email || '';
+    if (!rawName) return 'Admin';
     const parts = rawName.split(/[ @\.]/);
     if (parts.length >= 2) {
       return `${parts[0].charAt(0).toUpperCase() + parts[0].slice(1)} ${parts[1][0].toUpperCase()}.`;
@@ -49,29 +49,24 @@ const SermonEditor: React.FC = () => {
     return rawName.charAt(0).toUpperCase() + rawName.slice(1);
   };
 
-  // Lógica de Admin y Créditos (Bypass total)
+  // Lógica de Admin y Créditos
   const userEmail = user?.email?.toLowerCase() || '';
   const isAdmin = userProfile?.is_admin || userEmail === 'diazzabala@gmail.com';
 
-  // Formatear tiempo relativo legible
+  // Formatear tiempo relativo
   const formatRelativeTime = (updatedAt?: string) => {
     if (!updatedAt) return language === 'es' ? 'Estudio nuevo' : 'New study';
-    
     const diffMs = new Date().getTime() - new Date(updatedAt).getTime();
     const diffMins = Math.floor(diffMs / 60000);
-    
     if (diffMins < 1) return language === 'es' ? 'Recién guardado' : 'Just saved';
-    
     const mins = diffMins % 60;
     const hoursTotal = Math.floor(diffMins / 60);
     const hours = hoursTotal % 24;
     const days = Math.floor(hoursTotal / 24);
-
     let parts = [];
     if (days > 0) parts.push(`${days}d`);
     if (hours > 0) parts.push(`${hours}h`);
     if (mins > 0 || parts.length === 0) parts.push(`${mins}m`);
-
     return `${t('editor.saved_ago')} ${parts.join(' ')}`;
   };
 
@@ -95,7 +90,11 @@ const SermonEditor: React.FC = () => {
     try {
       setLoading(true);
       const data = await sermonService.getById(sermonId);
-      setSermon(data);
+      // ASEGURAR QUE LAS NOTAS SE MAPEAN
+      setSermon({
+        ...data,
+        additional_notes: data.additional_notes || ''
+      });
     } catch (error) {
       addNotification('Error al cargar el estudio.', 'error');
     } finally {
@@ -108,7 +107,6 @@ const SermonEditor: React.FC = () => {
       addNotification('Por favor ingresa un versículo.', 'error');
       return;
     }
-
     setLoading(true);
     try {
       const analysis = await sermonService.generateAnalysis(sermon.main_passage);
@@ -121,7 +119,7 @@ const SermonEditor: React.FC = () => {
       }));
       addNotification('Análisis generado con éxito.', 'success');
     } catch (error) {
-      addNotification('Error al generar el análisis ministerial.', 'error');
+      addNotification('Error al generar el análisis.', 'error');
     } finally {
       setLoading(false);
     }
@@ -152,16 +150,9 @@ const SermonEditor: React.FC = () => {
     navigate('/login');
   };
 
-  // Formato Correcto para Bible Hub Atlas
   const getMapLink = (location: string) => {
     const formattedLoc = location.toLowerCase().trim().replace(/\s+/g, '_');
     return `https://biblehub.com/atlas/${formattedLoc}.htm`;
-  };
-
-  // Formato Correcto para Blue Letter Bible
-  const getBLBLink = (passage: string) => {
-    const query = passage.replace(/\s+/g, '+');
-    return `https://www.blueletterbible.org/search/preSearch.cfm?Criteria=${query}&t=KJV`;
   };
 
   if (loading && !sermon.content) return (
@@ -173,7 +164,6 @@ const SermonEditor: React.FC = () => {
 
   return (
     <div className="sermon-editor-page">
-      {/* Side Navigation - Fixed */}
       <aside className="sacred-sidebar-editor">
         <div className="sidebar-brand">
           <div className="brand-icon-box">
@@ -184,7 +174,6 @@ const SermonEditor: React.FC = () => {
             <p className="brand-tagline-sm">{t('auth.inspired_prep')}</p>
           </div>
         </div>
-
         <nav className="sacred-nav">
           <Link to="/sermons" className="nav-item">
             <span className="material-symbols-outlined nav-icon">book_2</span>
@@ -199,7 +188,6 @@ const SermonEditor: React.FC = () => {
             <span>{t('nav.settings')}</span>
           </a>
         </nav>
-
         <div className="sidebar-footer-sacred">
           <div className="sidebar-user-stats">
             <div className="credits-display">
@@ -208,30 +196,25 @@ const SermonEditor: React.FC = () => {
                 {isAdmin ? t('nav.unlimited') : '25'}
               </span>
             </div>
-            
             <button className="lang-toggle-sidebar" onClick={toggleLanguage}>
               <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>language</span>
               {language.toUpperCase()}
             </button>
           </div>
-          
           <button className="logout-btn-sidebar" onClick={handleLogout}>
             <span className="material-symbols-outlined">logout</span>
             <span>{t('nav.logout').toUpperCase()}</span>
           </button>
         </div>
-
         <button className="new-study-btn-sidebar" onClick={() => navigate('/sermons/new')}>
           <span className="material-symbols-outlined">add</span>
           <span>{t('list.new_study_btn')}</span>
         </button>
       </aside>
 
-      {/* Main Workspace */}
       <main className="editor-main-workspace">
-        {/* Editor Header */}
         <header className="editor-header-sacred">
-          <div className="header-left-aligned">
+          <div className="header-column-1">
             <div className="verse-input-wrapper">
               <span className="material-symbols-outlined verse-icon">auto_awesome</span>
               <input 
@@ -242,6 +225,8 @@ const SermonEditor: React.FC = () => {
                 onChange={(e) => setSermon({...sermon, main_passage: e.target.value})}
               />
             </div>
+          </div>
+          <div className="header-column-2">
             <div className="header-button-group">
               <button 
                 className="btn-generate-sacred" 
@@ -250,20 +235,16 @@ const SermonEditor: React.FC = () => {
               >
                 {loading ? '...' : t('editor.analyze_btn')}
               </button>
-              
-              <button 
-                className="btn-save-top-sacred" 
-                onClick={handleSave}
-                disabled={isSaving}
-              >
+              <button className="btn-save-top-sacred" onClick={handleSave} disabled={isSaving}>
                 <span className="material-symbols-outlined">save</span>
                 {isSaving ? '...' : language === 'es' ? 'Guardar' : 'Save'}
               </button>
             </div>
           </div>
-
-          <div className="header-right-aligned">
-            <span className="user-name-display-header">{formatUserName()}</span>
+          <div className="header-column-3">
+            <span className="user-name-display-header">
+              {formatUserName(userProfile?.full_name || user?.full_name, user?.email)}
+            </span>
           </div>
         </header>
 
@@ -283,13 +264,11 @@ const SermonEditor: React.FC = () => {
                   {lastSavedLabel}
                 </div>
               </div>
-
               <div className="analysis-grid-uniform">
                 <div className="analysis-text-pure">
                   {sermon.content || t('editor.write_here')}
                 </div>
               </div>
-
               <div className="editor-notes-section">
                 <label className="notes-label">{t('editor.write_here')}</label>
                 <textarea 
@@ -302,45 +281,31 @@ const SermonEditor: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Tools - Integrated Column */}
           <aside className="editor-right-tools-integrated">
             <div className="tools-header-sacred">
               <span className="material-symbols-outlined">construction</span>
               {t('editor.resources')}
             </div>
-
             <div className="tool-actions-vertical">
               <a 
                 href={`https://www.biblegateway.com/passage/?search=${encodeURIComponent(sermon.main_passage || '')}&version=${language === 'es' ? 'RVR1960' : 'NIV'}`} 
-                target="_blank" 
-                rel="noreferrer"
-                className="tool-btn-sacred-link"
+                target="_blank" rel="noreferrer" className="tool-btn-sacred-link"
               >
                 <span className="material-symbols-outlined">auto_stories</span>
                 <span>{t('editor.bible_versions')}</span>
               </a>
-              
               <a 
-                href={getBLBLink(sermon.main_passage || '')} 
-                target="_blank" 
-                rel="noreferrer"
-                className="tool-btn-sacred-link"
+                href={`https://www.blueletterbible.org/search/preSearch.cfm?Criteria=${(sermon.main_passage || '').replace(/\s+/g, '+')}&t=KJV`} 
+                target="_blank" rel="noreferrer" className="tool-btn-sacred-link"
               >
                 <span className="material-symbols-outlined">menu_book</span>
                 <span>{t('editor.strong_lexicon')}</span>
               </a>
-
               <div className="maps-resource-group">
                 <p className="resource-sublabel">{t('editor.biblical_maps')}</p>
                 {sermon.key_locations && sermon.key_locations.length > 0 ? (
                   sermon.key_locations.map((loc, idx) => (
-                    <a 
-                      key={idx}
-                      href={getMapLink(loc)} 
-                      target="_blank" 
-                      rel="noreferrer"
-                      className="map-link-item"
-                    >
+                    <a key={idx} href={getMapLink(loc)} target="_blank" rel="noreferrer" className="map-link-item">
                       <span className="material-symbols-outlined">map</span>
                       <span>{loc}</span>
                     </a>
@@ -350,21 +315,13 @@ const SermonEditor: React.FC = () => {
                 )}
               </div>
             </div>
-
             <div className="export-section-sacred">
               <p className="section-subtitle-sacred">EXPORTAR</p>
               <div className="export-grid">
-                <button className="export-icon-btn">
-                  <span className="material-symbols-outlined">picture_as_pdf</span>
-                  PDF
-                </button>
-                <button className="export-icon-btn">
-                  <span className="material-symbols-outlined">present_to_all</span>
-                  PPTX/Keynote
-                </button>
+                <button className="export-icon-btn"><span className="material-symbols-outlined">picture_as_pdf</span>PDF</button>
+                <button className="export-icon-btn"><span className="material-symbols-outlined">present_to_all</span>PPTX/Keynote</button>
               </div>
             </div>
-
             <button className="btn-share-integrated">
               <span className="material-symbols-outlined">share</span>
               <span>{t('editor.share_btn')}</span>
