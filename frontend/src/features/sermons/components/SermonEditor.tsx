@@ -19,7 +19,7 @@ const SermonEditor: React.FC = () => {
     title: '',
     main_passage: '',
     content: '',
-    additional_notes: '', // IMPORTANTE: Inicializar
+    additional_notes: '',
     key_locations: []
   });
   
@@ -36,17 +36,6 @@ const SermonEditor: React.FC = () => {
     } catch (err) {
       console.error("Error cargando perfil:", err);
     }
-  };
-
-  // Formatear nombre: Mauricio Diaz -> Mauricio D. (Defensivo)
-  const formatUserName = (fullName?: string, email?: string) => {
-    const rawName = fullName || email || '';
-    if (!rawName) return 'Admin';
-    const parts = rawName.split(/[ @\.]/);
-    if (parts.length >= 2) {
-      return `${parts[0].charAt(0).toUpperCase() + parts[0].slice(1)} ${parts[1][0].toUpperCase()}.`;
-    }
-    return rawName.charAt(0).toUpperCase() + rawName.slice(1);
   };
 
   // Lógica de Admin y Créditos
@@ -90,7 +79,6 @@ const SermonEditor: React.FC = () => {
     try {
       setLoading(true);
       const data = await sermonService.getById(sermonId);
-      // ASEGURAR QUE LAS NOTAS SE MAPEAN
       setSermon({
         ...data,
         additional_notes: data.additional_notes || ''
@@ -150,9 +138,65 @@ const SermonEditor: React.FC = () => {
     navigate('/login');
   };
 
+  // Función para forzar nombres en inglés para Bible Hub Atlas
+  const anglicizeLocation = (loc: string) => {
+    const translations: Record<string, string> = {
+      'jerusalén': 'jerusalem',
+      'jerusalen': 'jerusalem',
+      'belén': 'bethlehem',
+      'belen': 'bethlehem',
+      'nazaret': 'nazareth',
+      'galilea': 'galilee',
+      'judea': 'judea',
+      'samaria': 'samaria',
+      'antioquía': 'antioch',
+      'antioquia': 'antioch',
+      'éfeso': 'ephesus',
+      'efeso': 'ephesus',
+      'corinto': 'corinth',
+      'filipos': 'philippi',
+      'tesalónica': 'thessalonica',
+      'tesalonica': 'thessalonica',
+      'colosas': 'colossae',
+      'damasco': 'damascus',
+      'babilonia': 'babylon',
+      'nínive': 'nineveh',
+      'ninive': 'nineveh',
+      'tiro': 'tyre',
+      'sidón': 'sidon',
+      'sidon': 'sidon',
+      'cesarea': 'caesarea',
+      'jericó': 'jericho',
+      'jerico': 'jericho',
+      'hebrón': 'hebron',
+      'hebron': 'hebron',
+      'siquem': 'shechem',
+      'betel': 'bethel',
+      'gabaón': 'gibeon',
+      'gabaon': 'gibeon',
+      'sion': 'zion',
+      'carmelo': 'carmel',
+      'hermón': 'hermon',
+      'hermon': 'hermon',
+      'sinaí': 'sinai',
+      'sinai': 'sinai',
+      'horeb': 'horeb',
+      'nilo': 'nile',
+      'éufrates': 'euphrates',
+      'eufrates': 'euphrates',
+      'tigris': 'tigris',
+      'jordán': 'jordan',
+      'jordan': 'jordan',
+      'roma': 'rome',
+      'egipto': 'egypt'
+    };
+    const key = loc.toLowerCase().trim();
+    return translations[key] || key.replace(/\s+/g, '_');
+  };
+
   const getMapLink = (location: string) => {
-    const formattedLoc = location.toLowerCase().trim().replace(/\s+/g, '_');
-    return `https://biblehub.com/atlas/${formattedLoc}.htm`;
+    const englishName = anglicizeLocation(location);
+    return `https://biblehub.com/atlas/${englishName}.htm`;
   };
 
   if (loading && !sermon.content) return (
@@ -243,7 +287,7 @@ const SermonEditor: React.FC = () => {
           </div>
           <div className="header-column-3">
             <span className="user-name-display-header">
-              {formatUserName(userProfile?.full_name || user?.full_name, user?.email)}
+              {userProfile?.full_name || 'Admin'}
             </span>
           </div>
         </header>
