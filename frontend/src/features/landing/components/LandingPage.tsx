@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../../context/LanguageContext';
 import './LandingPage.css';
@@ -8,6 +8,29 @@ const LandingPage: React.FC = () => {
   const navigate = useNavigate();
   const { t, language } = useLanguage();
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
+  
+  // Refs para animaciones al hacer scroll
+  const sectionRefs = useRef<(HTMLElement | null)[]>([]);
+
+  useEffect(() => {
+    const observerOptions = {
+      threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+        }
+      });
+    }, observerOptions);
+
+    sectionRefs.current.forEach(ref => {
+      if (ref) observer.observe(ref);
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   const toggleFaq = (index: number) => {
     setActiveFaq(activeFaq === index ? null : index);
@@ -47,7 +70,7 @@ const LandingPage: React.FC = () => {
 
   return (
     <div className="landing-page-sacred">
-      {/* Hero Section */}
+      {/* Hero Section - Sin animaciones de entrada adicionales */}
       <section className="hero-section-sacred">
         <div className="hero-celestial-bg">
           <div className="hero-orbit"></div>
@@ -89,7 +112,7 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Trusted By Section */}
+      {/* Trusted By Section - Sin animaciones de entrada adicionales */}
       <section className="trusted-section">
         <div className="max-container">
           <p className="trusted-label">{t('trust.title')}</p>
@@ -116,8 +139,12 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="features-section">
+      {/* Features Section - Con animaciones */}
+      <section 
+        id="features" 
+        className="features-section reveal-on-scroll"
+        ref={el => sectionRefs.current[0] = el}
+      >
         <div className="max-container">
           <div className="section-header-sacred">
             <h2>{language === 'es' ? 'Preparación Inspirada' : 'Inspired Preparation'}</h2>
@@ -161,8 +188,11 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Use Cases Section */}
-      <section className="use-cases-section">
+      {/* Use Cases Section - Con animaciones e imagen nueva */}
+      <section 
+        className="use-cases-section reveal-on-scroll"
+        ref={el => sectionRefs.current[1] = el}
+      >
         <div className="max-container">
           <div className="use-cases-grid">
             <div className="use-cases-content-col">
@@ -205,8 +235,8 @@ const LandingPage: React.FC = () => {
 
             <div className="use-case-visual">
               <img 
-                src="https://images.unsplash.com/photo-1490730141103-6cac27aaab94?q=80&w=2070&auto=format&fit=crop" 
-                alt="Study Environment" 
+                src="/images/study_bible_desk.png" 
+                alt="Biblical Study Environment" 
                 className="use-case-img-sacred"
               />
             </div>
@@ -214,8 +244,11 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="testimonials-section">
+      {/* Testimonials - Con animaciones */}
+      <section 
+        className="testimonials-section reveal-on-scroll"
+        ref={el => sectionRefs.current[2] = el}
+      >
         <div className="max-container">
           <h2 className="hero-title-sacred" style={{ textAlign: 'center', fontSize: '3rem', fontStyle: 'italic', marginBottom: '5rem' }}>
             "{language === 'es' ? 'Palabras desde el Púlpito' : 'Words from the Pulpit'}"
@@ -269,8 +302,11 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className="faq-section">
+      {/* FAQ Section - Con animaciones */}
+      <section 
+        className="faq-section reveal-on-scroll"
+        ref={el => sectionRefs.current[3] = el}
+      >
         <div className="max-container">
           <div className="section-header-sacred">
             <h2>{language === 'es' ? 'Preguntas Comunes' : 'Common Questions'}</h2>
@@ -294,8 +330,11 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Final CTA */}
-      <section className="final-cta-section">
+      {/* Final CTA - Con animaciones */}
+      <section 
+        className="final-cta-section reveal-on-scroll"
+        ref={el => sectionRefs.current[4] = el}
+      >
         <div className="cta-bg-glow"></div>
         <div className="max-container">
           <h2 className="hero-title-sacred" style={{ fontSize: '3.5rem', marginBottom: '2rem' }}>

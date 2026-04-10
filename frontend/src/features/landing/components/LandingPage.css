@@ -510,6 +510,34 @@
   z-index: -1;
 }
 
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Delay staggered children if needed */
+.is-visible .feature-card-sacred:nth-child(1) { transition-delay: 0.1s; }
+.is-visible .feature-card-sacred:nth-child(2) { transition-delay: 0.2s; }
+.is-visible .feature-card-sacred:nth-child(3) { transition-delay: 0.3s; }
+
 /* Footer */
 .landing-footer {
   padding: 4rem 2rem;
