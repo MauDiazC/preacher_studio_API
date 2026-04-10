@@ -22,21 +22,31 @@ const translations = {
     'pricing.title': 'Inversión en tu',
     'pricing.title_gradient': 'Ministerio',
     'pricing.subtitle': 'Planes diseñados para cada etapa de tu llamado espiritual.',
+    'pricing.badge': 'PLANES Y PRECIOS',
     'PRICING.BADGE': 'PLANES Y PRECIOS',
     'plan.free': 'Sembrador', 'plan.pro': 'Mentor', 'plan.unlimited': 'Ministerio',
     'plan.free_desc': '3 estudios básicos sin léxicos',
     'plan.pro_desc': '30 estudios al mes',
     'plan.unlimited_desc': 'Estudios ilimitados',
     'plan.free_price': '0',
+    'plan.popular': 'Más Popular',
     'pricing.month': '/mes',
     'pricing.includes_prev': 'Todo lo del plan anterior',
     'pricing.includes_all': 'Todo lo de los planes anteriores',
     'pricing.pptx_keynote': 'Integración con PPTX y Keynote con plantillas',
     'pricing.start_now': 'Comenzar ahora',
     'pricing.teams': 'Ministerio',
+    'pricing.bento_library_title': 'Biblioteca Espiritual',
+    'pricing.bento_library_desc': 'Acceso instantáneo a todos tus estudios desde cualquier dispositivo.',
+    'pricing.bento_sync_title': 'Sincronización Total',
+    'pricing.bento_sync_desc': 'Tus notas y exégesis siempre al día.',
+    'pricing.bento_uptime': 'Disponibilidad',
+    'PRICING.BENTO_UPTIME': 'Disponibilidad',
+    'pricing.bento_pastors': 'Pastores Activos',
+    'pricing.contact_sales': 'Hablar con Soporte',
     // List
     'list.search_placeholder': 'Buscar pasajes...',
-    'list.title': 'Mis Estudios Exegéticos', 'list.subtitle': 'Gestionando la Sabiduría Divina', 'list.total_studies': 'Total Estudios', 'list.this_month': 'Este Mes', 'list.empty': 'No tienes estudios guardados aún.', 'list.loading': 'Cargando...', 'list.col_reference': 'Referencia Bíblica', 'list.col_last_edit': 'Última Edición', 'list.col_tags': 'Etiquetas', 'list.col_actions': 'Acciones', 'list.new_study_btn': 'Crear Estudio',
+    'list.title': 'Mis Estudios Exegéticos', 'list.subtitle': 'Gestionando la Sabiduría Divina', 'list.total_studies': 'Total Estudios', 'list.this_month': 'Este Mes', 'list.empty': 'No tienes estudios guardados aún.', 'list.loading': 'Cargando...', 'list.col_reference': 'Referencia Bíblica', 'list.col_last_edit': 'Última Edición', 'list.col_tags': 'Etiquetas', 'list.col_actions': 'Acciones', 'list.new_study_btn': 'Crear Estudio', 'list.edit': 'Editar',
     // Editor
     'editor.exegesis': 'Exégesis', 'editor.write_here': 'Notas Personales:', 'editor.saved_ago': 'Guardado hace', 'editor.analyze_btn': 'Generar Análisis', 'editor.verse_placeholder': 'Ej: Juan 3:16', 'editor.resources': 'Recursos', 'editor.bible_versions': 'Versiones Bíblicas', 'editor.strong_lexicon': 'Léxicos Strong', 'editor.biblical_maps': 'Geografía y Mapas', 'editor.share_btn': 'Compartir',
     // Auth
@@ -50,6 +60,7 @@ const translations = {
     'auth.no_account': '¿No tienes una cuenta?',
     'auth.register_now': 'Registrarme',
     'auth.full_name': 'Nombre Completo',
+    'auth.full_name_placeholder': 'Escribe tu nombre aquí',
     'auth.register_btn': 'Crear Cuenta Ministerial',
     'auth.already_account': '¿Ya tienes una cuenta?',
     'auth.success_login': '¡Bienvenido de nuevo!',
@@ -58,7 +69,15 @@ const translations = {
     'auth.register_subtitle': 'Únete a la comunidad de guías espirituales',
     'auth.have_account': '¿Ya tienes una cuenta?',
     'auth.login_link': 'Iniciar Sesión',
+    'auth.confirm_password_label': 'Confirmar Contraseña',
     'AUTH.CONFIRM_PASSWORD_LABEL': 'Confirmar Contraseña',
+    'auth.error_passwords_match': 'Las contraseñas no coinciden',
+    'auth.success_notification': '¡Cuenta creada!',
+    'auth.error_notification': 'Error al crear la cuenta',
+    'auth.success_title': 'Registro Exitoso',
+    'auth.success_body': 'Hemos enviado un correo a',
+    'auth.success_body_2': 'Bienvenido a',
+    'auth.go_login': 'Ir al Login',
     // Checkout
     'checkout.confirm_plan': 'Confirma tu Plan',
     'checkout.step_desc': 'Estás a un paso de elevar tu ministerio',
@@ -79,6 +98,9 @@ const translations = {
     'checkout.quote_preparation': '"La preparación del corazón es del hombre; mas de Jehová es la respuesta de la lengua." — Proverbios 16:1',
     // Footer
     'footer.privacy': 'Privacidad', 'footer.terms': 'Términos', 'footer.contact': 'Soporte',
+    // Botones
+    'btn.choose': 'Elegir Plan',
+    'btn.start_free': 'Comenzar Gratis',
   },
   en: {
     // Navbar
@@ -93,21 +115,31 @@ const translations = {
     'pricing.title': 'Investment in your',
     'pricing.title_gradient': 'Ministry',
     'pricing.subtitle': 'Plans designed for every stage of your spiritual calling.',
+    'pricing.badge': 'PLANS & PRICING',
     'PRICING.BADGE': 'PLANS & PRICING',
     'plan.free': 'Sower', 'plan.pro': 'Mentor', 'plan.unlimited': 'Ministry',
     'plan.free_desc': '3 basic studies without lexicons',
     'plan.pro_desc': '30 studies per month',
     'plan.unlimited_desc': 'Unlimited studies',
     'plan.free_price': '0',
+    'plan.popular': 'Most Popular',
     'pricing.month': '/month',
     'pricing.includes_prev': 'Everything in the previous plan',
     'pricing.includes_all': 'Everything in previous plans',
     'pricing.pptx_keynote': 'PPTX & Keynote integration with templates',
     'pricing.start_now': 'Start Now',
     'pricing.teams': 'Ministry',
+    'pricing.bento_library_title': 'Spiritual Library',
+    'pricing.bento_library_desc': 'Instant access to all your studies from any device.',
+    'pricing.bento_sync_title': 'Total Sync',
+    'pricing.bento_sync_desc': 'Your notes and exegesis always up to date.',
+    'pricing.bento_uptime': 'Uptime',
+    'PRICING.BENTO_UPTIME': 'Uptime',
+    'pricing.bento_pastors': 'Active Pastors',
+    'pricing.contact_sales': 'Talk to Support',
     // List
     'list.search_placeholder': 'Search passages...',
-    'list.title': 'My Exegetical Studies', 'list.subtitle': 'Managing Divine Wisdom', 'list.total_studies': 'Total Studies', 'list.this_month': 'This Month', 'list.empty': 'No saved studies yet.', 'list.loading': 'Loading...', 'list.col_reference': 'Bible Reference', 'list.col_last_edit': 'Last Edit', 'list.col_tags': 'Tags', 'list.col_actions': 'Actions', 'list.new_study_btn': 'Create Study',
+    'list.title': 'My Exegetical Studies', 'list.subtitle': 'Managing Divine Wisdom', 'list.total_studies': 'Total Studies', 'list.this_month': 'This Month', 'list.empty': 'No saved studies yet.', 'list.loading': 'Loading...', 'list.col_reference': 'Bible Reference', 'list.col_last_edit': 'Last Edit', 'list.col_tags': 'Tags', 'list.col_actions': 'Actions', 'list.new_study_btn': 'Create Study', 'list.edit': 'Edit',
     // Editor
     'editor.exegesis': 'Exegesis', 'editor.write_here': 'Personal Notes:', 'editor.saved_ago': 'Saved', 'editor.analyze_btn': 'Generate Analysis', 'editor.verse_placeholder': 'Ex: John 3:16', 'editor.resources': 'Resources', 'editor.bible_versions': 'Bible Versions', 'editor.strong_lexicon': 'Strong Lexicons', 'editor.biblical_maps': 'Biblical Maps', 'editor.share_btn': 'Share',
     // Auth
@@ -121,6 +153,7 @@ const translations = {
     'auth.no_account': 'Don\'t have an account?',
     'auth.register_now': 'Register Now',
     'auth.full_name': 'Full Name',
+    'auth.full_name_placeholder': 'Write your name here',
     'auth.register_btn': 'Create Ministerial Account',
     'auth.already_account': 'Already have an account?',
     'auth.success_login': 'Welcome back!',
@@ -129,7 +162,15 @@ const translations = {
     'auth.register_subtitle': 'Join the community of spiritual guides',
     'auth.have_account': 'Already have an account?',
     'auth.login_link': 'Log In',
+    'auth.confirm_password_label': 'Confirm Password',
     'AUTH.CONFIRM_PASSWORD_LABEL': 'Confirm Password',
+    'auth.error_passwords_match': 'Passwords do not match',
+    'auth.success_notification': 'Account created!',
+    'auth.error_notification': 'Error creating account',
+    'auth.success_title': 'Registration Successful',
+    'auth.success_body': 'We have sent an email to',
+    'auth.success_body_2': 'Welcome to',
+    'auth.go_login': 'Go to Login',
     // Checkout
     'checkout.confirm_plan': 'Confirm Your Plan',
     'checkout.step_desc': 'You are one step away from elevating your ministry',
@@ -150,6 +191,9 @@ const translations = {
     'checkout.quote_preparation': '"The preparations of the heart in man, and the answer of the tongue, is from the LORD." — Proverbs 16:1',
     // Footer
     'footer.privacy': 'Privacy', 'footer.terms': 'Terms', 'footer.contact': 'Support',
+    // Botones
+    'btn.choose': 'Choose Plan',
+    'btn.start_free': 'Start for Free',
   }
 };
 
@@ -158,7 +202,14 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [language, setLanguage] = useState<Language>('es');
   const toggleLanguage = () => setLanguage(prev => prev === 'es' ? 'en' : 'es');
-  const t = (key: string) => (translations[language] as any)[key] || key;
+  const t = (key: string) => {
+    const translation = (translations[language] as any)[key];
+    if (!translation) {
+      // Intento en minúsculas por si acaso
+      return (translations[language] as any)[key.toLowerCase()] || key;
+    }
+    return translation;
+  };
   return <LanguageContext.Provider value={{ language, toggleLanguage, t }}>{children}</LanguageContext.Provider>;
 };
 

@@ -7,23 +7,28 @@ const AuthCallback: React.FC = () => {
   const { setAuth } = useAuthStore();
 
   useEffect(() => {
+    console.log("Processing Auth Callback...");
     const hash = window.location.hash;
     if (hash) {
       const params = new URLSearchParams(hash.replace('#', '?'));
       const accessToken = params.get('access_token');
       
       if (accessToken) {
-        // Obtenemos info básica del usuario del fragmento si está disponible
-        // Supabase a veces manda el user object en el hash
+        console.log("Token received, persisting...");
+        
+        // FORZADO MANUAL DE PERSISTENCIA
+        // Esto asegura que App.tsx vea al usuario como autenticado inmediatamente
+        localStorage.setItem('token', accessToken);
+        
+        // Sincronizamos con el store
         setAuth({ id: 'google-user', email: 'google-auth' }, accessToken); 
         
-        // Pequeña espera para asegurar que el store se actualice
-        setTimeout(() => {
-          navigate('/sermons', { replace: true });
-        }, 100);
+        // Redirección inmediata a la biblioteca
+        navigate('/sermons', { replace: true });
       }
     } else {
-      navigate('/login');
+      console.warn("No hash found in URL");
+      navigate('/login', { replace: true });
     }
   }, [navigate, setAuth]);
 
@@ -31,13 +36,17 @@ const AuthCallback: React.FC = () => {
     <div style={{ 
       height: '100vh', 
       display: 'flex', 
+      flexDirection: 'column',
       alignItems: 'center', 
       justifyContent: 'center',
       backgroundColor: '#111127',
-      color: '#b0c6ff'
+      color: '#b0c6ff',
+      fontFamily: 'Plus Jakarta Sans, sans-serif'
     }}>
       <div className="loader-ministerial"></div>
-      <p style={{ marginLeft: '1rem' }}>Finalizando preparación ministerial...</p>
+      <p style={{ marginTop: '1.5rem', opacity: 0.8, letterSpacing: '0.05em' }}>
+        FINALIZANDO PREPARACIÓN MINISTERIAL...
+      </p>
     </div>
   );
 };
