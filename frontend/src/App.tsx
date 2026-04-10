@@ -6,6 +6,7 @@ import { LanguageProvider } from './context/LanguageContext';
 // Direct imports to avoid resolution issues during build
 import LoginPage from './features/auth/components/LoginPage';
 import RegisterPage from './features/auth/components/RegisterPage';
+import AuthCallback from './features/auth/components/AuthCallback';
 import SermonList from './features/sermons/components/SermonList';
 import SermonEditor from './features/sermons/components/SermonEditor';
 import LandingPage from './features/landing/components/LandingPage';
@@ -27,6 +28,7 @@ function App() {
             <Route path="/checkout/:planId" element={<CheckoutPage />} />
             <Route path="/login" element={!isAuthenticated ? <LoginPage /> : <Navigate to="/sermons" />} />
             <Route path="/register" element={!isAuthenticated ? <RegisterPage /> : <Navigate to="/sermons" />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
             
             {/* Protected Routes */}
             <Route path="/sermons" element={
