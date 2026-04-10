@@ -16,7 +16,7 @@ const RegisterPage: React.FC = () => {
   
   const navigate = useNavigate();
   const { addNotification } = useNotificationStore();
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
 
   // Asegurar que la página cargue desde arriba
   useEffect(() => {
@@ -48,8 +48,16 @@ const RegisterPage: React.FC = () => {
     }
   };
 
-  const handleGoogleRegister = () => {
-    console.log("Iniciando registro con Google...");
+  const handleGoogleRegister = async () => {
+    try {
+      setLoading(true);
+      const url = await authService.getGoogleAuthUrl();
+      window.location.href = url;
+    } catch (err: any) {
+      addNotification(t('auth.error_google'), 'error');
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (isSuccess) {
@@ -62,13 +70,13 @@ const RegisterPage: React.FC = () => {
         <main className="register-main-canvas">
           <div className="glass-panel-reg" style={{ textAlign: 'center' }}>
             <div className="panel-accent-line"></div>
-            <h2 className="brand-title">{t('auth.success_title')}</h2>
+            <h2 className="brand-title">{t('auth.success_title') || 'Registro Exitoso'}</h2>
             <p className="brand-tagline" style={{ marginBottom: '2rem' }}>
-              {t('auth.success_body')} <strong>{email}</strong>.<br /><br />
-              {t('auth.success_body_2')} <strong>Preacher Studio</strong>.
+              {t('auth.success_body') || 'Hemos enviado un correo a'} <strong>{email}</strong>.<br /><br />
+              {t('auth.success_body_2') || 'Bienvenido a'} <strong>Preacher Studio</strong>.
             </p>
             <button className="sacred-submit-reg" onClick={() => navigate('/login')}>
-              {t('auth.go_login')}
+              {t('auth.login_btn')}
             </button>
           </div>
         </main>
@@ -91,7 +99,7 @@ const RegisterPage: React.FC = () => {
             <span className="material-symbols-outlined">menu_book</span>
           </div>
           <h1 className="brand-title">Preacher Studio</h1>
-          <p className="brand-tagline">{language === 'es' ? 'Comienza tu jornada de Preparación Inspirada para la excelencia ministerial.' : 'Begin your journey of Inspired Preparation for ministerial excellence.'}</p>
+          <p className="brand-tagline">{t('auth.inspired_prep')}</p>
         </div>
 
         {/* Registration Card */}
@@ -99,7 +107,7 @@ const RegisterPage: React.FC = () => {
           <div className="panel-accent-line"></div>
           
           <div className="reg-card-header">
-            <h2>Crear Cuenta</h2>
+            <h2>{t('auth.register_now')}</h2>
             <p>{t('auth.register_subtitle')}</p>
           </div>
 
@@ -111,10 +119,10 @@ const RegisterPage: React.FC = () => {
                 className="sacred-social-icon-img" 
                 src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" 
               />
-              <span>Registrarme con Google</span>
+              <span>{t('auth.continue_with')} Google</span>
             </button>
             <div className="sacred-divider">
-              <span className="sacred-divider-text">o con tu correo</span>
+              <span className="sacred-divider-text">{t('auth.continue_with')} email</span>
             </div>
           </div>
 
@@ -122,11 +130,12 @@ const RegisterPage: React.FC = () => {
             <div className="sacred-input-group">
               <label className="sacred-label" htmlFor="full_name">{t('auth.full_name')}</label>
               <div className="sacred-input-wrapper">
+                <span className="material-symbols-outlined sacred-input-icon">person</span>
                 <input 
                   className="sacred-input"
                   id="full_name" 
                   type="text"
-                  placeholder={t('auth.full_name_placeholder')}
+                  placeholder={t('auth.full_name')}
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   required
@@ -137,6 +146,7 @@ const RegisterPage: React.FC = () => {
             <div className="sacred-input-group">
               <label className="sacred-label" htmlFor="email">{t('auth.email')}</label>
               <div className="sacred-input-wrapper">
+                <span className="material-symbols-outlined sacred-input-icon">mail</span>
                 <input 
                   className="sacred-input"
                   id="email" 
@@ -152,6 +162,7 @@ const RegisterPage: React.FC = () => {
             <div className="sacred-input-group">
               <label className="sacred-label" htmlFor="password">{t('auth.password')}</label>
               <div className="sacred-input-wrapper">
+                <span className="material-symbols-outlined sacred-input-icon">lock</span>
                 <input 
                   className="sacred-input"
                   id="password" 
@@ -165,8 +176,9 @@ const RegisterPage: React.FC = () => {
             </div>
 
             <div className="sacred-input-group">
-              <label className="sacred-label" htmlFor="confirm_password">{t('auth.confirm_password_label')}</label>
+              <label className="sacred-label" htmlFor="confirm_password">{t('AUTH.CONFIRM_PASSWORD_LABEL')}</label>
               <div className="sacred-input-wrapper">
+                <span className="material-symbols-outlined sacred-input-icon">lock_reset</span>
                 <input 
                   className="sacred-input"
                   id="confirm_password" 
@@ -182,7 +194,7 @@ const RegisterPage: React.FC = () => {
             {error && <p className="input-error" style={{ color: '#ffb4ab', fontSize: '0.8rem' }}>{error}</p>}
 
             <button className="sacred-submit-reg" type="submit" disabled={loading}>
-              {loading ? '...' : 'Registrarme'}
+              {loading ? '...' : t('auth.register_btn')}
             </button>
           </form>
 
