@@ -89,42 +89,45 @@ const SermonList: React.FC = () => {
         </nav>
         <div className="sidebar-footer-sacred">
           <div className="sidebar-user-stats">
-            <div className="credits-display">
-              <span className="material-symbols-outlined credits-icon">stars</span>
-              <div className="credits-text-stack">
-                <span className="credits-label">{t('nav.credits')}</span>
-                <span className="credits-value">{isAdmin ? t('nav.unlimited') : credits}</span>
-              </div>
+            <div className="credits-display-clean">
+              <span className="credits-label-small">{t('nav.credits')}</span>
+              <span className="credits-value-small">{isAdmin ? t('nav.unlimited') : credits}</span>
             </div>
-            <button className="lang-toggle-sidebar" onClick={toggleLanguage}>
+            <button className="lang-toggle-minimal" onClick={toggleLanguage}>
               <span className="material-symbols-outlined">language</span>
-              <span>{language === 'es' ? 'ES' : 'EN'}</span>
+              <span className="lang-text-small">{language.toUpperCase()}</span>
             </button>
           </div>
-          <button className="logout-btn-sidebar" onClick={handleLogout}><span className="material-symbols-outlined">logout</span><span>{t('nav.logout')}</span></button>
+          <button className="logout-btn-sidebar" onClick={handleLogout}>
+            <span className="material-symbols-outlined">logout</span>
+            <span>{t('nav.logout')}</span>
+          </button>
         </div>
         <button className="new-study-btn-sidebar" onClick={() => navigate('/sermons/new')}><span className="material-symbols-outlined">add</span><span>{t('list.new_study_btn')}</span></button>
       </aside>
 
       <main className="sermon-list-main">
         <header className="list-top-bar">
-          <div className="top-bar-title"><h2>{t('list.title')}</h2><p>{t('list.subtitle')}</p></div>
+          <div className="top-bar-title-clean">
+            <h2>{t('list.title')}</h2>
+            <p>{t('list.subtitle')}</p>
+          </div>
           <div className="list-search-wrapper-blinded">
             <span className="material-symbols-outlined search-icon-sacred">search</span>
             <input className="search-input-sacred" type="text" placeholder={t('list.search_placeholder')} value={searchTerm} onChange={(e) => setSearchText(e.target.value)} />
           </div>
         </header>
 
-        <div className="list-content-padding">
+        <div className="list-content-padding-clean">
           <div className="sacred-stats-grid">
             <div className="stat-card-sacred primary"><span className="stat-label">{t('list.total_studies')}</span><div className="stat-value-row"><span className="stat-number">{total}</span><span className="material-symbols-outlined stat-icon">history_edu</span></div></div>
             <div className="stat-card-sacred secondary"><span className="stat-label">{t('list.this_month')}</span><div className="stat-value-row"><span className="stat-number">--</span><span className="material-symbols-outlined stat-icon">calendar_month</span></div></div>
           </div>
 
           <div className="sacred-list-header">
-            <div style={{ width: '40%' }}>{t('list.col_reference')}</div>
-            <div style={{ width: '25%' }}>{t('list.col_last_edit')}</div>
-            <div style={{ width: '35%', textAlign: 'right' }}>{t('list.col_actions')}</div>
+            <div className="col-ref-header">{t('list.col_reference')}</div>
+            <div className="col-date-header">{t('list.col_last_edit')}</div>
+            <div className="col-actions-header">{t('list.col_actions')}</div>
           </div>
 
           <div className="sacred-list-container">
@@ -132,9 +135,20 @@ const SermonList: React.FC = () => {
               sermons.map((s) => (
                 <div key={s.id} className="study-item-sacred group">
                   <div className="item-accent-bar"></div>
-                  <div className="col-info" style={{ width: '40%' }}><div className="item-icon-box"><span className="material-symbols-outlined">menu_book</span></div><div><h3 className="item-title-sacred">{s.title}</h3><p className="item-excerpt">{s.main_passage}</p></div></div>
-                  <div className="col-date" style={{ width: '25%' }}><span className="item-date-text">{formatDate(s.updated_at || s.created_at)}</span></div>
-                  <div className="col-actions" style={{ width: '35%' }}><button className="action-btn-sacred btn-edit-sacred" onClick={() => navigate(`/sermons/${s.id}`)} title={t('list.edit')}><span className="material-symbols-outlined">edit</span></button><button className="action-btn-sacred btn-delete-sacred" onClick={() => handleDelete(s.id)} title="Eliminar"><span className="material-symbols-outlined">delete</span></button></div>
+                  <div className="col-info-main">
+                    <div className="item-icon-box"><span className="material-symbols-outlined">menu_book</span></div>
+                    <div className="item-text-stack">
+                      <h3 className="item-title-sacred">{s.title}</h3>
+                      <p className="item-excerpt">{s.main_passage}</p>
+                    </div>
+                  </div>
+                  <div className="col-date-main">
+                    <span className="item-date-text">{formatDate(s.updated_at || s.created_at)}</span>
+                  </div>
+                  <div className="col-actions-main">
+                    <button className="action-btn-sacred btn-edit-sacred" onClick={() => navigate(`/sermons/${s.id}`)} title={t('list.edit')}><span className="material-symbols-outlined">edit</span></button>
+                    <button className="action-btn-sacred btn-delete-sacred" onClick={() => handleDelete(s.id)} title="Eliminar"><span className="material-symbols-outlined">delete</span></button>
+                  </div>
                 </div>
               ))}
           </div>
