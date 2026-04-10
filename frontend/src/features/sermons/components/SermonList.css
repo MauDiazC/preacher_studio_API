@@ -100,6 +100,66 @@
   padding: 1.25rem 1.5rem;
   border-radius: 1rem;
   border: 1px solid rgba(176, 198, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.stat-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  color: rgba(194, 198, 215, 0.5);
+  letter-spacing: 0.1em;
+  font-weight: 700;
+}
+
+.stat-value-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.stat-number {
+  font-family: 'Noto Serif', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.stat-icon {
+  font-size: 2rem;
+  color: #b0c6ff;
+  opacity: 0.3;
+}
+
+.stat-card-sacred.primary .stat-icon { color: #b0c6ff; }
+.stat-card-sacred.secondary .stat-icon { color: #558dff; }
+
+/* Loader */
+.loading-screen-ministerial {
+  position: fixed;
+  inset: 0;
+  background-color: #111127;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  color: #b0c6ff;
+}
+
+.loader-ministerial {
+  width: 48px;
+  height: 48px;
+  border: 3px solid rgba(176, 198, 255, 0.1);
+  border-top-color: #b0c6ff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 /* List Table Header */

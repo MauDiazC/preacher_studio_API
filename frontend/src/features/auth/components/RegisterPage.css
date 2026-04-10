@@ -338,3 +338,29 @@
 .sacred-footer-link:hover {
   color: #b0c6ff;
 }
+
+/* Loader */
+.loading-screen-ministerial {
+  position: fixed;
+  inset: 0;
+  background-color: #111127;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  color: #b0c6ff;
+}
+
+.loader-ministerial {
+  width: 48px;
+  height: 48px;
+  border: 3px solid rgba(176, 198, 255, 0.1);
+  border-top-color: #b0c6ff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

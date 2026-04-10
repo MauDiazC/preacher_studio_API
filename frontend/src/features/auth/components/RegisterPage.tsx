@@ -55,10 +55,16 @@ const RegisterPage: React.FC = () => {
       window.location.href = url;
     } catch (err: any) {
       addNotification(t('auth.error_google'), 'error');
-    } finally {
       setLoading(false);
     }
   };
+
+  if (loading) return (
+    <div className="loading-screen-ministerial">
+      <div className="loader-ministerial"></div>
+      <p style={{ marginTop: '1.5rem', opacity: 0.6, letterSpacing: '0.1em' }}>{t('list.loading').toUpperCase()}</p>
+    </div>
+  );
 
   if (isSuccess) {
     return (

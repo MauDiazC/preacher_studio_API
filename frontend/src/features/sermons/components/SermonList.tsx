@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { sermonService } from '../services/sermonService';
 import type { Sermon } from '../services/sermonService';
@@ -12,10 +12,11 @@ const SermonList: React.FC = () => {
   const [sermons, setSermons] = useState<Sermon[]>([]);
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
+  const [thisMonthCount, setThisMonthCount] = useState(0);
   const [page] = useState(1); 
-  const [searchTerm, setSearchText] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const [userProfile, setUserProfile] = useState<{full_name?: string, is_admin?: boolean, credits_remaining?: number} | null>(null);
-  const limit = 10;
+  const limit = 50; 
   
   const navigate = useNavigate();
   const { addNotification } = useNotificationStore();
@@ -31,7 +32,21 @@ const SermonList: React.FC = () => {
     }
   };
 
-  useEffect(() => { loadProfile(); }, []);
+  const fetchThisMonthCount = async () => {
+    try {
+      const now = new Date();
+      const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+      const response = await api.get(`/sermons/?from_date=${firstDay}&limit=1`);
+      setThisMonthCount(response.data.total || 0);
+    } catch (error) {
+      console.error("Error fetching month count:", error);
+    }
+  };
+
+  useEffect(() => { 
+    loadProfile(); 
+    fetchThisMonthCount();
+  }, []);
 
   const userEmail = user?.email?.toLowerCase() || '';
   const isAdmin = userProfile?.is_admin || userEmail === 'diazzabala@gmail.com';
@@ -42,17 +57,16 @@ const SermonList: React.FC = () => {
       await logout(); 
       navigate('/login'); 
     } catch (err) {
-      // Si falla el logout de red, limpiamos local de todos modos
       localStorage.clear();
       navigate('/login');
     }
   };
 
-  const fetchSermons = async () => {
+  const fetchSermons = useCallback(async (query: string = '') => {
     try {
       setLoading(true);
       const currentOffset = (page - 1) * limit;
-      const data = await sermonService.getAll(limit, currentOffset);
+      const data = await sermonService.getAll(limit, currentOffset, query);
       setSermons(data.data || []);
       setTotal(data.total || 0);
     } catch (error) {
@@ -60,16 +74,23 @@ const SermonList: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, limit]);
 
-  useEffect(() => { fetchSermons(); }, [page]);
+  // Debounced search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchSermons(searchTerm);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchTerm, fetchSermons]);
 
   const handleDelete = async (id: string) => {
     if (!window.confirm('¿Eliminar este estudio?')) return;
     try {
       await sermonService.delete(id);
       addNotification('Eliminado.', 'success');
-      fetchSermons();
+      fetchSermons(searchTerm);
+      fetchThisMonthCount();
     } catch (error) {
       addNotification('Error.', 'error');
     }
@@ -80,8 +101,11 @@ const SermonList: React.FC = () => {
     return d.toLocaleDateString(undefined, { day: '2-digit', month: 'long', year: 'numeric' });
   };
 
-  if (loading && sermons.length === 0) return (
-    <div className="loading-screen" style={{ backgroundColor: '#111127', color: '#b0c6ff' }}>{t('list.loading')}</div>
+  if (loading && sermons.length === 0 && !searchTerm) return (
+    <div className="loading-screen-ministerial">
+      <div className="loader-ministerial"></div>
+      <p style={{ marginTop: '1.5rem', opacity: 0.6, letterSpacing: '0.1em' }}>{t('list.loading').toUpperCase()}</p>
+    </div>
   );
 
   return (
@@ -123,14 +147,32 @@ const SermonList: React.FC = () => {
           </div>
           <div className="list-search-wrapper-blinded">
             <span className="material-symbols-outlined search-icon-sacred">search</span>
-            <input className="search-input-sacred" type="text" placeholder={t('list.search_placeholder')} value={searchTerm} onChange={(e) => setSearchText(e.target.value)} />
+            <input 
+              className="search-input-sacred" 
+              type="text" 
+              placeholder={t('list.search_placeholder')} 
+              value={searchTerm} 
+              onChange={(e) => setSearchTerm(e.target.value)} 
+            />
           </div>
         </header>
 
         <div className="list-content-padding-clean">
           <div className="sacred-stats-grid">
-            <div className="stat-card-sacred primary"><span className="stat-label">{t('list.total_studies')}</span><div className="stat-value-row"><span className="stat-number">{total}</span><span className="material-symbols-outlined stat-icon">history_edu</span></div></div>
-            <div className="stat-card-sacred secondary"><span className="stat-label">{t('list.this_month')}</span><div className="stat-value-row"><span className="stat-number">--</span><span className="material-symbols-outlined stat-icon">calendar_month</span></div></div>
+            <div className="stat-card-sacred primary">
+              <span className="stat-label">{t('list.total_studies')}</span>
+              <div className="stat-value-row">
+                <span className="stat-number">{total}</span>
+                <span className="material-symbols-outlined stat-icon">history_edu</span>
+              </div>
+            </div>
+            <div className="stat-card-sacred secondary">
+              <span className="stat-label">{t('list.this_month')}</span>
+              <div className="stat-value-row">
+                <span className="stat-number">{thisMonthCount}</span>
+                <span className="material-symbols-outlined stat-icon">calendar_month</span>
+              </div>
+            </div>
           </div>
 
           <div className="sacred-list-header">

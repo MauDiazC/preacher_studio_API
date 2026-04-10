@@ -66,6 +66,13 @@ const LoginPage: React.FC = () => {
     }
   };
 
+  if (loading) return (
+    <div className="loading-screen-ministerial">
+      <div className="loader-ministerial"></div>
+      <p style={{ marginTop: '1.5rem', opacity: 0.6, letterSpacing: '0.1em' }}>{t('list.loading').toUpperCase()}</p>
+    </div>
+  );
+
   return (
     <div className="login-page-sacred">
       <div className="orbit-bg">

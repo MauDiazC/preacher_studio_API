@@ -27,8 +27,10 @@ export interface PaginatedSermons {
 }
 
 export const sermonService = {
-  getAll: async (limit: number = 10, offset: number = 0) => {
-    const response = await api.get<any>(`/sermons/?limit=${limit}&offset=${offset}`);
+  getAll: async (limit: number = 10, offset: number = 0, search: string = '') => {
+    let url = `/sermons/?limit=${limit}&offset=${offset}`;
+    if (search) url += `&search=${encodeURIComponent(search)}`;
+    const response = await api.get<any>(url);
     return response.data; // Retornamos { data, total, limit, offset }
   },
   getById: async (id: string) => {
