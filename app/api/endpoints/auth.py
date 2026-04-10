@@ -65,3 +65,21 @@ async def login(auth_data: AuthSchema):
     except Exception as e:
         print(f"❌ LOGIN FAILED: {str(e)}")
         raise HTTPException(status_code=401, detail=str(e))
+
+@router.get("/google")
+async def google_login():
+    """
+    Genera la URL de autenticación con Google a través de Supabase.
+    """
+    try:
+        # Nota: La redirección final debe estar configurada en el dashboard de Supabase
+        res = supabase.auth.sign_in_with_oauth({
+            "provider": "google",
+            "options": {
+                "redirect_to": settings.get("FRONTEND_URL", "http://localhost:5173")
+            }
+        })
+        return {"url": res.url}
+    except Exception as e:
+        print(f"❌ GOOGLE AUTH FAILED: {str(e)}")
+        raise HTTPException(status_code=400, detail=str(e))

@@ -30,9 +30,16 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  const handleGoogleLogin = () => {
-    // Aquí se implementará la lógica de Google OAuth
-    console.log("Iniciando sesión con Google...");
+  const handleGoogleLogin = async () => {
+    try {
+      setLoading(true);
+      const url = await authService.getGoogleAuthUrl();
+      window.location.href = url;
+    } catch (err: any) {
+      addNotification(t('auth.error_google') || 'Error al conectar con Google', 'error');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

@@ -20,4 +20,8 @@ export const authService = {
     useAuthStore.getState().setAuth(user, access_token);
     return response.data;
   },
+  getGoogleAuthUrl: async () => {
+    const response = await api.get('auth/google');
+    return response.data.url;
+  },
 };
