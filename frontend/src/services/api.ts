@@ -31,19 +31,22 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
+    if (error.response?.status === 401) {
+      // Manejo silencioso de 401 para evitar alertas de "Error al cargar" durante el logout
+      await useAuthStore.getState().logout();
+      if (!window.location.pathname.includes('/login')) {
+        window.location.href = '/login?expired=true';
+      }
+      return new Promise(() => {}); // Cortar la cadena de error
+    }
+    
     console.error('❌ Error de API:', {
       url: error.config?.url,
       status: error.response?.status,
       data: error.response?.data
     });
-    if (error.response?.status === 401) {
-      useAuthStore.getState().logout();
-      // Forzar redirección al login si el token expira
-      if (!window.location.pathname.includes('/login')) {
-        window.location.href = '/login?expired=true';
-      }
-    }
+    
     return Promise.reject(error);
   }
 );

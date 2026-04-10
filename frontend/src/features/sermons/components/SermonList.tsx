@@ -37,7 +37,16 @@ const SermonList: React.FC = () => {
   const isAdmin = userProfile?.is_admin || userEmail === 'diazzabala@gmail.com';
   const credits = userProfile?.credits_remaining ?? 0;
 
-  const handleLogout = () => { logout(); navigate('/login'); };
+  const handleLogout = async () => { 
+    try {
+      await logout(); 
+      navigate('/login'); 
+    } catch (err) {
+      // Si falla el logout de red, limpiamos local de todos modos
+      localStorage.clear();
+      navigate('/login');
+    }
+  };
 
   const fetchSermons = async () => {
     try {

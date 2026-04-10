@@ -163,6 +163,16 @@ ${res.source_attribution}`;
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (err) {
+      localStorage.clear();
+      navigate('/login');
+    }
+  };
+
   // Los lugares ahora vienen en inglés directamente desde la IA
   const getMapLink = (location: string) => {
     const formatted = location.trim().replace(/\s+/g, '_').toLowerCase();
@@ -199,7 +209,7 @@ ${res.source_attribution}`;
               <span>{language === 'es' ? 'ES' : 'EN'}</span>
             </button>
           </div>
-          <button className="logout-btn-sidebar" onClick={() => { logout(); navigate('/login'); }}>
+          <button className="logout-btn-sidebar" onClick={handleLogout}>
             <span className="material-symbols-outlined">logout</span>
             <span>{t('nav.logout')}</span>
           </button>
