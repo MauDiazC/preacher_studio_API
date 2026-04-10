@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel, EmailStr
 from app.core.db import supabase
+from config.config import settings
 from typing import Optional
 import logging
 
