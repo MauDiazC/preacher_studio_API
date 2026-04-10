@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuthStore } from '../../../store/authStore';
+import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../../context/LanguageContext';
 import { useNotificationStore } from '../../../store/useNotificationStore';
 import api from '../../../services/api';
+import Sidebar from '../../../components/common/Sidebar';
 import './SettingsPage.css';
 
 const SettingsPage: React.FC = () => {
-  const { logout, user } = useAuthStore();
-  const { t, language, toggleLanguage } = useLanguage();
+  const { t, language } = useLanguage();
   const { addNotification } = useNotificationStore();
   const navigate = useNavigate();
 
@@ -48,24 +47,21 @@ const SettingsPage: React.FC = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      // Solo enviamos los campos editables del perfil
-      const { email, id, created_at, updated_at, credits_remaining, plan_id, is_admin, stripe_customer_id, ...editableData } = profile as any;
+      // Campos que enviamos explícitamente para evitar errores de esquema
+      const editableData = {
+        full_name: profile.full_name,
+        ministry_name: profile.ministry_name,
+        role_title: profile.role_title,
+        country: profile.country,
+        bio: profile.bio,
+        mentorship_style: profile.mentorship_style
+      };
       await api.put('/profile/', editableData);
       addNotification('Ajustes guardados con éxito', 'success');
     } catch (err) {
       addNotification('Error al guardar ajustes', 'error');
     } finally {
       setSaving(false);
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-      navigate('/login');
-    } catch (err) {
-      localStorage.clear();
-      navigate('/login');
     }
   };
 
@@ -76,10 +72,6 @@ const SettingsPage: React.FC = () => {
     return name.slice(0, 2).toUpperCase();
   };
 
-  const userEmail = user?.email?.toLowerCase() || '';
-  const isAdmin = profile.is_admin || userEmail === 'diazzabala@gmail.com';
-  const credits = profile.credits_remaining ?? 0;
-
   if (loading) return (
     <div className="loading-screen-ministerial">
       <div className="loader-ministerial"></div>
@@ -89,37 +81,7 @@ const SettingsPage: React.FC = () => {
 
   return (
     <div className="settings-page-sacred">
-      <aside className="sacred-sidebar">
-        <div className="sidebar-brand">
-          <div className="brand-icon-box"><span className="material-symbols-outlined">menu_book</span></div>
-          <div>
-            <h1 className="brand-text-pulp">Preacher Studio</h1>
-            <p className="brand-tagline-sm">{t('auth.inspired_prep')}</p>
-          </div>
-        </div>
-        <nav className="sacred-nav">
-          <Link to="/sermons" className="nav-item"><span className="material-symbols-outlined nav-icon">book_2</span><span>{t('nav.library')}</span></Link>
-          <Link to="/sermons/new" className="nav-item"><span className="material-symbols-outlined nav-icon">edit_note</span><span>{t('nav.sermon_prep')}</span></Link>
-          <Link to="/settings" className="nav-item active"><span className="material-symbols-outlined nav-icon">settings</span><span>{t('nav.settings')}</span></Link>
-        </nav>
-        <div className="sidebar-footer-sacred">
-          <div className="sidebar-user-stats">
-            <div className="credits-display-clean">
-              <span className="credits-label-small">{t('nav.credits')}</span>
-              <span className="credits-value-small">{isAdmin ? t('nav.unlimited') : credits}</span>
-            </div>
-            <button className="lang-toggle-minimal" onClick={toggleLanguage}>
-              <span className="material-symbols-outlined">language</span>
-              <span className="lang-text-small">{language.toUpperCase()}</span>
-            </button>
-          </div>
-          <button className="logout-btn-sidebar" onClick={handleLogout}>
-            <span className="material-symbols-outlined">logout</span>
-            <span>{t('nav.logout')}</span>
-          </button>
-        </div>
-        <button className="new-study-btn-sidebar" onClick={() => navigate('/sermons/new')}><span className="material-symbols-outlined">add</span><span>{t('list.new_study_btn')}</span></button>
-      </aside>
+      <Sidebar />
 
       <main className="settings-main-content">
         <div className="max-width-container">
@@ -132,7 +94,6 @@ const SettingsPage: React.FC = () => {
             </p>
           </header>
 
-          {/* Avatar Section */}
           <div className="profile-avatar-dashboard-floating">
             <div className="initials-avatar-circle">
               {getInitials(profile.full_name)}
@@ -143,7 +104,6 @@ const SettingsPage: React.FC = () => {
           </div>
 
           <div className="settings-grid-layout">
-            {/* Form Card */}
             <section className="glass-card-settings">
               <div className="panel-accent-line"></div>
               <h2 className="headline-text">{language === 'es' ? 'Preparación Inspirada' : 'Inspired Preparation'}</h2>
@@ -168,7 +128,13 @@ const SettingsPage: React.FC = () => {
                 <div className="input-group-sacred">
                   <label className="label-text">{language === 'es' ? 'País' : 'Country'}</label>
                   <select className="input-sacred" value={profile.country} onChange={(e) => setProfile({...profile, country: e.target.value})}>
-                    <option>México</option><option>España</option><option>Estados Unidos</option><option>Colombia</option><option>Argentina</option>
+                    <option value="México">México</option>
+                    <option value="España">España</option>
+                    <option value="Estados Unidos">Estados Unidos</option>
+                    <option value="Colombia">Colombia</option>
+                    <option value="Argentina">Argentina</option>
+                    <option value="Chile">Chile</option>
+                    <option value="Perú">Perú</option>
                   </select>
                 </div>
                 <div className="input-group-sacred">
@@ -189,7 +155,6 @@ const SettingsPage: React.FC = () => {
               </div>
             </section>
 
-            {/* Subscription Card */}
             <section className="glass-card-settings">
               <div className="panel-accent-line" style={{ background: 'linear-gradient(90deg, #b0c6ff, #c2c1ff)' }}></div>
               <h2 className="headline-text">{language === 'es' ? 'Suscripción y Créditos' : 'Subscription & Credits'}</h2>
@@ -202,7 +167,7 @@ const SettingsPage: React.FC = () => {
                   <label className="label-text">{language === 'es' ? 'Créditos Disponibles' : 'Available Credits'}</label>
                   <div className="input-sacred disabled" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <span className="material-symbols-outlined" style={{ fontSize: '1.2rem', color: '#b0c6ff' }}>auto_awesome</span>
-                    {isAdmin ? t('nav.unlimited') : profile.credits_remaining}
+                    {profile.is_admin ? t('nav.unlimited') : profile.credits_remaining}
                   </div>
                 </div>
               </div>

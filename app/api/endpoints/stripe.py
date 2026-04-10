@@ -133,24 +133,37 @@ async def handle_checkout_session(session):
     """
     user_id = session.get("client_reference_id")
     customer_id = session.get("customer")
-    plan_id = session.get("metadata", {}).get("plan_id")
+    # Asegurarnos de capturar el plan_id de los metadatos
+    metadata = session.get("metadata", {})
+    plan_id = metadata.get("plan_id")
+
+    logger.info(f"🔔 Procesando checkout.session.completed para User: {user_id}, Plan: {plan_id}")
 
     if not user_id:
-        logger.error(f"❌ Webhook checkout.session.completed sin client_reference_id")
+        logger.error(f"❌ Webhook checkout.session.completed SIN client_reference_id. Session ID: {session.get('id')}")
+        return
+
+    if not plan_id:
+        logger.error(f"❌ Webhook checkout.session.completed SIN plan_id en metadata. Session ID: {session.get('id')}")
         return
 
     new_credits = await get_credits_for_plan(plan_id)
 
     try:
-        supabase.table("profiles").update({
+        res = supabase.table("profiles").update({
             "stripe_customer_id": customer_id,
             "plan_id": plan_id,
             "credits_remaining": new_credits,
             "last_payment_date": "now()"
         }).eq("id", user_id).execute()
-        logger.info(f"🚀 Perfil inicializado tras compra: {user_id} (Plan: {plan_id})")
+        
+        if res.data:
+            logger.info(f"🚀 PERFIL ACTUALIZADO EXITOSAMENTE: {user_id} -> Plan: {plan_id}, Créditos: {new_credits}")
+        else:
+            logger.error(f"❌ NO SE ENCONTRÓ PERFIL para actualizar con ID: {user_id}")
+            
     except Exception as e:
-        logger.error(f"❌ Error actualizando perfil en handle_checkout_session: {e}")
+        logger.error(f"❌ ERROR CRÍTICO actualizando perfil en handle_checkout_session: {e}")
 
 async def handle_invoice_paid(invoice):
     """

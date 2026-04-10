@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { sermonService } from '../services/sermonService';
 import type { Sermon } from '../services/sermonService';
 import { useNotificationStore } from '../../../store/useNotificationStore';
-import { useAuthStore } from '../../../store/authStore';
 import { useLanguage } from '../../../context/LanguageContext';
 import api from '../../../services/api';
+import Sidebar from '../../../components/common/Sidebar';
 import './SermonList.css';
 
 const SermonList: React.FC = () => {
@@ -15,22 +15,11 @@ const SermonList: React.FC = () => {
   const [thisMonthCount, setThisMonthCount] = useState(0);
   const [page] = useState(1); 
   const [searchTerm, setSearchTerm] = useState('');
-  const [userProfile, setUserProfile] = useState<{full_name?: string, is_admin?: boolean, credits_remaining?: number, plan_id?: string} | null>(null);
   const limit = 50; 
   
   const navigate = useNavigate();
   const { addNotification } = useNotificationStore();
-  const { t, language, toggleLanguage } = useLanguage();
-  const { logout, user } = useAuthStore();
-
-  const loadProfile = async () => {
-    try {
-      const response = await api.get('/profile/');
-      setUserProfile(response.data);
-    } catch (err) {
-      console.error("Error perfil:", err);
-    }
-  };
+  const { t } = useLanguage();
 
   const fetchThisMonthCount = async () => {
     try {
@@ -44,23 +33,8 @@ const SermonList: React.FC = () => {
   };
 
   useEffect(() => { 
-    loadProfile(); 
     fetchThisMonthCount();
   }, []);
-
-  const userEmail = user?.email?.toLowerCase() || '';
-  const isAdmin = userProfile?.is_admin || userEmail === 'diazzabala@gmail.com';
-  const credits = userProfile?.credits_remaining ?? 0;
-
-  const handleLogout = async () => { 
-    try {
-      await logout(); 
-      navigate('/login'); 
-    } catch (err) {
-      localStorage.clear();
-      navigate('/login');
-    }
-  };
 
   const fetchSermons = useCallback(async (query: string = '') => {
     try {
@@ -110,34 +84,7 @@ const SermonList: React.FC = () => {
 
   return (
     <div className="sermon-list-page">
-      <aside className="sacred-sidebar">
-        <div className="sidebar-brand">
-          <div className="brand-icon-box"><span className="material-symbols-outlined">menu_book</span></div>
-          <div><h1 className="brand-text-pulp">Preacher Studio</h1><p className="brand-tagline-sm">{t('auth.inspired_prep')}</p></div>
-        </div>
-        <nav className="sacred-nav">
-          <Link to="/sermons" className="nav-item active"><span className="material-symbols-outlined nav-icon">book_2</span><span>{t('nav.library')}</span></Link>
-          <Link to="/sermons/new" className="nav-item"><span className="material-symbols-outlined nav-icon">edit_note</span><span>{t('nav.sermon_prep')}</span></Link>
-          <Link to="/settings" className="nav-item"><span className="material-symbols-outlined nav-icon">settings</span><span>{t('nav.settings')}</span></Link>
-        </nav>
-        <div className="sidebar-footer-sacred">
-          <div className="sidebar-user-stats">
-            <div className="credits-display-clean">
-              <span className="credits-label-small">{t('nav.credits')}</span>
-              <span className="credits-value-small">{isAdmin ? t('nav.unlimited') : credits}</span>
-            </div>
-            <button className="lang-toggle-minimal" onClick={toggleLanguage}>
-              <span className="material-symbols-outlined">language</span>
-              <span className="lang-text-small">{language.toUpperCase()}</span>
-            </button>
-          </div>
-          <button className="logout-btn-sidebar" onClick={handleLogout}>
-            <span className="material-symbols-outlined">logout</span>
-            <span>{t('nav.logout')}</span>
-          </button>
-        </div>
-        <button className="new-study-btn-sidebar" onClick={() => navigate('/sermons/new')}><span className="material-symbols-outlined">add</span><span>{t('list.new_study_btn')}</span></button>
-      </aside>
+      <Sidebar />
 
       <main className="sermon-list-main">
         <header className="list-top-bar">
