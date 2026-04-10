@@ -52,7 +52,11 @@ const LoginPage: React.FC = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin + '/sermons'
+          redirectTo: window.location.origin + '/sermons',
+          queryParams: {
+            prompt: 'select_account', // ESTO fuerzo a Google a pedir la cuenta
+            access_type: 'offline'
+          }
         }
       });
       if (error) throw error;

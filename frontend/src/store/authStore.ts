@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { supabase } from '../services/supabase';
 
 interface User {
   id: string;
@@ -12,7 +13,7 @@ interface AuthState {
   token: string | null;
   isAuthenticated: boolean;
   setAuth: (user: User, token: string) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
 // Función auxiliar para buscar tokens de Supabase o los nuestros
@@ -39,15 +40,22 @@ export const useAuthStore = create<AuthState>((set) => ({
     localStorage.setItem('token', token);
     set({ user, token, isAuthenticated: true });
   },
-  logout: () => {
-    // Limpieza total de cualquier token
+  logout: async () => {
+    // 1. Cerrar sesión en Supabase (esto maneja Google y Password)
+    await supabase.auth.signOut();
+    
+    // 2. Limpieza manual de cualquier rastro
     localStorage.removeItem('token');
+    const keysToRemove = [];
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
       if (key && key.startsWith('sb-')) {
-        localStorage.removeItem(key);
+        keysToRemove.push(key);
       }
     }
+    keysToRemove.forEach(k => localStorage.removeItem(k));
+    
+    // 3. Resetear estado global
     set({ user: null, token: null, isAuthenticated: false });
   },
 }));
