@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { authService } from '../services/authService';
+import { supabase } from '../../../services/supabase';
 import { useNotificationStore } from '../../../store/useNotificationStore';
 import { useAuthStore } from '../../../store/authStore';
 import { useLanguage } from '../../../context/LanguageContext';
@@ -11,27 +12,24 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [isStuck, setIsStuck] = useState(false);
   
   const navigate = useNavigate();
   const { addNotification } = useNotificationStore();
   const { t } = useLanguage();
-  const { logout, token } = useAuthStore();
+  const { logout, setAuth } = useAuthStore();
 
-  // Detectar si hay un token residual que nos está bloqueando
+  // Escuchar cambios de sesión de Supabase (OAuth)
   useEffect(() => {
-    if (token || localStorage.getItem('token')) {
-      setIsStuck(true);
-    }
-  }, [token]);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        console.log("Supabase Auth Event: SIGNED_IN");
+        setAuth({ id: session.user.id, email: session.user.email || '' }, session.access_token);
+        navigate('/sermons');
+      }
+    });
 
-  const handleForceClear = () => {
-    logout();
-    localStorage.clear(); // Limpieza total
-    setIsStuck(false);
-    addNotification('Sesión limpiada. Intenta de nuevo.', 'success');
-    window.location.reload();
-  };
+    return () => subscription.unsubscribe();
+  }, [navigate, setAuth]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,18 +49,21 @@ const LoginPage: React.FC = () => {
   const handleGoogleLogin = async () => {
     try {
       setLoading(true);
-      const url = await authService.getGoogleAuthUrl();
-      window.location.href = url;
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin + '/sermons'
+        }
+      });
+      if (error) throw error;
     } catch (err: any) {
       addNotification(t('auth.error_google') || 'Error al conectar con Google', 'error');
-    } finally {
       setLoading(false);
     }
   };
 
   return (
     <div className="login-page-sacred">
-      {/* Background Celestial Orbits */}
       <div className="orbit-bg">
         <div className="orbit-1"></div>
         <div className="orbit-2"></div>
@@ -70,43 +71,11 @@ const LoginPage: React.FC = () => {
 
       <main className="login-main-content">
         <div className="login-card-sacred">
-          {/* Brand Anchor */}
           <div className="login-brand-header">
             <h1 className="login-brand-title">Preacher Studio</h1>
             <p className="login-brand-subtitle">{t('auth.inspired_prep')}</p>
           </div>
 
-          {isStuck && (
-            <div style={{ 
-              background: 'rgba(255, 180, 171, 0.1)', 
-              border: '1px solid rgba(255, 180, 171, 0.2)',
-              padding: '1rem',
-              borderRadius: '0.5rem',
-              marginBottom: '1.5rem',
-              textAlign: 'center'
-            }}>
-              <p style={{ color: '#ffb4ab', fontSize: '0.8rem', marginBottom: '0.5rem' }}>
-                Detectamos una sesión activa. Si no puedes entrar, limpia tu sesión:
-              </p>
-              <button 
-                onClick={handleForceClear}
-                style={{ 
-                  background: '#ffb4ab', 
-                  color: '#690005', 
-                  border: 'none', 
-                  padding: '0.4rem 1rem', 
-                  borderRadius: '0.4rem',
-                  fontSize: '0.7rem',
-                  fontWeight: '700',
-                  cursor: 'pointer'
-                }}
-              >
-                LIMPIAR SESIÓN Y REINTENTAR
-              </button>
-            </div>
-          )}
-
-          {/* Login Form */}
           <form className="sacred-form" onSubmit={handleSubmit}>
             <div className="sacred-input-group">
               <label className="sacred-label" htmlFor="email">{t('auth.email')}</label>
@@ -157,12 +126,10 @@ const LoginPage: React.FC = () => {
             </button>
           </form>
 
-          {/* Social Provider Divider */}
           <div className="sacred-divider">
             <span className="sacred-divider-text">{t('auth.continue_with')}</span>
           </div>
 
-          {/* Social Providers */}
           <div className="sacred-social-full">
             <button className="sacred-social-btn-google" onClick={handleGoogleLogin}>
               <img 
@@ -174,7 +141,6 @@ const LoginPage: React.FC = () => {
             </button>
           </div>
 
-          {/* Footer Link */}
           <p className="sacred-register-footer">
             {t('auth.no_account')} 
             <Link to="/register" className="sacred-register-link">
@@ -184,7 +150,6 @@ const LoginPage: React.FC = () => {
         </div>
       </main>
 
-      {/* Persistent Footer */}
       <footer className="sacred-footer-login">
         <div className="sacred-footer-content">
           <p className="sacred-footer-copy">© 2026 Preacher Studio. {t('auth.inspired_prep')}.</p>
