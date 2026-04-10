@@ -64,74 +64,113 @@ async def export_to_pptx(sermon_id: str, db=Depends(get_db), user=Depends(get_cu
     sermon = res.data
     prs = Presentation()
 
-    # Colores del tema
-    bg_color = RGBColor(13, 11, 31) # #0D0B1F
-    text_color = RGBColor(255, 255, 255) # White
-    accent_color = RGBColor(125, 92, 255) # Purple #7D5CFF
+    # --- PALETA SACRED OBSERVATORY ---
+    BG_COLOR = RGBColor(13, 11, 31)      # #0D0B1F
+    ACCENT_PURPLE = RGBColor(125, 92, 255) # #7D5CFF
+    ACCENT_GOLD = RGBColor(255, 184, 120)  # #FFB878
+    TEXT_MAIN = RGBColor(255, 255, 255)    # #FFFFFF
+    TEXT_DIM = RGBColor(161, 161, 170)     # #A1A1AA
 
-    def apply_slide_background(slide):
+    def apply_sacred_style(slide, is_title=False):
+        # Fondo oscuro profundo
         background = slide.background
         fill = background.fill
         fill.solid()
-        fill.fore_color.rgb = bg_color
+        fill.fore_color.rgb = BG_COLOR
+        
+        # Pie de página ministerial
+        if not is_title:
+            left = Inches(0.5)
+            top = Inches(7.1)
+            width = Inches(9)
+            height = Inches(0.3)
+            txBox = slide.shapes.add_textbox(left, top, width, height)
+            tf = txBox.text_frame
+            p = tf.paragraphs[0]
+            p.text = "PREACHER STUDIO | Asistencia Homilética Digital"
+            p.font.size = Pt(9)
+            p.font.color.rgb = TEXT_DIM
+            p.alignment = PP_ALIGN.LEFT
 
-    # Diapositiva de Título
+    # 1. Diapositiva de Portada
     title_slide_layout = prs.slide_layouts[0]
     slide = prs.slides.add_slide(title_slide_layout)
-    apply_slide_background(slide)
+    apply_sacred_style(slide, is_title=True)
 
-    title = slide.shapes.title
-    subtitle = slide.placeholders[1]
+    title_shape = slide.shapes.title
+    subtitle_shape = slide.placeholders[1]
 
-    title.text = sermon["title"]
-    for paragraph in title.text_frame.paragraphs:
-        paragraph.font.size = Pt(44)
+    title_shape.text = sermon["title"].upper()
+    for paragraph in title_shape.text_frame.paragraphs:
+        paragraph.font.size = Pt(48)
         paragraph.font.bold = True
-        paragraph.font.color.rgb = accent_color
+        paragraph.font.color.rgb = ACCENT_GOLD # Oro para el título principal
         paragraph.alignment = PP_ALIGN.CENTER
 
-    subtitle.text = f"Análisis Exegético\nPasaje: {sermon.get('main_passage') or 'N/A'}"
-    for paragraph in subtitle.text_frame.paragraphs:
-        paragraph.font.size = Pt(24)
-        paragraph.font.color.rgb = text_color
+    subtitle_shape.text = f"ANÁLISIS EXEGÉTICO & HOMILÉTICO\n{sermon.get('main_passage') or 'Estudio Bíblico'}"
+    for paragraph in subtitle_shape.text_frame.paragraphs:
+        paragraph.font.size = Pt(22)
+        paragraph.font.color.rgb = TEXT_MAIN
         paragraph.alignment = PP_ALIGN.CENTER
 
-    # Diapositivas de Contenido
+    # 2. Procesamiento de Contenido
     content = sermon.get("content", "")
-    # Dividir por bloques de títulos
-    blocks = re.split(r'(\d+\.\s+[A-ZÁÉÍÓÚÑ\s\(\)]+:|VERSIÓN [A-Z0-9\s]+:)', content)
-
-    # Re-combinar títulos con su contenido
+    # Regex mejorada para detectar secciones académicas (v1.4)
+    sections = re.split(r'(\d+\.\s+[A-ZÁÉÍÓÚÑ\s\(\)]+:|VERSIÓN [A-Z0-9\s]+:)', content)
+    
     slides_data = []
-    for i in range(1, len(blocks), 2):
-        title_text = blocks[i].strip()
-        body_text = blocks[i+1].strip() if i+1 < len(blocks) else ""
-        if body_text:
-            slides_data.append((title_text, body_text))
+    for i in range(1, len(sections), 2):
+        header = sections[i].strip()
+        body = sections[i+1].strip() if i+1 < len(sections) else ""
+        if body:
+            slides_data.append((header, body))
 
-    bullet_slide_layout = prs.slide_layouts[1]
+    # 3. Diapositivas de Cuerpo
+    bullet_layout = prs.slide_layouts[1]
     for s_title, s_body in slides_data:
-        # Si el cuerpo es muy largo, lo dividimos en varias diapositivas
-        body_chunks = [s_body[i:i+500] for i in range(0, len(s_body), 500)]
+        # Dividir texto largo para evitar desbordamiento (aprox 600 chars por slide)
+        chunks = [s_body[i:i+650] for i in range(0, len(s_body), 650)]
 
-        for idx, chunk in enumerate(body_chunks):
-            slide = prs.slides.add_slide(bullet_slide_layout)
-            apply_slide_background(slide)
+        for idx, chunk in enumerate(chunks):
+            slide = prs.slides.add_slide(bullet_layout)
+            apply_sacred_style(slide)
 
             shapes = slide.shapes
-            title_shape = shapes.title
-            body_shape = shapes.placeholders[1]
+            title_box = shapes.title
+            body_box = shapes.placeholders[1]
 
-            title_suffix = " (cont.)" if idx > 0 else ""
-            title_shape.text = s_title + title_suffix
-            title_shape.text_frame.paragraphs[0].font.color.rgb = accent_color
-            title_shape.text_frame.paragraphs[0].font.size = Pt(32)
+            # Estilo del Título de Sección
+            title_box.text = s_title + (" (cont.)" if idx > 0 else "")
+            title_tf = title_box.text_frame.paragraphs[0]
+            title_tf.font.color.rgb = ACCENT_PURPLE
+            title_tf.font.size = Pt(32)
+            title_tf.font.bold = True
 
-            tf = body_shape.text_frame
-            tf.text = chunk
-            for paragraph in tf.paragraphs:
-                paragraph.font.size = Pt(20)
-                paragraph.font.color.rgb = text_color
+            # Estilo del Cuerpo
+            body_tf = body_box.text_frame
+            body_tf.text = chunk
+            for p in body_tf.paragraphs:
+                p.font.size = Pt(18)
+                p.font.color.rgb = TEXT_MAIN
+                p.space_after = Pt(10)
+
+    # 4. Diapositiva de Cierre
+    blank_layout = prs.slide_layouts[6]
+    slide = prs.slides.add_slide(blank_layout)
+    apply_sacred_style(slide, is_title=True)
+    
+    left = Inches(2)
+    top = Inches(3)
+    width = Inches(6)
+    height = Inches(1.5)
+    txBox = slide.shapes.add_textbox(left, top, width, height)
+    tf = txBox.text_frame
+    p = tf.paragraphs[0]
+    p.text = "SOLI DEO GLORIA"
+    p.font.size = Pt(36)
+    p.font.bold = True
+    p.font.color.rgb = ACCENT_GOLD
+    p.alignment = PP_ALIGN.CENTER
 
     buffer = io.BytesIO()
     prs.save(buffer)
