@@ -247,7 +247,7 @@ const LandingPage: React.FC = () => {
       {/* Testimonials - Con animaciones */}
       <section 
         className="testimonials-section reveal-on-scroll"
-        ref={el => sectionRefs.current[2] = el}
+        ref={el => { sectionRefs.current[2] = el; }}
       >
         <div className="max-container">
           <h2 className="hero-title-sacred" style={{ textAlign: 'center', fontSize: '3rem', fontStyle: 'italic', marginBottom: '5rem' }}>
@@ -305,7 +305,7 @@ const LandingPage: React.FC = () => {
       {/* FAQ Section - Con animaciones */}
       <section 
         className="faq-section reveal-on-scroll"
-        ref={el => sectionRefs.current[3] = el}
+        ref={el => { sectionRefs.current[3] = el; }}
       >
         <div className="max-container">
           <div className="section-header-sacred">
@@ -333,7 +333,7 @@ const LandingPage: React.FC = () => {
       {/* Final CTA - Con animaciones */}
       <section 
         className="final-cta-section reveal-on-scroll"
-        ref={el => sectionRefs.current[4] = el}
+        ref={el => { sectionRefs.current[4] = el; }}
       >
         <div className="cta-bg-glow"></div>
         <div className="max-container">
