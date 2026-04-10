@@ -55,6 +55,10 @@ const translations = {
     'auth.success_login': '¡Bienvenido de nuevo!',
     'auth.error_login': 'Credenciales inválidas',
     'auth.error_google': 'Error al conectar con Google',
+    'auth.register_subtitle': 'Únete a la comunidad de guías espirituales',
+    'auth.have_account': '¿Ya tienes una cuenta?',
+    'auth.login_link': 'Iniciar Sesión',
+    'AUTH.CONFIRM_PASSWORD_LABEL': 'Confirmar Contraseña',
     // Checkout
     'checkout.confirm_plan': 'Confirma tu Plan',
     'checkout.step_desc': 'Estás a un paso de elevar tu ministerio',
@@ -122,6 +126,10 @@ const translations = {
     'auth.success_login': 'Welcome back!',
     'auth.error_login': 'Invalid credentials',
     'auth.error_google': 'Error connecting with Google',
+    'auth.register_subtitle': 'Join the community of spiritual guides',
+    'auth.have_account': 'Already have an account?',
+    'auth.login_link': 'Log In',
+    'AUTH.CONFIRM_PASSWORD_LABEL': 'Confirm Password',
     // Checkout
     'checkout.confirm_plan': 'Confirm Your Plan',
     'checkout.step_desc': 'You are one step away from elevating your ministry',

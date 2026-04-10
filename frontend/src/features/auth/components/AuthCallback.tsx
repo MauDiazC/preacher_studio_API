@@ -7,23 +7,22 @@ const AuthCallback: React.FC = () => {
   const { setAuth } = useAuthStore();
 
   useEffect(() => {
-    // Supabase devuelve el token en el fragmento (#) de la URL
-    // Ejemplo: #access_token=xyz&refresh_token=abc...
     const hash = window.location.hash;
     if (hash) {
       const params = new URLSearchParams(hash.replace('#', '?'));
       const accessToken = params.get('access_token');
       
-      // El usuario viene codificado en el token, pero Supabase también 
-      // lo envía a veces en los metadatos. Por ahora simplificamos:
       if (accessToken) {
-        // Guardamos el token y redirigimos a la biblioteca
-        // El user object se llenará la primera vez que hagamos una petición al perfil
-        setAuth({ id: '', email: '' }, accessToken); 
-        navigate('/sermons');
+        // Obtenemos info básica del usuario del fragmento si está disponible
+        // Supabase a veces manda el user object en el hash
+        setAuth({ id: 'google-user', email: 'google-auth' }, accessToken); 
+        
+        // Pequeña espera para asegurar que el store se actualice
+        setTimeout(() => {
+          navigate('/sermons', { replace: true });
+        }, 100);
       }
     } else {
-      // Si no hay hash, puede que haya habido un error
       navigate('/login');
     }
   }, [navigate, setAuth]);

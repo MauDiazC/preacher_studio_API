@@ -21,7 +21,7 @@ const SermonEditor: React.FC = () => {
   };
 
   const [sermon, setSermon] = useState<Partial<Sermon>>(initialState);
-  const [userProfile, setUserProfile] = useState<{full_name?: string, is_admin?: boolean} | null>(null);
+  const [userProfile, setUserProfile] = useState<{full_name?: string, is_admin?: boolean, credits_remaining?: number} | null>(null);
   const [loading, setLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [lastSavedLabel, setLastSavedLabel] = useState<string>('');
@@ -47,6 +47,7 @@ const SermonEditor: React.FC = () => {
 
   const userEmail = user?.email?.toLowerCase() || '';
   const isAdmin = userProfile?.is_admin || userEmail === 'diazzabala@gmail.com';
+  const credits = userProfile?.credits_remaining ?? 0;
 
   const formatRelativeTime = (updatedAt?: string) => {
     if (!updatedAt) return language === 'es' ? 'Nuevo' : 'New';
@@ -186,10 +187,22 @@ ${res.source_attribution}`;
         </nav>
         <div className="sidebar-footer-sacred">
           <div className="sidebar-user-stats">
-            <div className="credits-display"><span className="credits-label">{t('nav.credits')}</span><span className="credits-value">{isAdmin ? t('nav.unlimited') : '25'}</span></div>
-            <button className="lang-toggle-sidebar" onClick={toggleLanguage}><span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>language</span>{language.toUpperCase()}</button>
+            <div className="credits-display">
+              <span className="material-symbols-outlined credits-icon">stars</span>
+              <div className="credits-text-stack">
+                <span className="credits-label">{t('nav.credits')}</span>
+                <span className="credits-value">{isAdmin ? t('nav.unlimited') : credits}</span>
+              </div>
+            </div>
+            <button className="lang-toggle-sidebar" onClick={toggleLanguage}>
+              <span className="material-symbols-outlined">language</span>
+              <span>{language === 'es' ? 'ES' : 'EN'}</span>
+            </button>
           </div>
-          <button className="logout-btn-sidebar" onClick={() => { logout(); navigate('/login'); }}><span className="material-symbols-outlined">logout</span><span>{t('nav.logout').toUpperCase()}</span></button>
+          <button className="logout-btn-sidebar" onClick={() => { logout(); navigate('/login'); }}>
+            <span className="material-symbols-outlined">logout</span>
+            <span>{t('nav.logout')}</span>
+          </button>
         </div>
         <button className="new-study-btn-sidebar" onClick={() => navigate('/sermons/new')}><span className="material-symbols-outlined">add</span><span>{t('list.new_study_btn')}</span></button>
       </aside>
