@@ -53,8 +53,7 @@ const RegisterPage: React.FC = () => {
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
-...
-
+    e.preventDefault();
     setError('');
 
     if (password !== confirmPassword) {
@@ -81,8 +80,17 @@ const RegisterPage: React.FC = () => {
   const handleGoogleRegister = async () => {
     try {
       setLoading(true);
-      const url = await authService.getGoogleAuthUrl();
-      window.location.href = url;
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin + '/sermons',
+          queryParams: {
+            prompt: 'select_account',
+            access_type: 'offline'
+          }
+        }
+      });
+      if (error) throw error;
     } catch (err: any) {
       addNotification(t('auth.error_google'), 'error');
       setLoading(false);
@@ -124,14 +132,12 @@ const RegisterPage: React.FC = () => {
 
   return (
     <div className="register-page-sacred">
-      {/* Background Celestial Orbits */}
       <div className="celestial-orbit-container">
         <div className="celestial-orbit orbit-reg-1"></div>
         <div className="celestial-orbit orbit-reg-2"></div>
       </div>
 
       <main className="register-main-canvas">
-        {/* Brand Identity */}
         <div className="brand-identity">
           <div className="brand-icon-wrapper">
             <span className="material-symbols-outlined">menu_book</span>
@@ -153,7 +159,6 @@ const RegisterPage: React.FC = () => {
           )}
         </div>
 
-        {/* Registration Card */}
         <div className="glass-panel-reg">
           <div className="panel-accent-line"></div>
           
@@ -162,7 +167,6 @@ const RegisterPage: React.FC = () => {
             <p>{t('auth.register_subtitle')}</p>
           </div>
 
-          {/* Google Register Option */}
           <div className="reg-google-container">
             <button className="sacred-social-btn-google" onClick={handleGoogleRegister}>
               <img 
@@ -260,7 +264,6 @@ const RegisterPage: React.FC = () => {
         </div>
       </main>
 
-      {/* Persistent Footer */}
       <footer className="sacred-footer-reg">
         <div className="sacred-footer-content">
           <p className="sacred-footer-copy">© 2026 Preacher Studio. {t('auth.inspired_prep')}.</p>
