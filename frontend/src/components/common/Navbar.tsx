@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { useLanguage } from '../../context/LanguageContext';
@@ -9,9 +9,16 @@ const Navbar: React.FC = () => {
   const { language, toggleLanguage, t } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
+  
+  // Estado local para forzar reactividad con el token de localStorage
+  const [hasToken, setHasToken] = useState(!!localStorage.getItem('token'));
 
-  // Blindaje: Verificar localStorage si el store aún no está listo
-  const isTrulyAuthenticated = isAuthenticated || !!token || !!localStorage.getItem('token');
+  useEffect(() => {
+    // Sincronizar cada vez que cambie la ruta o el estado global
+    setHasToken(isAuthenticated || !!token || !!localStorage.getItem('token'));
+  }, [isAuthenticated, token, location.pathname]);
+
+  const isTrulyAuthenticated = hasToken;
 
   // Ocultar Navbar en las rutas internas de la aplicación que ya tienen Sidebar
   if (location.pathname.startsWith('/sermons') || location.pathname.startsWith('/settings')) {
@@ -19,7 +26,9 @@ const Navbar: React.FC = () => {
   }
 
   const handleLogout = () => {
+    localStorage.removeItem('token');
     logout();
+    setHasToken(false);
     navigate('/');
   };
 
@@ -44,13 +53,13 @@ const Navbar: React.FC = () => {
           <span 
             className="material-symbols-outlined lang-icon-sacred"
             onClick={toggleLanguage}
-            title={language === 'es' ? 'Switch to English' : 'Cambiar a Español'}
+            style={{ cursor: 'pointer', marginRight: '1rem' }}
           >
             language
           </span>
 
           {!isTrulyAuthenticated ? (
-            <>
+            <div style={{ display: 'flex', gap: '0.75rem' }}>
               <button 
                 className="btn-login-sacred"
                 onClick={() => navigate('/login')}
@@ -63,9 +72,9 @@ const Navbar: React.FC = () => {
               >
                 {t('nav.try_free')}
               </button>
-            </>
+            </div>
           ) : (
-            <div style={{ display: 'flex', gap: '1rem' }}>
+            <div style={{ display: 'flex', gap: '0.75rem' }}>
               <button 
                 className="btn-try-sacred"
                 onClick={() => navigate('/sermons')}
@@ -74,7 +83,11 @@ const Navbar: React.FC = () => {
               </button>
               <button 
                 className="btn-login-sacred"
-                style={{ borderColor: 'rgba(255, 85, 85, 0.2)', color: '#ff8585' }}
+                style={{ 
+                  borderColor: 'rgba(255, 85, 85, 0.3)', 
+                  color: '#ff8585',
+                  backgroundColor: 'rgba(255, 85, 85, 0.05)' 
+                }}
                 onClick={handleLogout}
               >
                 {t('nav.logout')}
