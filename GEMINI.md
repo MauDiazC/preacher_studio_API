@@ -2,42 +2,42 @@
 
 Plataforma especializada de mentoría homilética diseñada para ayudar a guías espirituales a profundizar en el estudio de la Palabra con asistencia digital avanzada de nivel académico.
 
+## Mandatorio: Principio de Blindaje
+**TODO LO QUE ESTÉ MARCADO COMO "BLINDADO" NO SE TOCA.** Una funcionalidad o diseño blindado ha alcanzado su estado óptimo de excelencia y estabilidad. Cualquier cambio futuro debe respetar rigurosamente la estructura, el estilo y el comportamiento establecido, evitando regresiones visuales o funcionales.
+
 ## Visión y Lenguaje del Proyecto
 
 - **Tono Ministerial:** Se utiliza: *Asistencia Homilética Digital*, *Mentoría Teológica*, *Estudio del Texto Original*. Se prefiere "Guía Espiritual" sobre "Pastor".
 - **Calibre Académico:** El análisis incluye información de léxicos profesionales (Strong, Thayer, BDB) y fuentes académicas clásicas.
 
-## Estado Actual (v1.4 - Academic Refinement ✅)
+## Estado Actual (v1.5 - Infrastructure & Auth ✅)
 
-El sistema ha sido blindado visualmente y se ha optimizado la experiencia de usuario en todo el flujo ministerial.
+Se ha finalizado la integración de pagos y la autenticación real, blindando la experiencia de usuario y la persistencia de datos.
 
-- **Identidad Visual "Sacred Observatory":** 
-    - Implementación total en Landing, Pricing, Login, Registro, Lista de Estudios, Editor y Settings.
-    - Header responsivo y blindado en el Editor para evitar solapamientos.
-    - Avatar de iniciales dinámico en Settings.
-- **Funcionalidades de Estudio:**
-    - **Editor Integrado:** Dashboard con recursos (Bible Hub Atlas, Léxicos BLB) y editor de notas sincronizado.
-    - **Estructura Académica:** Análisis dividido en 7 secciones (RVR1960, NTV, Tipo Literario, Autoría, Propósito, Historia, Significancia, Idiomas y Fuentes).
-    - **Auto-guardado:** El sistema guarda automáticamente el análisis tras ser generado por la IA.
-    - **Mapas Inteligentes:** Links a Bible Hub Atlas con traducción forzada a inglés para asegurar precisión.
-- **Planes y Suscripciones:**
-    - **Sembrador (Free):** 3 Estudios básicos/mes (Sin léxicos).
-    - **Mentor (Pro):** 30 Estudios/mes + Recursos avanzados (9.99 USD / 180 MXN).
-    - **Ministerio (Teams):** Estudios Ilimitados + PPTX/Keynote + Soporte (19.99 USD / 360 MXN).
-- **Infraestructura:**
-    - Migraciones de Alembic implementadas para el campo `additional_notes`.
-    - Sincronización automática en `github` (Railway) y `origin` (Codeberg).
+- **Identidad Visual "Sacred Observatory" (BLINDADO):** 
+    - UI blindada en Landing, Pricing, Login, Registro, Lista de Estudios y Editor.
+    - Sistema de traducciones (i18n) robusto e insensible a mayúsculas/minúsculas.
+    - Sidebar y Header con formato académico fijo y responsivo.
+- **Autenticación Real (Google OAuth & Email):**
+    - Implementación nativa con Supabase SDK en el frontend.
+    - Cierre de sesión asíncrono con limpieza profunda de tokens.
+    - Redirección inteligente en `App.tsx` que evita rebotes al landing.
+    - Trigger en base de datos para creación automática de perfiles.
+- **Pagos y Créditos:**
+    - Webhook de Stripe implementado para `checkout.session.completed`.
+    - Lógica de actualización automática de créditos y planes en Supabase.
+- **Exportación PPTX (BLINDADO):**
+    - Generación de diapositivas con estética "Sacred" (Fondo oscuro, acentos oro/púrpura, pie de página institucional y slide de cierre "Soli Deo Gloria").
 
-## Próximos Pasos (Mañana - Backend Day)
-- [ ] **Backend (Stripe):** Implementar el endpoint de Webhook para procesar eventos `checkout.session.completed`.
-- [ ] **Lógica de Créditos:** Finalizar la función en el backend para actualizar automáticamente los créditos en la tabla `profiles` tras una compra exitosa.
-- [ ] **Refinamiento PPTX:** Adaptar la exportación a diapositivas al nuevo sistema de diseño "Sacred" con plantillas profesionales.
-- [ ] **Google OAuth:** Implementar la lógica real de registro e inicio de sesión con Google.
+## Próximos Pasos
+- [ ] **Optimización de IA:** Refinar los prompts para asegurar que los análisis mantengan siempre el rigor académico solicitado.
+- [ ] **Módulo de Notificaciones:** Implementar notificaciones push o emails tras la generación exitosa de un estudio largo.
+- [ ] **Dashboard de Administrador:** Crear la vista para gestionar usuarios y monitorear créditos globales.
 
-## Punto de Restauración (v1.4 - 09/04/2026)
-- **Estado:** UI blindada, navegación completa, lógica de idiomas unificada, listo para lógica de negocio de pagos.
-- **Commit de Referencia:** `92bd3475` (Fix build error y refinamiento final de planes).
+## Punto de Restauración (v1.5 - 10/04/2026)
+- **Estado:** Infraestructura de pagos lista, Auth real funcionando, UI/UX blindada y profesional.
+- **Commit de Referencia:** `f84c69fd` (Fix silent 401 handling and async logout).
 
 ## Infraestructura y CI/CD
-- **Hosting:** Railway (Backend) y Supabase (DB/Auth).
+- **Hosting:** Railway (Backend/Frontend) y Supabase (DB/Auth).
 - **Remotos:** Sincronización automática obligatoria en `github` y `origin`.
