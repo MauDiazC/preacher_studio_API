@@ -33,11 +33,18 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response?.status === 401) {
-      // Manejo silencioso de 401 para evitar alertas de "Error al cargar" durante el logout
-      await useAuthStore.getState().logout();
-      if (!window.location.pathname.includes('/login')) {
-        window.location.href = '/login?expired=true';
+      console.warn("⚠️ 401 Detectado en:", window.location.pathname);
+      
+      // Si ya estamos en login/register o AuthCallback, NO disparamos logout ni redirección
+      if (window.location.pathname.includes('/login') || 
+          window.location.pathname.includes('/register') ||
+          window.location.pathname.includes('/auth/callback')) {
+        return Promise.reject(error);
       }
+
+      // De lo contrario, cerramos sesión ministerialmente
+      await useAuthStore.getState().logout();
+      window.location.href = '/login?expired=true';
       return new Promise(() => {}); // Cortar la cadena de error
     }
     

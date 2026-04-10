@@ -36,11 +36,11 @@ const RegisterPage: React.FC = () => {
     }
   };
 
+  // Escuchar cambios de sesión de Supabase (SOLO PARA OAUTH/GOOGLE)
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' && session) {
+      if (event === 'SIGNED_IN' && session && session.user.app_metadata.provider === 'google') {
         setAuth({ id: session.user.id, email: session.user.email || '' }, session.access_token);
-        localStorage.setItem('token', session.access_token);
         handlePostAuthRedirect();
       }
     });
@@ -71,7 +71,6 @@ const RegisterPage: React.FC = () => {
       const errorMessage = err.response?.data?.detail || err.message || 'Error';
       setError(errorMessage);
       addNotification(t('auth.error_notification') || 'Error', 'error');
-    } finally {
       setLoading(false);
     }
   };

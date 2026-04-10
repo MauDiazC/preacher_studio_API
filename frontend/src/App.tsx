@@ -1,7 +1,9 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 import Layout from './components/common/Layout';
 import { useAuthStore } from './store/authStore';
 import { LanguageProvider } from './context/LanguageContext';
+import { supabase } from './services/supabase';
 
 // Direct imports
 import LoginPage from './features/auth/components/LoginPage';
@@ -15,11 +17,29 @@ import CheckoutPage from './features/checkout/CheckoutPage';
 import SettingsPage from './features/profile/components/SettingsPage';
 
 function App() {
-  const { isAuthenticated, token } = useAuthStore();
+  const { isAuthenticated, token, setAuth } = useAuthStore();
+  const [initializing, setInitializing] = useState(true);
   
-  // Si hay un token en el store, consideramos que está autenticado
-  // para evitar rebotes innecesarios durante la hidratación.
+  useEffect(() => {
+    // Sincronización ministerial de sesión al arrancar
+    const initAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        setAuth({ id: session.user.id, email: session.user.email || '' }, session.access_token);
+      }
+      setInitializing(false);
+    };
+    initAuth();
+  }, [setAuth]);
+
+  // Si hay un token en el store o en localStorage, consideramos que está autenticado
   const isTrulyAuthenticated = isAuthenticated || !!token || !!localStorage.getItem('token');
+
+  if (initializing) return (
+    <div style={{ height: '100vh', backgroundColor: '#111127', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className="loader-ministerial"></div>
+    </div>
+  );
 
   return (
     <LanguageProvider>
@@ -40,7 +60,7 @@ function App() {
             <Route path="/sermons/:id" element={isTrulyAuthenticated ? <SermonEditor /> : <Navigate to="/login" replace />} />
             <Route path="/settings" element={isTrulyAuthenticated ? <SettingsPage /> : <Navigate to="/login" replace />} />
 
-            {/* Catch all - Solo redirige al landing si la ruta no existe y NO está autenticado */}
+            {/* Catch all */}
             <Route path="*" element={<Navigate to={isTrulyAuthenticated ? "/sermons" : "/"} replace />} />
           </Routes>
         </Layout>

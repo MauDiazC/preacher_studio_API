@@ -31,35 +31,31 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  // Escuchar cambios de sesión de Supabase (OAuth y Email/Password)
+  // Escuchar cambios de sesión de Supabase (SOLO PARA OAUTH/GOOGLE)
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log(`Auth Event: ${event}`);
-      if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session) {
+      if (event === 'SIGNED_IN' && session && session.user.app_metadata.provider === 'google') {
         setAuth({ id: session.user.id, email: session.user.email || '' }, session.access_token);
-        localStorage.setItem('token', session.access_token);
-        
-        // Solo redirigimos si estamos en la página de login
-        if (location.pathname === '/login') {
-          handlePostAuthRedirect();
-        }
+        handlePostAuthRedirect();
       }
     });
-
     return () => subscription.unsubscribe();
-  }, [navigate, setAuth, location.pathname]);
+  }, [navigate, setAuth]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     
     try {
-      await authService.login(email, password);
-      addNotification(t('auth.success_login') || '¡Bienvenido de nuevo!', 'success');
-      // No navegamos aquí, dejamos que onAuthStateChange lo haga
+      const { user, session } = await authService.login(email, password);
+      if (session) {
+        setAuth({ id: user.id, email: user.email || '' }, session.access_token);
+        addNotification(t('auth.success_login') || '¡Bienvenido!', 'success');
+        handlePostAuthRedirect();
+      }
     } catch (err: any) {
       addNotification(t('auth.error_login') || 'Credenciales inválidas', 'error');
-      setLoading(false); // Solo bajamos el loading si falla, si tiene éxito el listener redirige
+      setLoading(false);
     }
   };
 
@@ -70,15 +66,12 @@ const LoginPage: React.FC = () => {
         provider: 'google',
         options: {
           redirectTo: window.location.origin + '/sermons',
-          queryParams: {
-            prompt: 'select_account',
-            access_type: 'offline'
-          }
+          queryParams: { prompt: 'select_account', access_type: 'offline' }
         }
       });
       if (error) throw error;
     } catch (err: any) {
-      addNotification(t('auth.error_google') || 'Error al conectar con Google', 'error');
+      addNotification(t('auth.error_google'), 'error');
       setLoading(false);
     }
   };
