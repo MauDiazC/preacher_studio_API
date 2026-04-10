@@ -25,12 +25,10 @@ const SermonEditor: React.FC = () => {
   const [userProfile, setUserProfile] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [lastSavedLabel, setLastSavedLabel] = useState<string>('');
 
   useEffect(() => {
     if (!id) {
       setSermon(initialState);
-      setLastSavedLabel('');
     } else {
       loadSermon(id);
     }
