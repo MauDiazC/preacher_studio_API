@@ -37,6 +37,10 @@ const LoginPage: React.FC = () => {
       if (event === 'SIGNED_IN' && session) {
         console.log("Supabase Auth Event: SIGNED_IN");
         setAuth({ id: session.user.id, email: session.user.email || '' }, session.access_token);
+        
+        // Persistencia manual para evitar rebotes del router
+        localStorage.setItem('token', session.access_token);
+        
         handlePostAuthRedirect();
       }
     });
