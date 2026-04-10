@@ -34,7 +34,6 @@ const RegisterPage: React.FC = () => {
     }
   };
 
-  // Escuchar cambios de sesión de Supabase (OAuth)
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' && session) {
@@ -43,11 +42,9 @@ const RegisterPage: React.FC = () => {
         handlePostAuthRedirect();
       }
     });
-
     return () => subscription.unsubscribe();
   }, [navigate, setAuth]);
 
-  // Asegurar que la página cargue desde arriba
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -57,13 +54,13 @@ const RegisterPage: React.FC = () => {
     setError('');
 
     if (password !== confirmPassword) {
-      setError(t('auth.error_passwords_match') || 'Las contraseñas no coinciden');
-      addNotification(t('auth.error_passwords_match') || 'Las contraseñas no coinciden', 'error');
+      const msg = t('auth.error_passwords_match') || 'Las contraseñas no coinciden';
+      setError(msg);
+      addNotification(msg, 'error');
       return;
     }
 
     setLoading(true);
-    
     try {
       await authService.register(email, password, fullName);
       setIsSuccess(true);
@@ -84,10 +81,7 @@ const RegisterPage: React.FC = () => {
         provider: 'google',
         options: {
           redirectTo: window.location.origin + '/sermons',
-          queryParams: {
-            prompt: 'select_account',
-            access_type: 'offline'
-          }
+          queryParams: { prompt: 'select_account', access_type: 'offline' }
         }
       });
       if (error) throw error;
@@ -139,9 +133,7 @@ const RegisterPage: React.FC = () => {
 
       <main className="register-main-canvas">
         <div className="brand-identity">
-          <div className="brand-icon-wrapper">
-            <span className="material-symbols-outlined">menu_book</span>
-          </div>
+          <div className="brand-icon-box"><span className="material-symbols-outlined">menu_book</span></div>
           <h1 className="brand-title">Preacher Studio</h1>
           <p className="brand-tagline">{t('auth.inspired_prep')}</p>
           {planId && (
@@ -161,7 +153,6 @@ const RegisterPage: React.FC = () => {
 
         <div className="glass-panel-reg">
           <div className="panel-accent-line"></div>
-          
           <div className="reg-card-header">
             <h2>{t('auth.register_now')}</h2>
             <p>{t('auth.register_subtitle')}</p>
@@ -169,16 +160,10 @@ const RegisterPage: React.FC = () => {
 
           <div className="reg-google-container">
             <button className="sacred-social-btn-google" onClick={handleGoogleRegister}>
-              <img 
-                alt="Google" 
-                className="sacred-social-icon-img" 
-                src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" 
-              />
+              <img alt="Google" className="sacred-social-icon-img" src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" />
               <span>{t('auth.continue_with')} Google</span>
             </button>
-            <div className="sacred-divider">
-              <span className="sacred-divider-text">{t('auth.continue_with')} email</span>
-            </div>
+            <div className="sacred-divider"><span className="sacred-divider-text">{t('auth.continue_with')} email</span></div>
           </div>
 
           <form className="sacred-form" onSubmit={handleSubmit}>
@@ -186,15 +171,7 @@ const RegisterPage: React.FC = () => {
               <label className="sacred-label" htmlFor="full_name">{t('auth.full_name')}</label>
               <div className="sacred-input-wrapper">
                 <span className="material-symbols-outlined sacred-input-icon">person</span>
-                <input 
-                  className="sacred-input"
-                  id="full_name" 
-                  type="text"
-                  placeholder={t('auth.full_name')}
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  required
-                />
+                <input className="sacred-input" id="full_name" type="text" placeholder={t('auth.full_name')} value={fullName} onChange={(e) => setFullName(e.target.value)} required />
               </div>
             </div>
 
@@ -202,15 +179,7 @@ const RegisterPage: React.FC = () => {
               <label className="sacred-label" htmlFor="email">{t('auth.email')}</label>
               <div className="sacred-input-wrapper">
                 <span className="material-symbols-outlined sacred-input-icon">mail</span>
-                <input 
-                  className="sacred-input"
-                  id="email" 
-                  type="email"
-                  placeholder={t('auth.email_placeholder')}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
+                <input className="sacred-input" id="email" type="email" placeholder={t('auth.email_placeholder')} value={email} onChange={(e) => setEmail(e.target.value)} required />
               </div>
             </div>
 
@@ -218,47 +187,27 @@ const RegisterPage: React.FC = () => {
               <label className="sacred-label" htmlFor="password">{t('auth.password')}</label>
               <div className="sacred-input-wrapper">
                 <span className="material-symbols-outlined sacred-input-icon">lock</span>
-                <input 
-                  className="sacred-input"
-                  id="password" 
-                  type="password"
-                  placeholder="••••••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
+                <input className="sacred-input" id="password" type="password" placeholder="••••••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
               </div>
             </div>
 
             <div className="sacred-input-group">
-              <label className="sacred-label" htmlFor="confirm_password">{t('AUTH.CONFIRM_PASSWORD_LABEL')}</label>
+              <label className="sacred-label" htmlFor="confirm_password">{t('auth.confirm_password_label') || 'Confirmar Contraseña'}</label>
               <div className="sacred-input-wrapper">
                 <span className="material-symbols-outlined sacred-input-icon">lock_reset</span>
-                <input 
-                  className="sacred-input"
-                  id="confirm_password" 
-                  type="password"
-                  placeholder="••••••••••••"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                />
+                <input className="sacred-input" id="confirm_password" type="password" placeholder="••••••••••••" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
               </div>
             </div>
 
             {error && <p className="input-error" style={{ color: '#ffb4ab', fontSize: '0.8rem' }}>{error}</p>}
 
-            <button className="sacred-submit-reg" type="submit" disabled={loading}>
-              {loading ? '...' : t('auth.register_btn')}
-            </button>
+            <button className="sacred-submit-reg" type="submit" disabled={loading}>{loading ? '...' : t('auth.register_btn')}</button>
           </form>
 
           <div className="reg-footer-divider">
             <p className="reg-footer-text">
               {t('auth.have_account')} 
-              <Link to={`/login${planId ? `?plan=${planId}` : ''}`} className="reg-footer-link">
-                {t('auth.login_link')}
-              </Link>
+              <Link to={`/login${planId ? `?plan=${planId}` : ''}`} className="reg-footer-link">{t('auth.login_link')}</Link>
             </p>
           </div>
         </div>

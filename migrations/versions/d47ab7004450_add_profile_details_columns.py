@@ -19,11 +19,12 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    op.add_column('profiles', sa.Column('ministry_name', sa.String(), nullable=True))
-    op.add_column('profiles', sa.Column('role_title', sa.String(), nullable=True))
-    op.add_column('profiles', sa.Column('country', sa.String(), nullable=True))
-    op.add_column('profiles', sa.Column('bio', sa.Text(), nullable=True))
-    op.add_column('profiles', sa.Column('mentorship_style', sa.String(), nullable=True))
+    # Usamos execute directo para aprovechar IF NOT EXISTS de PostgreSQL
+    op.execute("ALTER TABLE profiles ADD COLUMN IF NOT EXISTS ministry_name VARCHAR")
+    op.execute("ALTER TABLE profiles ADD COLUMN IF NOT EXISTS role_title VARCHAR")
+    op.execute("ALTER TABLE profiles ADD COLUMN IF NOT EXISTS country VARCHAR")
+    op.execute("ALTER TABLE profiles ADD COLUMN IF NOT EXISTS bio TEXT")
+    op.execute("ALTER TABLE profiles ADD COLUMN IF NOT EXISTS mentorship_style VARCHAR")
 
 
 def downgrade() -> None:
