@@ -6,7 +6,7 @@ import './Navbar.css';
 
 const Navbar: React.FC = () => {
   const { isAuthenticated, logout, token } = useAuthStore();
-  const { language, toggleLanguage, t } = useLanguage();
+  const { toggleLanguage, t } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
   
