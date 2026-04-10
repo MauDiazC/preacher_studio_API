@@ -25,28 +25,29 @@ const LoginPage: React.FC = () => {
   const handlePostAuthRedirect = () => {
     if (planId && planId !== 'plan_sembrador') {
       localStorage.removeItem('pending_plan');
-      navigate(`/checkout/${planId}`);
+      navigate(`/checkout/${planId}`, { replace: true });
     } else {
-      navigate('/sermons');
+      navigate('/sermons', { replace: true });
     }
   };
 
-  // Escuchar cambios de sesión de Supabase (OAuth)
+  // Escuchar cambios de sesión de Supabase (OAuth y Email/Password)
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' && session) {
-        console.log("Supabase Auth Event: SIGNED_IN");
+      console.log(`Auth Event: ${event}`);
+      if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session) {
         setAuth({ id: session.user.id, email: session.user.email || '' }, session.access_token);
-        
-        // Persistencia manual para evitar rebotes del router
         localStorage.setItem('token', session.access_token);
         
-        handlePostAuthRedirect();
+        // Solo redirigimos si estamos en la página de login
+        if (location.pathname === '/login') {
+          handlePostAuthRedirect();
+        }
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate, setAuth]);
+  }, [navigate, setAuth, location.pathname]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,11 +56,10 @@ const LoginPage: React.FC = () => {
     try {
       await authService.login(email, password);
       addNotification(t('auth.success_login') || '¡Bienvenido de nuevo!', 'success');
-      handlePostAuthRedirect();
+      // No navegamos aquí, dejamos que onAuthStateChange lo haga
     } catch (err: any) {
       addNotification(t('auth.error_login') || 'Credenciales inválidas', 'error');
-    } finally {
-      setLoading(false);
+      setLoading(false); // Solo bajamos el loading si falla, si tiene éxito el listener redirige
     }
   };
 
