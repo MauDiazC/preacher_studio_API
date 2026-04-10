@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { authService } from '../services/authService';
+import { supabase } from '../../../services/supabase';
 import { useNotificationStore } from '../../../store/useNotificationStore';
+import { useAuthStore } from '../../../store/authStore';
 import { useLanguage } from '../../../context/LanguageContext';
 import './RegisterPage.css';
 
@@ -13,14 +15,37 @@ const RegisterPage: React.FC = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  
+
   const navigate = useNavigate();
   const location = useLocation();
   const { addNotification } = useNotificationStore();
   const { t } = useLanguage();
+  const { setAuth } = useAuthStore();
 
   const queryParams = new URLSearchParams(location.search);
   const planId = queryParams.get('plan');
+
+  const handlePostAuthRedirect = () => {
+    if (planId && planId !== 'plan_sembrador') {
+      localStorage.removeItem('pending_plan');
+      navigate(`/checkout/${planId}`);
+    } else {
+      navigate('/sermons');
+    }
+  };
+
+  // Escuchar cambios de sesión de Supabase (OAuth)
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        setAuth({ id: session.user.id, email: session.user.email || '' }, session.access_token);
+        localStorage.setItem('token', session.access_token);
+        handlePostAuthRedirect();
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate, setAuth]);
 
   // Asegurar que la página cargue desde arriba
   useEffect(() => {
@@ -28,7 +53,8 @@ const RegisterPage: React.FC = () => {
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+...
+
     setError('');
 
     if (password !== confirmPassword) {
