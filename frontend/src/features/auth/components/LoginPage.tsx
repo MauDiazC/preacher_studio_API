@@ -16,7 +16,7 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const { addNotification } = useNotificationStore();
   const { t } = useLanguage();
-  const { logout, setAuth } = useAuthStore();
+  const { setAuth } = useAuthStore();
 
   // Escuchar cambios de sesión de Supabase (OAuth)
   useEffect(() => {
