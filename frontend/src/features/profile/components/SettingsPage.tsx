@@ -163,6 +163,49 @@ const SettingsPage: React.FC = () => {
                 <button className="btn-save-sacred" onClick={handleSave} disabled={saving}>{saving ? '...' : (language === 'es' ? 'Guardar Cambios' : 'Save Changes')}</button>
               </div>
             </section>
+
+            {/* Subscription Card */}
+            <section className="glass-card-settings">
+              <div className="panel-accent-line" style={{ background: 'linear-gradient(90deg, #b0c6ff, #c2c1ff)' }}></div>
+              <h2 className="headline-text">{language === 'es' ? 'Suscripción y Créditos' : 'Subscription & Credits'}</h2>
+              <p className="label-text" style={{ marginBottom: '1.5rem', opacity: 0.7 }}>
+                {language === 'es' ? 'Gestione su plan ministerial y métodos de pago.' : 'Manage your ministerial plan and payment methods.'}
+              </p>
+              
+              <div className="form-grid-settings">
+                <div className="input-group-sacred">
+                  <label className="label-text">{language === 'es' ? 'Créditos Disponibles' : 'Available Credits'}</label>
+                  <div className="input-sacred disabled" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: '1.2rem', color: '#b0c6ff' }}>auto_awesome</span>
+                    {profile.is_admin ? t('nav.unlimited') : profile.credits_remaining}
+                  </div>
+                </div>
+              </div>
+
+              <div className="actions-footer-settings" style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <button 
+                  className="btn-save-sacred" 
+                  style={{ width: '100%', background: 'rgba(176, 198, 255, 0.1)', border: '1px solid rgba(176, 198, 255, 0.3)', color: '#b0c6ff' }}
+                  onClick={async () => {
+                    try {
+                      const res = await api.post('/stripe/create-portal-session');
+                      if (res.data?.url) window.location.href = res.data.url;
+                    } catch (err: any) {
+                      addNotification(err.response?.data?.detail || 'Error al conectar con Stripe', 'error');
+                    }
+                  }}
+                >
+                  {language === 'es' ? 'Gestionar en Stripe' : 'Manage on Stripe'}
+                </button>
+                <button 
+                  className="btn-save-sacred" 
+                  style={{ width: '100%' }}
+                  onClick={() => navigate('/pricing')}
+                >
+                  {language === 'es' ? 'Ver Planes y Mejorar' : 'View Plans & Upgrade'}
+                </button>
+              </div>
+            </section>
           </div>
         </div>
       </main>

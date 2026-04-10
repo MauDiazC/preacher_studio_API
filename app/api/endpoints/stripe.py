@@ -54,6 +54,28 @@ async def create_checkout_session(
         logger.error(f"❌ Error creando sesión de Stripe: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@router.post("/create-portal-session")
+async def create_portal_session(user=Depends(get_current_user)):
+    """
+    Crea una sesión para el Portal de Clientes de Stripe.
+    """
+    try:
+        # Buscar el customer_id en el perfil
+        res = supabase.table("profiles").select("stripe_customer_id").eq("id", user.id).single().execute()
+        customer_id = res.data.get("stripe_customer_id") if res.data else None
+
+        if not customer_id:
+            raise HTTPException(status_code=400, detail="No tienes una suscripción activa para gestionar.")
+
+        portal_session = stripe.billing_portal.Session.create(
+            customer=customer_id,
+            return_url=settings.get("FRONTEND_URL", "http://localhost:5173") + "/settings",
+        )
+        return {"url": portal_session.url}
+    except Exception as e:
+        logger.error(f"❌ Error creando portal de Stripe: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @router.post("/webhook")
 async def stripe_webhook(request: Request, stripe_signature: str = Header(None)):
     """
