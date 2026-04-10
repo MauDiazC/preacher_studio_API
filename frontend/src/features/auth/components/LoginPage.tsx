@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { authService } from '../services/authService';
 import { useNotificationStore } from '../../../store/useNotificationStore';
+import { useAuthStore } from '../../../store/authStore';
 import { useLanguage } from '../../../context/LanguageContext';
 import './LoginPage.css';
 
@@ -10,10 +11,27 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isStuck, setIsStuck] = useState(false);
   
   const navigate = useNavigate();
   const { addNotification } = useNotificationStore();
   const { t } = useLanguage();
+  const { logout, token } = useAuthStore();
+
+  // Detectar si hay un token residual que nos está bloqueando
+  useEffect(() => {
+    if (token || localStorage.getItem('token')) {
+      setIsStuck(true);
+    }
+  }, [token]);
+
+  const handleForceClear = () => {
+    logout();
+    localStorage.clear(); // Limpieza total
+    setIsStuck(false);
+    addNotification('Sesión limpiada. Intenta de nuevo.', 'success');
+    window.location.reload();
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,6 +75,36 @@ const LoginPage: React.FC = () => {
             <h1 className="login-brand-title">Preacher Studio</h1>
             <p className="login-brand-subtitle">{t('auth.inspired_prep')}</p>
           </div>
+
+          {isStuck && (
+            <div style={{ 
+              background: 'rgba(255, 180, 171, 0.1)', 
+              border: '1px solid rgba(255, 180, 171, 0.2)',
+              padding: '1rem',
+              borderRadius: '0.5rem',
+              marginBottom: '1.5rem',
+              textAlign: 'center'
+            }}>
+              <p style={{ color: '#ffb4ab', fontSize: '0.8rem', marginBottom: '0.5rem' }}>
+                Detectamos una sesión activa. Si no puedes entrar, limpia tu sesión:
+              </p>
+              <button 
+                onClick={handleForceClear}
+                style={{ 
+                  background: '#ffb4ab', 
+                  color: '#690005', 
+                  border: 'none', 
+                  padding: '0.4rem 1rem', 
+                  borderRadius: '0.4rem',
+                  fontSize: '0.7rem',
+                  fontWeight: '700',
+                  cursor: 'pointer'
+                }}
+              >
+                LIMPIAR SESIÓN Y REINTENTAR
+              </button>
+            </div>
+          )}
 
           {/* Login Form */}
           <form className="sacred-form" onSubmit={handleSubmit}>
@@ -122,7 +170,7 @@ const LoginPage: React.FC = () => {
                 className="sacred-social-icon-img" 
                 src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" 
               />
-              <span>Continuar con Google</span>
+              <span>{t('auth.continue_with')} Google</span>
             </button>
           </div>
 
@@ -130,7 +178,7 @@ const LoginPage: React.FC = () => {
           <p className="sacred-register-footer">
             {t('auth.no_account')} 
             <Link to="/register" className="sacred-register-link">
-              Registrarme
+              {t('auth.register_now')}
             </Link>
           </p>
         </div>
