@@ -5,15 +5,23 @@ import { useLanguage } from '../../context/LanguageContext';
 import './Navbar.css';
 
 const Navbar: React.FC = () => {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, logout, token } = useAuthStore();
   const { language, toggleLanguage, t } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Blindaje: Verificar localStorage si el store aún no está listo
+  const isTrulyAuthenticated = isAuthenticated || !!token || !!localStorage.getItem('token');
 
   // Ocultar Navbar en las rutas internas de la aplicación que ya tienen Sidebar
   if (location.pathname.startsWith('/sermons') || location.pathname.startsWith('/settings')) {
     return null;
   }
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   return (
     <nav className="navbar">
@@ -41,7 +49,7 @@ const Navbar: React.FC = () => {
             language
           </span>
 
-          {!isAuthenticated ? (
+          {!isTrulyAuthenticated ? (
             <>
               <button 
                 className="btn-login-sacred"
@@ -57,12 +65,21 @@ const Navbar: React.FC = () => {
               </button>
             </>
           ) : (
-            <button 
-              className="btn-try-sacred"
-              onClick={() => navigate('/sermons')}
-            >
-              {t('nav.my_sermons')}
-            </button>
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <button 
+                className="btn-try-sacred"
+                onClick={() => navigate('/sermons')}
+              >
+                {t('nav.my_sermons')}
+              </button>
+              <button 
+                className="btn-login-sacred"
+                style={{ borderColor: 'rgba(255, 85, 85, 0.2)', color: '#ff8585' }}
+                onClick={handleLogout}
+              >
+                {t('nav.logout')}
+              </button>
+            </div>
           )}
         </div>
       </div>
