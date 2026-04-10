@@ -1,16 +1,21 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useLanguage } from '../../context/LanguageContext';
+import api from '../../services/api';
+import { useNotificationStore } from '../../store/useNotificationStore';
 import './CheckoutPage.css';
 
 const CheckoutPage: React.FC = () => {
   const { planId } = useParams<{ planId: string }>();
   const navigate = useNavigate();
   const { t, language } = useLanguage();
+  const { addNotification } = useNotificationStore();
+  
   const [promoCode, setPromoCode] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const plans: Record<string, any> = {
-    'free': {
+    'plan_sembrador': {
       name: t('plan.free'),
       price: 0,
       features: [
@@ -20,31 +25,64 @@ const CheckoutPage: React.FC = () => {
     },
     'mentor': {
       name: t('plan.pro'),
-      price: 19,
+      price: language === 'en' ? 9.99 : 180,
       features: [
-        { name: 'Bosquejos ilimitados', icon: 'description' },
-        { name: 'Acceso a Léxicos (Griego/Hebreo)', icon: 'menu_book' },
-        { name: 'Soporte prioritario 24/7', icon: 'support_agent' }
+        { name: t('pricing.includes_prev'), icon: 'auto_awesome' },
+        { name: language === 'en' ? 'Access to Strong Lexicons' : 'Acceso a Léxicos Strong', icon: 'menu_book' },
+        { name: language === 'en' ? 'Biblical Maps & Geography' : 'Mapas Bíblicos y Geografía', icon: 'map' }
       ]
     },
-    'exegete': {
-      name: t('pricing.teams'),
-      price: 49,
+    'ministerio': {
+      name: t('plan.unlimited'),
+      price: language === 'en' ? 19.99 : 360,
       features: [
-        { name: 'Todo lo del plan Pro', icon: 'auto_awesome' },
-        { name: 'Hasta 10 usuarios', icon: 'group' },
-        { name: 'Espacios compartidos', icon: 'hub' }
+        { name: t('pricing.includes_all'), icon: 'auto_awesome' },
+        { name: t('pricing.pptx_keynote'), icon: 'present_to_all' },
+        { name: language === 'en' ? 'Priority Ministerial Support' : 'Soporte Ministerial Prioritario', icon: 'support_agent' }
       ]
     }
   };
 
-  const selectedPlan = plans[planId || 'mentor'] || plans['mentor'];
+  const currentPlanId = planId || 'mentor';
+  const selectedPlan = plans[currentPlanId] || plans['mentor'];
 
-  const handleProceedToPayment = () => {
-    // Aquí integraremos el Link de Stripe en el futuro.
-    // Por ahora solo una alerta ministerial.
-    window.open('https://buy.stripe.com/test_dR628Rgmd0HS0XC000', '_blank');
+  const handleProceedToPayment = async () => {
+    if (currentPlanId === 'plan_sembrador') {
+      navigate('/sermons');
+      return;
+    }
+
+    try {
+      setIsProcessing(true);
+      addNotification(t('checkout.processing') || 'Iniciando conexión segura con la pasarela...', 'info');
+      
+      const response = await api.post('/stripe/create-checkout-session', { 
+        plan_id: currentPlanId 
+      });
+
+      if (response.data?.checkout_url) {
+        // Redirigir a la pasarela de Stripe
+        window.location.href = response.data.checkout_url;
+      } else {
+        throw new Error('No se recibió la URL de pago');
+      }
+    } catch (error: any) {
+      console.error('❌ Error en Checkout:', error);
+      const msg = error.response?.data?.detail || t('checkout.error_payment') || 'Error al conectar con la pasarela de pago';
+      addNotification(msg, 'error');
+    } finally {
+      setIsProcessing(false);
+    }
   };
+
+  if (isProcessing) return (
+    <div className="loading-screen-ministerial">
+      <div className="loader-ministerial"></div>
+      <p style={{ marginTop: '1.5rem', opacity: 0.6, letterSpacing: '0.1em' }}>
+        {language === 'es' ? 'CONECTANDO CON PASARELA SEGURA...' : 'CONNECTING TO SECURE GATEWAY...'}
+      </p>
+    </div>
+  );
 
   return (
     <div className="checkout-page-container">
@@ -162,9 +200,9 @@ const CheckoutPage: React.FC = () => {
               <button className="btn-apply-promo">{t('checkout.apply_btn')}</button>
             </div>
 
-            <button className="btn-proceed-payment" onClick={handleProceedToPayment}>
+            <button className="btn-proceed-payment" onClick={handleProceedToPayment} disabled={isProcessing}>
               <span className="material-symbols-outlined">lock</span>
-              {t('checkout.proceed_btn')}
+              {isProcessing ? '...' : t('checkout.proceed_btn')}
             </button>
 
             <div className="payment-methods-row">

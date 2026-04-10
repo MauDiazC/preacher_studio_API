@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { authService } from '../services/authService';
 import { supabase } from '../../../services/supabase';
 import { useNotificationStore } from '../../../store/useNotificationStore';
@@ -14,9 +14,22 @@ const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   
   const navigate = useNavigate();
+  const location = useLocation();
   const { addNotification } = useNotificationStore();
   const { t } = useLanguage();
   const { setAuth } = useAuthStore();
+
+  const queryParams = new URLSearchParams(location.search);
+  const planId = queryParams.get('plan') || localStorage.getItem('pending_plan');
+
+  const handlePostAuthRedirect = () => {
+    if (planId && planId !== 'plan_sembrador') {
+      localStorage.removeItem('pending_plan');
+      navigate(`/checkout/${planId}`);
+    } else {
+      navigate('/sermons');
+    }
+  };
 
   // Escuchar cambios de sesión de Supabase (OAuth)
   useEffect(() => {
@@ -24,7 +37,7 @@ const LoginPage: React.FC = () => {
       if (event === 'SIGNED_IN' && session) {
         console.log("Supabase Auth Event: SIGNED_IN");
         setAuth({ id: session.user.id, email: session.user.email || '' }, session.access_token);
-        navigate('/sermons');
+        handlePostAuthRedirect();
       }
     });
 
@@ -38,7 +51,7 @@ const LoginPage: React.FC = () => {
     try {
       await authService.login(email, password);
       addNotification(t('auth.success_login') || '¡Bienvenido de nuevo!', 'success');
-      navigate('/sermons');
+      handlePostAuthRedirect();
     } catch (err: any) {
       addNotification(t('auth.error_login') || 'Credenciales inválidas', 'error');
     } finally {
@@ -54,7 +67,7 @@ const LoginPage: React.FC = () => {
         options: {
           redirectTo: window.location.origin + '/sermons',
           queryParams: {
-            prompt: 'select_account', // ESTO fuerzo a Google a pedir la cuenta
+            prompt: 'select_account',
             access_type: 'offline'
           }
         }
@@ -85,6 +98,20 @@ const LoginPage: React.FC = () => {
           <div className="login-brand-header">
             <h1 className="login-brand-title">Preacher Studio</h1>
             <p className="login-brand-subtitle">{t('auth.inspired_prep')}</p>
+            {planId && (
+              <div className="selected-plan-pill" style={{
+                background: 'rgba(176, 198, 255, 0.1)',
+                padding: '0.5rem 1rem',
+                borderRadius: '2rem',
+                fontSize: '0.8rem',
+                marginTop: '1rem',
+                border: '1px solid rgba(176, 198, 255, 0.2)',
+                color: '#b0c6ff',
+                textAlign: 'center'
+              }}>
+                {t('auth.selected_plan') || 'Continuando con plan'}: <strong>{planId.toUpperCase()}</strong>
+              </div>
+            )}
           </div>
 
           <form className="sacred-form" onSubmit={handleSubmit}>
@@ -154,7 +181,7 @@ const LoginPage: React.FC = () => {
 
           <p className="sacred-register-footer">
             {t('auth.no_account')} 
-            <Link to="/register" className="sacred-register-link">
+            <Link to={`/register${planId ? `?plan=${planId}` : ''}`} className="sacred-register-link">
               {t('auth.register_now')}
             </Link>
           </p>

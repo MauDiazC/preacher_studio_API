@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { authService } from '../services/authService';
 import { useNotificationStore } from '../../../store/useNotificationStore';
 import { useLanguage } from '../../../context/LanguageContext';
@@ -15,8 +15,12 @@ const RegisterPage: React.FC = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   
   const navigate = useNavigate();
+  const location = useLocation();
   const { addNotification } = useNotificationStore();
   const { t } = useLanguage();
+
+  const queryParams = new URLSearchParams(location.search);
+  const planId = queryParams.get('plan');
 
   // Asegurar que la página cargue desde arriba
   useEffect(() => {
@@ -78,10 +82,12 @@ const RegisterPage: React.FC = () => {
             <div className="panel-accent-line"></div>
             <h2 className="brand-title">{t('auth.success_title') || 'Registro Exitoso'}</h2>
             <p className="brand-tagline" style={{ marginBottom: '2rem' }}>
-              {t('auth.success_body') || 'Hemos enviado un correo a'} <strong>{email}</strong>.<br /><br />
-              {t('auth.success_body_2') || 'Bienvenido a'} <strong>Preacher Studio</strong>.
+              {planId 
+                ? (t('auth.success_body_plan') || `Tu cuenta está lista. Inicia sesión para activar tu plan ${planId.toUpperCase()}.`)
+                : (t('auth.success_body') || 'Hemos enviado un correo a ') + email
+              }
             </p>
-            <button className="sacred-submit-reg" onClick={() => navigate('/login')}>
+            <button className="sacred-submit-reg" onClick={() => navigate(`/login${planId ? `?plan=${planId}` : ''}`)}>
               {t('auth.login_btn')}
             </button>
           </div>
@@ -106,7 +112,127 @@ const RegisterPage: React.FC = () => {
           </div>
           <h1 className="brand-title">Preacher Studio</h1>
           <p className="brand-tagline">{t('auth.inspired_prep')}</p>
+          {planId && (
+            <div className="selected-plan-pill" style={{
+              background: 'rgba(176, 198, 255, 0.1)',
+              padding: '0.5rem 1rem',
+              borderRadius: '2rem',
+              fontSize: '0.8rem',
+              marginTop: '1rem',
+              border: '1px solid rgba(176, 198, 255, 0.2)',
+              color: '#b0c6ff'
+            }}>
+              {t('auth.selected_plan') || 'Plan seleccionado'}: <strong>{planId.toUpperCase()}</strong>
+            </div>
+          )}
         </div>
+
+        {/* Registration Card */}
+        <div className="glass-panel-reg">
+          <div className="panel-accent-line"></div>
+          
+          <div className="reg-card-header">
+            <h2>{t('auth.register_now')}</h2>
+            <p>{t('auth.register_subtitle')}</p>
+          </div>
+
+          {/* Google Register Option */}
+          <div className="reg-google-container">
+            <button className="sacred-social-btn-google" onClick={handleGoogleRegister}>
+              <img 
+                alt="Google" 
+                className="sacred-social-icon-img" 
+                src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" 
+              />
+              <span>{t('auth.continue_with')} Google</span>
+            </button>
+            <div className="sacred-divider">
+              <span className="sacred-divider-text">{t('auth.continue_with')} email</span>
+            </div>
+          </div>
+
+          <form className="sacred-form" onSubmit={handleSubmit}>
+            <div className="sacred-input-group">
+              <label className="sacred-label" htmlFor="full_name">{t('auth.full_name')}</label>
+              <div className="sacred-input-wrapper">
+                <span className="material-symbols-outlined sacred-input-icon">person</span>
+                <input 
+                  className="sacred-input"
+                  id="full_name" 
+                  type="text"
+                  placeholder={t('auth.full_name')}
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="sacred-input-group">
+              <label className="sacred-label" htmlFor="email">{t('auth.email')}</label>
+              <div className="sacred-input-wrapper">
+                <span className="material-symbols-outlined sacred-input-icon">mail</span>
+                <input 
+                  className="sacred-input"
+                  id="email" 
+                  type="email"
+                  placeholder={t('auth.email_placeholder')}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="sacred-input-group">
+              <label className="sacred-label" htmlFor="password">{t('auth.password')}</label>
+              <div className="sacred-input-wrapper">
+                <span className="material-symbols-outlined sacred-input-icon">lock</span>
+                <input 
+                  className="sacred-input"
+                  id="password" 
+                  type="password"
+                  placeholder="••••••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="sacred-input-group">
+              <label className="sacred-label" htmlFor="confirm_password">{t('AUTH.CONFIRM_PASSWORD_LABEL')}</label>
+              <div className="sacred-input-wrapper">
+                <span className="material-symbols-outlined sacred-input-icon">lock_reset</span>
+                <input 
+                  className="sacred-input"
+                  id="confirm_password" 
+                  type="password"
+                  placeholder="••••••••••••"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            {error && <p className="input-error" style={{ color: '#ffb4ab', fontSize: '0.8rem' }}>{error}</p>}
+
+            <button className="sacred-submit-reg" type="submit" disabled={loading}>
+              {loading ? '...' : t('auth.register_btn')}
+            </button>
+          </form>
+
+          <div className="reg-footer-divider">
+            <p className="reg-footer-text">
+              {t('auth.have_account')} 
+              <Link to={`/login${planId ? `?plan=${planId}` : ''}`} className="reg-footer-link">
+                {t('auth.login_link')}
+              </Link>
+            </p>
+          </div>
+        </div>
+      </main>
 
         {/* Registration Card */}
         <div className="glass-panel-reg">

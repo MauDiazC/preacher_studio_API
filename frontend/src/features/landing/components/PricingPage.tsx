@@ -1,18 +1,20 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../../context/LanguageContext';
+import { useAuthStore } from '../../../store/authStore';
 import './PricingPage.css';
 
 const PricingPage: React.FC = () => {
   const navigate = useNavigate();
   const { t, language } = useLanguage();
+  const { isAuthenticated } = useAuthStore();
 
   const isEn = language === 'en';
   const currency = isEn ? 'USD' : 'MXN';
   
   const plans = [
     {
-      id: 'free',
+      id: 'plan_sembrador',
       name: t('plan.free'),
       price: 0,
       description: t('plan.free_desc'),
@@ -37,7 +39,7 @@ const PricingPage: React.FC = () => {
       recommended: true
     },
     {
-      id: 'unlimited',
+      id: 'ministerio',
       name: t('plan.unlimited'),
       price: isEn ? 19.99 : 360,
       description: t('plan.unlimited_desc'),
@@ -50,6 +52,19 @@ const PricingPage: React.FC = () => {
       recommended: false
     }
   ];
+
+  const handlePlanSelection = (planId: string) => {
+    if (planId === 'plan_sembrador') {
+      navigate('/register');
+      return;
+    }
+
+    if (isAuthenticated) {
+      navigate(`/checkout/${planId}`);
+    } else {
+      navigate(`/register?plan=${planId}`);
+    }
+  };
 
   return (
     <div className="pricing-page-container">
@@ -93,7 +108,7 @@ const PricingPage: React.FC = () => {
 
               <button 
                 className={`plan-btn ${plan.recommended ? 'btn-primary-gradient' : 'btn-outline'}`}
-                onClick={() => navigate(`/checkout/${plan.id}`)}
+                onClick={() => handlePlanSelection(plan.id)}
               >
                 {plan.buttonText}
               </button>
