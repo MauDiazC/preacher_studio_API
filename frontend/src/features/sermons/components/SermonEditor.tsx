@@ -185,7 +185,7 @@ ${res.source_attribution}`;
 
   return (
     <div className="sermon-editor-page">
-      <aside className="sacred-sidebar-editor">
+      <aside className="sacred-sidebar">
         <div className="sidebar-brand">
           <div className="brand-icon-box"><span className="material-symbols-outlined">menu_book</span></div>
           <div><h1 className="brand-text-pulp">Preacher Studio</h1><p className="brand-tagline-sm">{t('auth.inspired_prep')}</p></div>
@@ -197,16 +197,13 @@ ${res.source_attribution}`;
         </nav>
         <div className="sidebar-footer-sacred">
           <div className="sidebar-user-stats">
-            <div className="credits-display">
-              <span className="material-symbols-outlined credits-icon">stars</span>
-              <div className="credits-text-stack">
-                <span className="credits-label">{t('nav.credits')}</span>
-                <span className="credits-value">{isAdmin ? t('nav.unlimited') : credits}</span>
-              </div>
+            <div className="credits-display-clean">
+              <span className="credits-label-small">{t('nav.credits')}</span>
+              <span className="credits-value-small">{isAdmin ? t('nav.unlimited') : credits}</span>
             </div>
-            <button className="lang-toggle-sidebar" onClick={toggleLanguage}>
+            <button className="lang-toggle-minimal" onClick={toggleLanguage}>
               <span className="material-symbols-outlined">language</span>
-              <span>{language === 'es' ? 'ES' : 'EN'}</span>
+              <span className="lang-text-small">{language.toUpperCase()}</span>
             </button>
           </div>
           <button className="logout-btn-sidebar" onClick={handleLogout}>

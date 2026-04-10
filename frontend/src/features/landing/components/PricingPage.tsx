@@ -26,9 +26,10 @@ const PricingPage: React.FC = () => {
     {
       id: 'plan_sembrador',
       name: t('plan.free'),
-      price: 0,
+      price: isEn ? 'Free' : 'Gratis',
       description: t('plan.free_desc'),
       features: [
+        isEn ? '3 Studies / month' : '3 Estudios / mes',
         isEn ? 'Basic literary analysis' : 'Análisis literario básico',
         isEn ? 'Personal study library' : 'Biblioteca de estudios personal'
       ],
@@ -38,7 +39,7 @@ const PricingPage: React.FC = () => {
     {
       id: 'mentor',
       name: t('plan.pro'),
-      price: isEn ? 9.99 : 180,
+      price: isEn ? '$9.99' : '$180',
       description: t('plan.pro_desc'),
       features: [
         t('pricing.includes_prev'),
@@ -51,7 +52,7 @@ const PricingPage: React.FC = () => {
     {
       id: 'ministerio',
       name: t('plan.unlimited'),
-      price: isEn ? 19.99 : 360,
+      price: isEn ? '$19.99' : '$360',
       description: t('plan.unlimited_desc'),
       features: [
         t('pricing.includes_all'),
@@ -87,10 +88,23 @@ const PricingPage: React.FC = () => {
 
       <div className="pricing-content-wrapper">
         <header className="pricing-hero-section">
-          <h1 className="pricing-hero-title">
-            <span className="highlight">{t('pricing.title')}</span> {t('pricing.title_gradient')}
-          </h1>
-          <p className="pricing-hero-desc">{t('pricing.subtitle')}</p>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div>
+              <h1 className="pricing-hero-title">
+                <span className="highlight">{t('pricing.title')}</span> {t('pricing.title_gradient')}
+              </h1>
+              <p className="pricing-hero-desc">{t('pricing.subtitle')}</p>
+            </div>
+            {isAuthenticated && (
+              <button 
+                className="btn-outline" 
+                onClick={() => navigate('/sermons')}
+                style={{ padding: '0.5rem 1.5rem', fontSize: '0.8rem', borderRadius: '2rem', border: '1px solid rgba(176, 198, 255, 0.3)', color: '#b0c6ff', background: 'transparent', cursor: 'pointer' }}
+              >
+                {isEn ? 'Back to Library' : 'Volver a Biblioteca'}
+              </button>
+            )}
+          </div>
         </header>
 
         <div className="pricing-main-grid">
@@ -104,9 +118,9 @@ const PricingPage: React.FC = () => {
                   <h2 className="card-plan-name">{plan.name}</h2>
                   <div className="card-price-row">
                     <span className="price-amount">
-                      {plan.price === 0 ? t('plan.free_price') : `$${plan.price}`}
+                      {plan.price}
                     </span>
-                    {plan.price !== 0 && <span className="price-period">{currency}{t('pricing.month')}</span>}
+                    {plan.id !== 'plan_sembrador' && <span className="price-period">{currency}{t('pricing.month')}</span>}
                   </div>
                   <p style={{ color: '#c2c6d7', fontSize: '0.875rem' }}>{plan.description}</p>
                 </div>

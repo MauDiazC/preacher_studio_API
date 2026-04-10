@@ -167,6 +167,10 @@ class ProfileBase(BaseModel):
     is_admin: Optional[bool] = False
     plan_id: Optional[str] = None
     credits_remaining: Optional[int] = 3
+    ministry_name: Optional[str] = Field(None, max_length=200)
+    role_title: Optional[str] = Field(None, max_length=100)
+    country: Optional[str] = Field(None, max_length=100)
+    bio: Optional[str] = None
     mentorship_style: Optional[str] = Field(
         "encouraging",
         description="Estilo de mentoría preferido (encouraging, academic, practical)",

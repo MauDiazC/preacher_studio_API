@@ -7,7 +7,7 @@ import api from '../../../services/api';
 import './SettingsPage.css';
 
 const SettingsPage: React.FC = () => {
-  const { logout } = useAuthStore();
+  const { logout, user } = useAuthStore();
   const { t, language, toggleLanguage } = useLanguage();
   const { addNotification } = useNotificationStore();
   const navigate = useNavigate();
@@ -22,6 +22,7 @@ const SettingsPage: React.FC = () => {
     mentorship_style: 'encouraging',
     is_admin: false,
     credits_remaining: 3,
+    plan_id: 'plan_sembrador',
     stripe_customer_id: null as string | null
   });
 
@@ -47,7 +48,9 @@ const SettingsPage: React.FC = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await api.put('/profile/', profile);
+      // Solo enviamos los campos editables del perfil
+      const { email, id, created_at, updated_at, credits_remaining, plan_id, is_admin, stripe_customer_id, ...editableData } = profile as any;
+      await api.put('/profile/', editableData);
       addNotification('Ajustes guardados con éxito', 'success');
     } catch (err) {
       addNotification('Error al guardar ajustes', 'error');
@@ -56,9 +59,14 @@ const SettingsPage: React.FC = () => {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (err) {
+      localStorage.clear();
+      navigate('/login');
+    }
   };
 
   const getInitials = (name: string) => {
@@ -68,11 +76,20 @@ const SettingsPage: React.FC = () => {
     return name.slice(0, 2).toUpperCase();
   };
 
-  if (loading) return <div className="loading-screen-settings">{t('list.loading')}</div>;
+  const userEmail = user?.email?.toLowerCase() || '';
+  const isAdmin = profile.is_admin || userEmail === 'diazzabala@gmail.com';
+  const credits = profile.credits_remaining ?? 0;
+
+  if (loading) return (
+    <div className="loading-screen-ministerial">
+      <div className="loader-ministerial"></div>
+      <p style={{ marginTop: '1.5rem', opacity: 0.6, letterSpacing: '0.1em' }}>{t('list.loading').toUpperCase()}</p>
+    </div>
+  );
 
   return (
     <div className="settings-page-sacred">
-      <aside className="sacred-sidebar-settings">
+      <aside className="sacred-sidebar">
         <div className="sidebar-brand">
           <div className="brand-icon-box"><span className="material-symbols-outlined">menu_book</span></div>
           <div>
@@ -87,14 +104,21 @@ const SettingsPage: React.FC = () => {
         </nav>
         <div className="sidebar-footer-sacred">
           <div className="sidebar-user-stats">
-            <div className="credits-display">
-              <span className="credits-label">{t('nav.credits')}</span>
-              <span className="credits-value">{profile.is_admin ? t('nav.unlimited') : profile.credits_remaining}</span>
+            <div className="credits-display-clean">
+              <span className="credits-label-small">{t('nav.credits')}</span>
+              <span className="credits-value-small">{isAdmin ? t('nav.unlimited') : credits}</span>
             </div>
-            <button className="lang-toggle-sidebar" onClick={toggleLanguage}><span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>language</span>{language.toUpperCase()}</button>
+            <button className="lang-toggle-minimal" onClick={toggleLanguage}>
+              <span className="material-symbols-outlined">language</span>
+              <span className="lang-text-small">{language.toUpperCase()}</span>
+            </button>
           </div>
-          <button className="logout-btn-sidebar" onClick={handleLogout}><span className="material-symbols-outlined">logout</span><span>{t('nav.logout').toUpperCase()}</span></button>
+          <button className="logout-btn-sidebar" onClick={handleLogout}>
+            <span className="material-symbols-outlined">logout</span>
+            <span>{t('nav.logout')}</span>
+          </button>
         </div>
+        <button className="new-study-btn-sidebar" onClick={() => navigate('/sermons/new')}><span className="material-symbols-outlined">add</span><span>{t('list.new_study_btn')}</span></button>
       </aside>
 
       <main className="settings-main-content">
@@ -108,7 +132,7 @@ const SettingsPage: React.FC = () => {
             </p>
           </header>
 
-          {/* Avatar Section - NOW OUTSIDE THE CARD */}
+          {/* Avatar Section */}
           <div className="profile-avatar-dashboard-floating">
             <div className="initials-avatar-circle">
               {getInitials(profile.full_name)}
@@ -178,7 +202,7 @@ const SettingsPage: React.FC = () => {
                   <label className="label-text">{language === 'es' ? 'Créditos Disponibles' : 'Available Credits'}</label>
                   <div className="input-sacred disabled" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <span className="material-symbols-outlined" style={{ fontSize: '1.2rem', color: '#b0c6ff' }}>auto_awesome</span>
-                    {profile.is_admin ? t('nav.unlimited') : profile.credits_remaining}
+                    {isAdmin ? t('nav.unlimited') : profile.credits_remaining}
                   </div>
                 </div>
               </div>
