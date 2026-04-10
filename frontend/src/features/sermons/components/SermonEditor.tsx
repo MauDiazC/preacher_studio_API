@@ -48,6 +48,7 @@ const SermonEditor: React.FC = () => {
   const userEmail = user?.email?.toLowerCase() || '';
   const isAdmin = userProfile?.is_admin || userEmail === 'diazzabala@gmail.com';
   const credits = userProfile?.credits_remaining ?? 0;
+  const hasNoCredits = !isAdmin && credits <= 0;
 
   const formatRelativeTime = (updatedAt?: string) => {
     if (!updatedAt) return language === 'es' ? 'Nuevo' : 'New';
@@ -84,6 +85,10 @@ const SermonEditor: React.FC = () => {
   };
 
   const handleGenerateAnalysis = async () => {
+    if (hasNoCredits) {
+      addNotification('Sin créditos disponibles.', 'error');
+      return;
+    }
     if (!sermon.main_passage) {
       addNotification('Ingresa un versículo.', 'error');
       return;
@@ -137,6 +142,7 @@ ${res.source_attribution}`;
       }
       
       addNotification('Análisis generado y guardado.', 'success');
+      loadProfile(); // Recargar créditos
     } catch (error) {
       addNotification('Error al generar.', 'error');
     } finally {
@@ -199,7 +205,7 @@ ${res.source_attribution}`;
           <div className="sidebar-user-stats">
             <div className="credits-display-clean">
               <span className="credits-label-small">{t('nav.credits')}</span>
-              <span className="credits-value-small">{isAdmin ? t('nav.unlimited') : credits}</span>
+              <span className="credits-value-small" style={hasNoCredits ? { color: '#ffb4ab' } : {}}>{isAdmin ? t('nav.unlimited') : (hasNoCredits ? (language === 'es' ? 'SIN CRÉDITOS' : 'OUT OF CREDITS') : credits)}</span>
             </div>
             <button className="lang-toggle-minimal" onClick={toggleLanguage}>
               <span className="material-symbols-outlined">language</span>
@@ -219,12 +225,27 @@ ${res.source_attribution}`;
           <div className="header-column-left-aligned">
             <div className="verse-input-wrapper-aligned">
               <span className="material-symbols-outlined verse-icon">auto_awesome</span>
-              <input type="text" className="verse-input-sacred" placeholder={t('editor.verse_placeholder')} value={sermon.main_passage} disabled={loading || !!id} onChange={(e) => setSermon({...sermon, main_passage: e.target.value})} />
+              <input 
+                type="text" 
+                className="verse-input-sacred" 
+                placeholder={hasNoCredits ? (language === 'es' ? 'SIN CRÉDITOS' : 'OUT OF CREDITS') : t('editor.verse_placeholder')} 
+                value={sermon.main_passage} 
+                disabled={loading || !!id || hasNoCredits} 
+                onChange={(e) => setSermon({...sermon, main_passage: e.target.value})} 
+                style={hasNoCredits ? { borderBottomColor: '#ffb4ab', color: '#ffb4ab' } : {}}
+              />
             </div>
           </div>
           <div className="header-column-center">
             <div className="header-button-group">
-              <button className="btn-generate-sacred" onClick={handleGenerateAnalysis} disabled={loading || !!id}>{loading ? '...' : t('editor.analyze_btn')}</button>
+              <button 
+                className="btn-generate-sacred" 
+                onClick={handleGenerateAnalysis} 
+                disabled={loading || !!id || hasNoCredits}
+                style={hasNoCredits ? { opacity: 0.5, cursor: 'not-allowed', filter: 'grayscale(1)' } : {}}
+              >
+                {loading ? '...' : t('editor.analyze_btn')}
+              </button>
               <button className="btn-save-top-sacred" onClick={handleSave} disabled={isSaving}><span className="material-symbols-outlined">save</span>{isSaving ? '...' : language === 'es' ? 'Guardar' : 'Save'}</button>
             </div>
           </div>

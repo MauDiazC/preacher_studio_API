@@ -12,6 +12,8 @@ const RegisterPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -187,7 +189,25 @@ const RegisterPage: React.FC = () => {
               <label className="sacred-label" htmlFor="password">{t('auth.password')}</label>
               <div className="sacred-input-wrapper">
                 <span className="material-symbols-outlined sacred-input-icon">lock</span>
-                <input className="sacred-input" id="password" type="password" placeholder="••••••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                <input 
+                  className="sacred-input" 
+                  id="password" 
+                  type={showPassword ? "text" : "password"} 
+                  placeholder="••••••••••••" 
+                  value={password} 
+                  onChange={(e) => setPassword(e.target.value)} 
+                  required 
+                />
+                <button 
+                  type="button" 
+                  className="sacred-password-toggle"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{ position: 'absolute', right: '1rem', background: 'none', border: 'none', color: 'rgba(176, 198, 255, 0.5)', cursor: 'pointer' }}
+                >
+                  <span className="material-symbols-outlined">
+                    {showPassword ? "visibility_off" : "visibility"}
+                  </span>
+                </button>
               </div>
             </div>
 
@@ -195,7 +215,25 @@ const RegisterPage: React.FC = () => {
               <label className="sacred-label" htmlFor="confirm_password">{t('auth.confirm_password_label') || 'Confirmar Contraseña'}</label>
               <div className="sacred-input-wrapper">
                 <span className="material-symbols-outlined sacred-input-icon">lock_reset</span>
-                <input className="sacred-input" id="confirm_password" type="password" placeholder="••••••••••••" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
+                <input 
+                  className="sacred-input" 
+                  id="confirm_password" 
+                  type={showConfirmPassword ? "text" : "password"} 
+                  placeholder="••••••••••••" 
+                  value={confirmPassword} 
+                  onChange={(e) => setConfirmPassword(e.target.value)} 
+                  required 
+                />
+                <button 
+                  type="button" 
+                  className="sacred-password-toggle"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  style={{ position: 'absolute', right: '1rem', background: 'none', border: 'none', color: 'rgba(176, 198, 255, 0.5)', cursor: 'pointer' }}
+                >
+                  <span className="material-symbols-outlined">
+                    {showConfirmPassword ? "visibility_off" : "visibility"}
+                  </span>
+                </button>
               </div>
             </div>
 
