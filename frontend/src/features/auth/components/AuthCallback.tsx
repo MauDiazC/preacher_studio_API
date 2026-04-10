@@ -13,7 +13,6 @@ const AuthCallback: React.FC = () => {
     if (hash) {
       const params = new URLSearchParams(hash.replace('#', '?'));
       const accessToken = params.get('access_token');
-      const refreshToken = params.get('refresh_token');
       
       // El usuario viene codificado en el token, pero Supabase también 
       // lo envía a veces en los metadatos. Por ahora simplificamos:
