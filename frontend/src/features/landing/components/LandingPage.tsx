@@ -191,7 +191,7 @@ const LandingPage: React.FC = () => {
       {/* Use Cases Section - Con animaciones e imagen nueva */}
       <section 
         className="use-cases-section reveal-on-scroll"
-        ref={el => sectionRefs.current[1] = el}
+        ref={el => { sectionRefs.current[1] = el; }}
       >
         <div className="max-container">
           <div className="use-cases-grid">
