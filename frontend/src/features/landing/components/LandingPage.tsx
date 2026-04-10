@@ -143,7 +143,7 @@ const LandingPage: React.FC = () => {
       <section 
         id="features" 
         className="features-section reveal-on-scroll"
-        ref={el => sectionRefs.current[0] = el}
+        ref={el => { sectionRefs.current[0] = el; }}
       >
         <div className="max-container">
           <div className="section-header-sacred">
