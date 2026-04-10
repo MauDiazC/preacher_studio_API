@@ -118,7 +118,6 @@ const SermonList: React.FC = () => {
         <nav className="sacred-nav">
           <Link to="/sermons" className="nav-item active"><span className="material-symbols-outlined nav-icon">book_2</span><span>{t('nav.library')}</span></Link>
           <Link to="/sermons/new" className="nav-item"><span className="material-symbols-outlined nav-icon">edit_note</span><span>{t('nav.sermon_prep')}</span></Link>
-          <Link to="/pricing" className="nav-item"><span className="material-symbols-outlined nav-icon">auto_awesome</span><span>{t('nav.pricing')}</span></Link>
           <Link to="/settings" className="nav-item"><span className="material-symbols-outlined nav-icon">settings</span><span>{t('nav.settings')}</span></Link>
         </nav>
         <div className="sidebar-footer-sacred">

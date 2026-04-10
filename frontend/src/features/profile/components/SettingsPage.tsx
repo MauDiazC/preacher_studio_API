@@ -21,7 +21,8 @@ const SettingsPage: React.FC = () => {
     bio: '',
     mentorship_style: 'encouraging',
     is_admin: false,
-    credits_remaining: 3
+    credits_remaining: 3,
+    stripe_customer_id: null as string | null
   });
 
   const [loading, setLoading] = useState(true);
@@ -183,20 +184,22 @@ const SettingsPage: React.FC = () => {
               </div>
 
               <div className="actions-footer-settings" style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <button 
-                  className="btn-save-sacred" 
-                  style={{ width: '100%', background: 'rgba(176, 198, 255, 0.1)', border: '1px solid rgba(176, 198, 255, 0.3)', color: '#b0c6ff' }}
-                  onClick={async () => {
-                    try {
-                      const res = await api.post('/stripe/create-portal-session');
-                      if (res.data?.url) window.location.href = res.data.url;
-                    } catch (err: any) {
-                      addNotification(err.response?.data?.detail || 'Error al conectar con Stripe', 'error');
-                    }
-                  }}
-                >
-                  {language === 'es' ? 'Gestionar en Stripe' : 'Manage on Stripe'}
-                </button>
+                {profile.stripe_customer_id && (
+                  <button 
+                    className="btn-save-sacred" 
+                    style={{ width: '100%', background: 'rgba(176, 198, 255, 0.1)', border: '1px solid rgba(176, 198, 255, 0.3)', color: '#b0c6ff' }}
+                    onClick={async () => {
+                      try {
+                        const res = await api.post('/stripe/create-portal-session');
+                        if (res.data?.url) window.location.href = res.data.url;
+                      } catch (err: any) {
+                        addNotification(err.response?.data?.detail || 'Error al conectar con Stripe', 'error');
+                      }
+                    }}
+                  >
+                    {language === 'es' ? 'Gestionar en Stripe' : 'Manage on Stripe'}
+                  </button>
+                )}
                 <button 
                   className="btn-save-sacred" 
                   style={{ width: '100%' }}

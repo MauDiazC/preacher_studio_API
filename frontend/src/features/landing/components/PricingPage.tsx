@@ -1,13 +1,23 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../../context/LanguageContext';
 import { useAuthStore } from '../../../store/authStore';
+import api from '../../../services/api';
 import './PricingPage.css';
 
 const PricingPage: React.FC = () => {
   const navigate = useNavigate();
   const { t, language } = useLanguage();
   const { isAuthenticated } = useAuthStore();
+  const [currentPlanId, setCurrentPlanId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      api.get('/profile/').then(res => {
+        setCurrentPlanId(res.data.plan_id || 'plan_sembrador');
+      }).catch(() => {});
+    }
+  }, [isAuthenticated]);
 
   const isEn = language === 'en';
   const currency = isEn ? 'USD' : 'MXN';
@@ -54,6 +64,8 @@ const PricingPage: React.FC = () => {
   ];
 
   const handlePlanSelection = (planId: string) => {
+    if (planId === currentPlanId) return;
+
     if (planId === 'plan_sembrador') {
       navigate('/register');
       return;
@@ -82,38 +94,43 @@ const PricingPage: React.FC = () => {
         </header>
 
         <div className="pricing-main-grid">
-          {plans.map((plan) => (
-            <div key={plan.id} className={`pricing-card-sacred ${plan.recommended ? 'recommended' : ''}`}>
-              {plan.recommended && <div className="recommended-badge">{t('plan.popular')}</div>}
-              <div className="card-header">
-                <span className="card-label">{t('pricing.badge')}</span>
-                <h2 className="card-plan-name">{plan.name}</h2>
-                <div className="card-price-row">
-                  <span className="price-amount">
-                    {plan.price === 0 ? t('plan.free_price') : `$${plan.price}`}
-                  </span>
-                  {plan.price !== 0 && <span className="price-period">{currency}{t('pricing.month')}</span>}
+          {plans.map((plan) => {
+            const isCurrent = plan.id === currentPlanId;
+            return (
+              <div key={plan.id} className={`pricing-card-sacred ${plan.recommended ? 'recommended' : ''}`}>
+                {plan.recommended && <div className="recommended-badge">{t('plan.popular')}</div>}
+                <div className="card-header">
+                  <span className="card-label">{t('pricing.badge')}</span>
+                  <h2 className="card-plan-name">{plan.name}</h2>
+                  <div className="card-price-row">
+                    <span className="price-amount">
+                      {plan.price === 0 ? t('plan.free_price') : `$${plan.price}`}
+                    </span>
+                    {plan.price !== 0 && <span className="price-period">{currency}{t('pricing.month')}</span>}
+                  </div>
+                  <p style={{ color: '#c2c6d7', fontSize: '0.875rem' }}>{plan.description}</p>
                 </div>
-                <p style={{ color: '#c2c6d7', fontSize: '0.875rem' }}>{plan.description}</p>
+
+                <ul className="card-features-list">
+                  {plan.features.map((feature, idx) => (
+                    <li key={idx} className="feature-item">
+                      <span className="material-symbols-outlined feature-icon">check_circle</span>
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <button 
+                  className={`plan-btn ${plan.recommended ? 'btn-primary-gradient' : 'btn-outline'}`}
+                  onClick={() => handlePlanSelection(plan.id)}
+                  disabled={isCurrent}
+                  style={isCurrent ? { opacity: 0.5, cursor: 'not-allowed', filter: 'grayscale(1)' } : {}}
+                >
+                  {isCurrent ? (language === 'es' ? 'Plan Actual' : 'Current Plan') : plan.buttonText}
+                </button>
               </div>
-
-              <ul className="card-features-list">
-                {plan.features.map((feature, idx) => (
-                  <li key={idx} className="feature-item">
-                    <span className="material-symbols-outlined feature-icon">check_circle</span>
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <button 
-                className={`plan-btn ${plan.recommended ? 'btn-primary-gradient' : 'btn-outline'}`}
-                onClick={() => handlePlanSelection(plan.id)}
-              >
-                {plan.buttonText}
-              </button>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Bento Details */}
