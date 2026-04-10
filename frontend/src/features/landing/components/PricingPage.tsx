@@ -17,7 +17,6 @@ const PricingPage: React.FC = () => {
       price: 0,
       description: t('plan.free_desc'),
       features: [
-        t('plan.free_desc'),
         isEn ? 'Basic literary analysis' : 'Análisis literario básico',
         isEn ? 'Personal study library' : 'Biblioteca de estudios personal'
       ],
@@ -31,7 +30,6 @@ const PricingPage: React.FC = () => {
       description: t('plan.pro_desc'),
       features: [
         t('pricing.includes_prev'),
-        t('plan.pro_desc'),
         isEn ? 'Access to Strong Lexicons' : 'Acceso a Léxicos Strong',
         isEn ? 'Biblical Maps & Geography' : 'Mapas Bíblicos y Geografía'
       ],
@@ -45,7 +43,6 @@ const PricingPage: React.FC = () => {
       description: t('plan.unlimited_desc'),
       features: [
         t('pricing.includes_all'),
-        t('plan.unlimited_desc'),
         t('pricing.pptx_keynote'),
         isEn ? 'Priority Ministerial Support' : 'Soporte Ministerial Prioritario'
       ],

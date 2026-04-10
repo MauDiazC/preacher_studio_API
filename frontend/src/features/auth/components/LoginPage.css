@@ -108,16 +108,17 @@
 .sacred-input-wrapper {
   position: relative;
   width: 100%;
-  box-sizing: border-box;
+  display: flex;
+  align-items: center;
 }
 
 .sacred-input-icon {
   position: absolute;
   left: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
+  z-index: 10;
   color: #8c90a0;
   font-size: 1.125rem;
+  pointer-events: none;
 }
 
 .sacred-input {
@@ -125,12 +126,12 @@
   background-color: #33324b;
   border: 1px solid rgba(176, 198, 255, 0.1);
   border-radius: 0.5rem;
-  padding: 0.875rem 1rem 0.875rem 3rem;
+  padding: 0.875rem 1rem 0.875rem 3rem; /* 3rem de padding a la izquierda para el icono */
   color: #e2dfff;
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.875rem;
   transition: all 0.2s;
-  box-sizing: border-box; /* Crucial to avoid overflow */
+  box-sizing: border-box;
 }
 
 .sacred-input:focus {

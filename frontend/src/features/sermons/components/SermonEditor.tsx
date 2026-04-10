@@ -220,7 +220,7 @@ ${res.source_attribution}`;
                 <input type="text" className="editor-title-input" placeholder={t('list.col_reference')} value={sermon.title} onChange={(e) => setSermon({...sermon, title: e.target.value})} />
                 <div className="save-status"><span className="material-symbols-outlined">cloud_done</span>{lastSavedLabel}</div>
               </div>
-              <div className="analysis-grid-uniform"><div className="analysis-text-pure">{sermon.content || t('editor.write_here')}</div></div>
+              <div className="analysis-grid-uniform"><div className="analysis-text-pure">{sermon.content || '...'}</div></div>
               <div className="editor-notes-section">
                 <label className="notes-label">{t('editor.write_here')}</label>
                 <textarea className="editor-textarea-sacred" placeholder="..." value={sermon.additional_notes} onChange={(e) => setSermon({...sermon, additional_notes: e.target.value})}></textarea>

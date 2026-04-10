@@ -189,7 +189,19 @@
 }
 
 .sacred-input-wrapper {
+  position: relative;
   width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.sacred-input-icon {
+  position: absolute;
+  left: 1rem;
+  z-index: 10;
+  color: #8c90a0;
+  font-size: 1.125rem;
+  pointer-events: none;
 }
 
 .sacred-input {
@@ -197,7 +209,7 @@
   background-color: #33324b;
   border: 1px solid rgba(176, 198, 255, 0.1);
   border-radius: 0.5rem;
-  padding: 0.875rem 1rem;
+  padding: 0.875rem 1rem 0.875rem 3rem; /* Padding para el icono */
   color: #e2dfff;
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.875rem;

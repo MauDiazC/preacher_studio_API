@@ -19,10 +19,15 @@ const translations = {
     // Trust
     'trust.title': 'RECONOCIDO POR MINISTERIOS GLOBALES',
     // Pricing
+    'pricing.title': 'Inversión en tu',
+    'pricing.title_gradient': 'Ministerio',
+    'pricing.subtitle': 'Planes diseñados para cada etapa de tu llamado espiritual.',
+    'PRICING.BADGE': 'PLANES Y PRECIOS',
     'plan.free': 'Sembrador', 'plan.pro': 'Mentor', 'plan.unlimited': 'Ministerio',
     'plan.free_desc': '3 estudios básicos sin léxicos',
     'plan.pro_desc': '30 estudios al mes',
     'plan.unlimited_desc': 'Estudios ilimitados',
+    'plan.free_price': '0',
     'pricing.month': '/mes',
     'pricing.includes_prev': 'Todo lo del plan anterior',
     'pricing.includes_all': 'Todo lo de los planes anteriores',
@@ -33,7 +38,7 @@ const translations = {
     'list.search_placeholder': 'Buscar pasajes...',
     'list.title': 'Mis Estudios Exegéticos', 'list.subtitle': 'Gestionando la Sabiduría Divina', 'list.total_studies': 'Total Estudios', 'list.this_month': 'Este Mes', 'list.empty': 'No tienes estudios guardados aún.', 'list.loading': 'Cargando...', 'list.col_reference': 'Referencia Bíblica', 'list.col_last_edit': 'Última Edición', 'list.col_tags': 'Etiquetas', 'list.col_actions': 'Acciones', 'list.new_study_btn': 'Crear Estudio',
     // Editor
-    'editor.exegesis': 'Exégesis', 'editor.write_here': 'Puedes seguir escribiendo notas:', 'editor.saved_ago': 'Guardado hace', 'editor.analyze_btn': 'Generar Análisis', 'editor.verse_placeholder': 'Ej: Juan 3:16', 'editor.resources': 'Recursos', 'editor.bible_versions': 'Versiones Bíblicas', 'editor.strong_lexicon': 'Léxicos Strong', 'editor.biblical_maps': 'Geografía y Mapas', 'editor.share_btn': 'Compartir',
+    'editor.exegesis': 'Exégesis', 'editor.write_here': 'Notas Personales:', 'editor.saved_ago': 'Guardado hace', 'editor.analyze_btn': 'Generar Análisis', 'editor.verse_placeholder': 'Ej: Juan 3:16', 'editor.resources': 'Recursos', 'editor.bible_versions': 'Versiones Bíblicas', 'editor.strong_lexicon': 'Léxicos Strong', 'editor.biblical_maps': 'Geografía y Mapas', 'editor.share_btn': 'Compartir',
     // Auth
     'auth.inspired_prep': 'Preparación Inspirada',
     'auth.email': 'Correo Electrónico',
@@ -81,10 +86,15 @@ const translations = {
     // Trust
     'trust.title': 'TRUSTED BY GLOBAL MINISTRIES',
     // Pricing
+    'pricing.title': 'Investment in your',
+    'pricing.title_gradient': 'Ministry',
+    'pricing.subtitle': 'Plans designed for every stage of your spiritual calling.',
+    'PRICING.BADGE': 'PLANS & PRICING',
     'plan.free': 'Sower', 'plan.pro': 'Mentor', 'plan.unlimited': 'Ministry',
     'plan.free_desc': '3 basic studies without lexicons',
     'plan.pro_desc': '30 studies per month',
     'plan.unlimited_desc': 'Unlimited studies',
+    'plan.free_price': '0',
     'pricing.month': '/month',
     'pricing.includes_prev': 'Everything in the previous plan',
     'pricing.includes_all': 'Everything in previous plans',
@@ -95,7 +105,7 @@ const translations = {
     'list.search_placeholder': 'Search passages...',
     'list.title': 'My Exegetical Studies', 'list.subtitle': 'Managing Divine Wisdom', 'list.total_studies': 'Total Studies', 'list.this_month': 'This Month', 'list.empty': 'No saved studies yet.', 'list.loading': 'Loading...', 'list.col_reference': 'Bible Reference', 'list.col_last_edit': 'Last Edit', 'list.col_tags': 'Tags', 'list.col_actions': 'Actions', 'list.new_study_btn': 'Create Study',
     // Editor
-    'editor.exegesis': 'Exegesis', 'editor.write_here': 'You can keep writing notes:', 'editor.saved_ago': 'Saved', 'editor.analyze_btn': 'Generate Analysis', 'editor.verse_placeholder': 'Ex: John 3:16', 'editor.resources': 'Resources', 'editor.bible_versions': 'Bible Versions', 'editor.strong_lexicon': 'Strong Lexicons', 'editor.biblical_maps': 'Biblical Maps', 'editor.share_btn': 'Share',
+    'editor.exegesis': 'Exegesis', 'editor.write_here': 'Personal Notes:', 'editor.saved_ago': 'Saved', 'editor.analyze_btn': 'Generate Analysis', 'editor.verse_placeholder': 'Ex: John 3:16', 'editor.resources': 'Resources', 'editor.bible_versions': 'Bible Versions', 'editor.strong_lexicon': 'Strong Lexicons', 'editor.biblical_maps': 'Biblical Maps', 'editor.share_btn': 'Share',
     // Auth
     'auth.inspired_prep': 'Inspired Preparation',
     'auth.email': 'Email Address',
