@@ -96,7 +96,7 @@ async def stripe_webhook(request: Request, stripe_signature: str = Header(None))
         raise HTTPException(status_code=400, detail="Invalid signature")
 
     # Manejar el evento
-    elif event["type"] == "checkout.session.completed":
+    if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
         await handle_checkout_session(session)
 
