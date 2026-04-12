@@ -131,7 +131,7 @@ const LoginPage: React.FC = () => {
             <div className="sacred-input-group">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <label className="sacred-label" htmlFor="password">{t('auth.password')}</label>
-                <Link to="/pricing" className="sacred-forgot-link">{t('auth.forgot_password')}</Link>
+                <Link to="/forgot-password" className="sacred-forgot-link">{t('auth.forgot_password')}</Link>
               </div>
               <div className="sacred-input-wrapper">
                 <span className="material-symbols-outlined sacred-input-icon">lock</span>
