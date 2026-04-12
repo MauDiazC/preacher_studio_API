@@ -96,11 +96,17 @@ async def stripe_webhook(request: Request, stripe_signature: str = Header(None))
         raise HTTPException(status_code=400, detail="Invalid signature")
 
     # Manejar el evento
-    if event["type"] == "checkout.session.completed":
+    elif event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
         await handle_checkout_session(session)
-    
+
+    elif event["type"] == "customer.subscription.updated":
+        # Upgrade o Downgrade desde el Portal de Stripe
+        subscription = event["data"]["object"]
+        await handle_subscription_updated(subscription)
+
     elif event["type"] == "invoice.paid":
+
         # Renovación mensual exitosa
         invoice = event["data"]["object"]
         await handle_invoice_paid(invoice)
