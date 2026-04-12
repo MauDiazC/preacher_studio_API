@@ -1,4 +1,5 @@
 import api from '../../../services/api';
+import { taskService } from '../../../services/taskService';
 
 export interface Sermon {
   id: string;
@@ -50,7 +51,7 @@ export const sermonService = {
     await api.delete(`/sermons/${id}`);
   },
   generateAnalysis: async (passage: string) => {
-    const response = await api.post<any>('/sermons/exegesis', { verse_reference: passage });
-    return response.data;
+    const response = await api.post<{ task_id: string }>('/sermons/exegesis', { verse_reference: passage });
+    return taskService.pollTask<any>(response.data.task_id);
   },
 };

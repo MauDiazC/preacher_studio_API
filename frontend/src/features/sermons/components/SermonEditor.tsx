@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { sermonService } from '../services/sermonService';
+import { exportService } from '../services/exportService';
 import type { Sermon } from '../services/sermonService';
 import { useNotificationStore } from '../../../store/useNotificationStore';
 import { useAuthStore } from '../../../store/authStore';
@@ -115,17 +116,16 @@ const SermonEditor: React.FC = () => {
       return;
     }
     try {
-      addNotification('Preparando descarga...', 'info');
-      const response = await api.get(`/export/${id}/${format}`, { responseType: 'blob' });
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `estudio_${id}.${format}`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      addNotification('Iniciando exportación asíncrona...', 'info');
+      if (format === 'pdf') {
+        await exportService.exportToPDF(id!);
+      } else {
+        await exportService.exportToKeynote(id!);
+      }
+      addNotification('Exportación completada.', 'success');
     } catch (error) {
-      addNotification('Error al descargar.', 'error');
+      console.error("Download error:", error);
+      addNotification('Error al exportar.', 'error');
     }
   };
 

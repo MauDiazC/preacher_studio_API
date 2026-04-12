@@ -3,7 +3,7 @@ import sys
 from fastapi import FastAPI, Request, APIRouter
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.endpoints import sermons, system, websocket_endpoints, export, profile, auth, stripe
+from app.api.endpoints import sermons, system, websocket_endpoints, export, profile, auth, stripe, tasks
 from app.core.exceptions import AppBaseException
 from config.config import settings
 from fastapi_cache import FastAPICache
@@ -57,6 +57,7 @@ api_v1_router.include_router(system.router)
 api_v1_router.include_router(export.router)
 api_v1_router.include_router(profile.router)
 api_v1_router.include_router(stripe.router)
+api_v1_router.include_router(tasks.router)
 
 app.include_router(api_v1_router)
 app.include_router(websocket_endpoints.router)

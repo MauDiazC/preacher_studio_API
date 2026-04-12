@@ -1,29 +1,33 @@
 import api from '../../../services/api';
+import { taskService } from '../../../services/taskService';
+
+interface ExportResult {
+  download_url: string;
+}
 
 export const exportService = {
   exportToPDF: async (sermonId: string) => {
-    const response = await api.get(`/export/${sermonId}/pdf`, {
-      responseType: 'blob',
-    });
-    const url = window.URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', `sermon-${sermonId}.pdf`);
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
+    // Paso 1: Enviar tarea
+    const initResponse = await api.get<{ task_id: string }>(`/export/${sermonId}/pdf`);
+    
+    // Paso 2: Polling
+    const result = await taskService.pollTask<ExportResult>(initResponse.data.task_id);
+    
+    // Paso 3: Descargar
+    if (result.download_url) {
+      window.open(result.download_url, '_blank');
+    }
   },
   exportToKeynote: async (sermonId: string) => {
-    // Exportamos a PPTX ya que Keynote lo abre y convierte nativamente
-    const response = await api.get(`/export/${sermonId}/pptx`, {
-      responseType: 'blob',
-    });
-    const url = window.URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', `sermon-${sermonId}.pptx`);
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
+    // Paso 1: Enviar tarea (a PPTX)
+    const initResponse = await api.get<{ task_id: string }>(`/export/${sermonId}/pptx`);
+    
+    // Paso 2: Polling
+    const result = await taskService.pollTask<ExportResult>(initResponse.data.task_id);
+    
+    // Paso 3: Descargar
+    if (result.download_url) {
+      window.open(result.download_url, '_blank');
+    }
   },
 };

@@ -1,4 +1,5 @@
 import api from '../../../services/api';
+import { taskService } from '../../../services/taskService';
 
 export interface AISuggestion {
   suggested_outline: string[];
@@ -20,16 +21,22 @@ export interface VerseExegesis {
 }
 
 export const aiService = {
-  getMentorship: async (sermonId: string) => {
-    const response = await api.post<AISuggestion>(`/sermons/${sermonId}/ai-assist`);
-    return response.data;
+  getMentorship: async (sermonId: string): Promise<AISuggestion> => {
+    // Paso 1: Enviar tarea
+    const initResponse = await api.post<{ task_id: string }>(`/sermons/${sermonId}/ai-assist`);
+    
+    // Paso 2: Polling
+    return taskService.pollTask<AISuggestion>(initResponse.data.task_id);
   },
 
-  analyzeVerse: async (verseReference: string, language: string = 'es') => {
-    const response = await api.post<VerseExegesis>(`/sermons/exegesis`, {
+  analyzeVerse: async (verseReference: string, language: string = 'es'): Promise<VerseExegesis> => {
+    // Paso 1: Enviar tarea
+    const initResponse = await api.post<{ task_id: string }>(`/sermons/exegesis`, {
       verse_reference: verseReference,
       language: language
     });
-    return response.data;
+    
+    // Paso 2: Polling
+    return taskService.pollTask<VerseExegesis>(initResponse.data.task_id);
   }
 };

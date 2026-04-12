@@ -10,33 +10,33 @@ Plataforma especializada de mentoría homilética diseñada para ayudar a guías
 - **Tono Ministerial:** Se utiliza: *Asistencia Homilética Digital*, *Mentoría Teológica*, *Estudio del Texto Original*. Se prefiere "Guía Espiritual" sobre "Pastor".
 - **Calibre Académico:** El análisis incluye información de léxicos profesionales (Strong, Thayer, BDB) y fuentes académicas clásicas.
 
-## Estado Actual (v1.5 - Infrastructure & Auth ✅)
+## Estado Actual (v1.6 - Full Subscription Flow & Profile ✅)
 
-Se ha finalizado la integración de pagos y la autenticación real, blindando la experiencia de usuario y la persistencia de datos.
+Se ha completado la integración total del ciclo de vida del usuario, desde el registro inteligente hasta la gestión de suscripciones y exportaciones profesionales.
 
 - **Identidad Visual "Sacred Observatory" (BLINDADO):** 
-    - UI blindada en Landing, Pricing, Login, Registro, Lista de Estudios y Editor.
-    - Sistema de traducciones (i18n) robusto e insensible a mayúsculas/minúsculas.
-    - Sidebar y Header con formato académico fijo y responsivo.
-- **Autenticación Real (Google OAuth & Email):**
-    - Implementación nativa con Supabase SDK en el frontend.
-    - Cierre de sesión asíncrono con limpieza profunda de tokens.
-    - Redirección inteligente en `App.tsx` que evita rebotes al landing.
-    - Trigger en base de datos para creación automática de perfiles.
-- **Pagos y Créditos:**
-    - Webhook de Stripe implementado para `checkout.session.completed`.
-    - Lógica de actualización automática de créditos y planes en Supabase.
-- **Exportación PPTX (BLINDADO):**
-    - Generación de diapositivas con estética "Sacred" (Fondo oscuro, acentos oro/púrpura, pie de página institucional y slide de cierre "Soli Deo Gloria").
+    - UI blindada en Landing, Pricing, Login, Registro, Lista de Estudios, Editor y Settings.
+    - **Sidebar Unificado (BLINDADO):** Componente común en todas las vistas que muestra dinámicamente el plan actual (Sembrador, Mentor, Ministerio).
+- **Autenticación & Redirección (BLINDADO):**
+    - Flujo de Google OAuth estabilizado con selector de cuenta forzado y bypass de hidratación en `App.tsx`.
+    - Redirección post-auth inteligente: lleva al usuario a su intención original (Dashboard o Checkout de plan elegido).
+- **Gestión de Pagos & Planes (BLINDADO):**
+    - Integración real con Stripe: Sesiones de Checkout y Webhooks para altas, renovaciones, fallos y cancelaciones.
+    - **Portal de Cliente:** Acceso directo desde Ajustes para gestionar métodos de pago y planes en Stripe.
+    - **Feature Gating:** Restricción automática de recursos premium (Léxicos) y exportaciones según el nivel del plan.
+- **Perfil Ministerial (BLINDADO):**
+    - Formulario de ajustes funcional con persistencia en DB para: nombre, ministerio, rol, país, bio y estilo de mentoría.
+- **Exportación PPTX/PDF (BLINDADO):**
+    - Generación y descarga real de archivos mediante lógica de Blob, con estética institucional "Sacred".
 
 ## Próximos Pasos
 - [ ] **Optimización de IA:** Refinar los prompts para asegurar que los análisis mantengan siempre el rigor académico solicitado.
 - [ ] **Módulo de Notificaciones:** Implementar notificaciones push o emails tras la generación exitosa de un estudio largo.
 - [ ] **Dashboard de Administrador:** Crear la vista para gestionar usuarios y monitorear créditos globales.
 
-## Punto de Restauración (v1.5 - 10/04/2026)
-- **Estado:** Infraestructura de pagos lista, Auth real funcionando, UI/UX blindada y profesional.
-- **Commit de Referencia:** `f84c69fd` (Fix silent 401 handling and async logout).
+## Punto de Restauración (v1.6 - 10/04/2026)
+- **Estado:** MVP funcional completo. Pagos, Auth, Perfiles y Exportaciones blindadas.
+- **Commit de Referencia:** `8d85412c` (fix: remove unused lastSavedLabel state in SermonEditor).
 
 ## Infraestructura y CI/CD
 - **Hosting:** Railway (Backend/Frontend) y Supabase (DB/Auth).

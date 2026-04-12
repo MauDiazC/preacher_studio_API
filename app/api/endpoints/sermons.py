@@ -14,6 +14,7 @@ from app.core.security import get_current_user
 from app.core.db import get_db
 from app.services.ai_service import ai_service
 from app.repository.sermon_repository import sermon_repo
+from app.worker.tasks import get_ai_suggestions_task, analyze_verse_exegesis_task
 from app.core.exceptions import EntityNotFoundException, AIServiceUnavailableException, AppBaseException
 from slowapi import Limiter
 from slowapi.util import get_remote_address
@@ -150,29 +151,26 @@ async def auto_save_sermon(
 
 @router.post(
     "/{sermon_id}/ai-assist",
-    response_model=AISuggestionResponse,
-    summary="Obtener mentoría de IA",
+    summary="Obtener mentoría de IA (Asíncrono)",
 )
 @limiter.limit("5/minute")
 async def get_ai_assistance(
     request: Request,
     sermon_id: str,
-    background_tasks: BackgroundTasks,
     db=Depends(get_db),
     user=Depends(get_current_user),
 ):
     """
-    Utiliza el motor de IA para generar un bosquejo sugerido y encontrar versículos basados en el título y notas actuales.
+    Encola una tarea de IA para generar un bosquejo sugerido y encontrar versículos.
+    Retorna un task_id para polling.
     """
     user_id = str(user.id)
-    # 1. Usar el repositorio para buscar el sermón
     res = sermon_repo.get_by_id(db, sermon_id, user_id)
     if not res.data:
         raise EntityNotFoundException(message="Sermón no encontrado para asistencia.")
 
     sermon_data = res.data
 
-    # 2. Obtener preferencia del pastor
     profile_res = (
         db.table("profiles")
         .select("mentorship_style")
@@ -186,21 +184,15 @@ async def get_ai_assistance(
         else "encouraging"
     )
 
-    # 3. Llamar al servicio de Gemini
-    try:
-        suggestion = await ai_service.get_suggestions(
-            title=sermon_data["title"], content=sermon_data["content"], style=style
-        )
-    except Exception as e:
-        raise AIServiceUnavailableException(details=str(e))
-
-    suggestion_str = str(suggestion.model_dump())
-    # 4. Guardar log de IA en segundo plano
-    background_tasks.add_task(
-        sermon_repo.save_history_snapshot, db, sermon_id, suggestion_str, "AI_LOG"
+    # Encolar en Celery
+    task = get_ai_suggestions_task.delay(
+        sermon_id=sermon_id,
+        title=sermon_data["title"], 
+        content=sermon_data["content"], 
+        style=style
     )
 
-    return suggestion
+    return {"task_id": task.id, "status": "PENDING"}
 
 
 @router.post("/{sermon_id}/snapshot", summary="Crear punto de restauración (Snapshot)")
@@ -268,8 +260,7 @@ logger = logging.getLogger("app.api.sermons")
 
 @router.post(
     "/exegesis",
-    response_model=VerseExegesisResponse,
-    summary="Analizar exegéticamente un versículo",
+    summary="Analizar exegéticamente un versículo (Asíncrono)",
 )
 @limiter.limit("10/minute")
 async def analyze_verse(
@@ -278,26 +269,16 @@ async def analyze_verse(
     user=Depends(get_current_user),
 ):
     """
-    Recibe la referencia de un versículo o pasaje y devuelve un análisis exegético
-    estructurado. Valida créditos del usuario antes de proceder.
+    Encola una tarea de análisis exegético. Retorna un task_id para polling.
     """
     user_id = str(user.id)
     user_email = str(user.email)
-    # 1. Validar si tiene créditos o es admin
     await subscription_service.check_usage_limit(user_id, "EXEGESIS", email=user_email)
 
-    try:
-        # 2. Llamar a la IA
-        exegesis = await ai_service.analyze_verse(payload.verse_reference, language=payload.language or "es")
-        
-        # 3. Registrar uso y descontar crédito (si no es admin)
-        await subscription_service.record_usage(
-            user_id=user_id, 
-            action_type="EXEGESIS", 
-            details=payload.verse_reference
-        )
-        
-        return exegesis
-    except Exception as e:
-        logger.error(f"❌ Error crítico en analyze_verse: {str(e)}", exc_info=True)
-        raise AIServiceUnavailableException(details=str(e))
+    # Encolar en Celery
+    task = analyze_verse_exegesis_task.delay(
+        verse_reference=payload.verse_reference, 
+        language=payload.language or "es"
+    )
+
+    return {"task_id": task.id, "status": "PENDING"}
