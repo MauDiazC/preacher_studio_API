@@ -90,14 +90,15 @@ const SermonEditor: React.FC = () => {
 
       setSermon(updatedSermon);
 
-      // AUTO-GUARDADO DINÁMICO
+      // AUTO-GUARDADO DINÁMICO REFORZADO
       if (id && id !== 'new') {
         await sermonService.update(id, updatedSermon);
         addNotification('Análisis generado y guardado.', 'success');
       } else {
         const created = await sermonService.create(updatedSermon);
-        addNotification('Estudio creado con éxito.', 'success');
-        navigate(`/sermons/${created.id}`, { replace: true });
+        addNotification('Análisis generado y estudio creado.', 'success');
+        // Usamos un pequeño delay para asegurar el estado
+        setTimeout(() => navigate(`/sermons/${created.id}`, { replace: true }), 100);
       }
       
       loadProfile(); 
@@ -200,7 +201,7 @@ const SermonEditor: React.FC = () => {
                       {sermon.key_locations.map((loc, index) => (
                         <a 
                           key={index} 
-                          href={`https://www.openbible.info/geo/atlas/search?q=${encodeURIComponent(loc)}`} 
+                          href={`https://www.biblemap.org/?q=${encodeURIComponent(loc)}`} 
                           target="_blank" 
                           rel="noreferrer" 
                           className="map-link-item"
