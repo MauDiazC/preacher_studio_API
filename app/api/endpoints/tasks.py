@@ -15,8 +15,7 @@ class TaskStatusResponse(BaseModel):
 
 @router.get("/{task_id}", response_model=TaskStatusResponse)
 async def get_task_status(
-    task_id: str,
-    user=Depends(get_current_user)
+    task_id: str
 ):
     """
     Consulta el estado y resultado de una tarea de Celery.
