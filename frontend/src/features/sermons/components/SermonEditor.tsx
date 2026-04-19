@@ -78,13 +78,24 @@ const SermonEditor: React.FC = () => {
     setLoading(true);
     try {
       const res = await sermonService.generateAnalysis(sermon.main_passage || '');
-      setSermon(prev => ({
-        ...prev,
+      
+      const updatedSermon = {
+        ...sermon,
         title: `${t('editor.exegesis')} - ${sermon.main_passage}`,
         content: `VERSIÓN RVR1960:\n${res.version_rv1960}\n\nVERSIÓN NVI:\n${res.version_nvi}\n\n1. TIPO LITERARIO:\n${res.literary_type}\n\n2. AUTORÍA:\n${res.author}\n\n3. PROPÓSITO ORIGINAL:\n${res.purpose}\n\n4. CONTEXTO HISTÓRICO:\n${res.historical_context}\n\n5. CONTEXTO DE SIGNIFICANCIA:\n${res.significance_context}\n\n6. IDIOMAS ORIGINALES:\n${res.original_languages}\n\n7. ATRIBUCIÓN:\n${res.source_attribution}`,
         key_locations: res.key_locations
-      }));
-      addNotification('Análisis generado.', 'success');
+      };
+
+      setSermon(updatedSermon);
+
+      // AUTO-GUARDADO: Si ya existe el ID, actualizamos inmediatamente en la DB
+      if (id && id !== 'new') {
+        await sermonService.update(id, updatedSermon);
+        addNotification('Análisis generado y guardado.', 'success');
+      } else {
+        addNotification('Análisis generado. Recuerda guardar tu nuevo estudio.', 'success');
+      }
+      
       loadProfile(); 
     } catch (error) {
       addNotification('Error al generar.', 'error');
