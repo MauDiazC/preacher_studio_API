@@ -17,15 +17,14 @@ class AISermonService:
         self.client = OpenAI(api_key=openai_key)
         self.model_id = "gpt-4o-mini"
         
-        # Gemini 1.5 Flash (Nuevo SDK google-genai)
+        # Gemini 2.5 Flash
         self.gemini_api_key = settings.get("GEMINI_API_KEY")
         self.gemini_client = None
         
         if self.gemini_api_key:
-            # Usamos el cliente con configuración por defecto
             self.gemini_client = genai.Client(api_key=self.gemini_api_key)
         
-        self.gemini_model = "gemini-1.5-flash"
+        self.gemini_model = "gemini-2.5-flash"
         self.system_instruction = "Eres un mentor homilético experto. Ayudas a pastores a estructurar sermones bíblicos profundos y prácticos."
         self._exegesis_cache = {}
 

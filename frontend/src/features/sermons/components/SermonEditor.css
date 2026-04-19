@@ -299,8 +299,23 @@
   gap: 0.5rem;
   color: #b0c6ff;
   font-size: 0.8125rem;
-  text-decoration: underline;
-  margin-bottom: 0.5rem;
+  text-decoration: none;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem;
+  background: rgba(176, 198, 255, 0.03);
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+}
+
+.map-link-item:hover {
+  background: rgba(176, 198, 255, 0.1);
+  transform: translateX(3px);
+}
+
+.maps-container-sacred {
+  margin-top: 1.5rem;
+  border-top: 1px solid rgba(176, 198, 255, 0.1);
+  padding-top: 1.5rem;
 }
 
 .export-section-sacred {

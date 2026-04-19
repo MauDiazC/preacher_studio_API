@@ -177,6 +177,24 @@ const SermonEditor: React.FC = () => {
                 <>
                   <a href={`https://www.biblegateway.com/passage/?search=${encodeURIComponent(sermon.main_passage || '')}&version=${language === 'es' ? 'RVR1960' : 'NIV'}`} target="_blank" rel="noreferrer" className="tool-btn-sacred-link"><span className="material-symbols-outlined">auto_stories</span><span>{t('editor.bible_versions')}</span></a>
                   <a href={`https://www.blueletterbible.org/search/preSearch.cfm?Criteria=${(sermon.main_passage || '').replace(/\s+/g, '+')}&t=KJV`} target="_blank" rel="noreferrer" className="tool-btn-sacred-link"><span className="material-symbols-outlined">menu_book</span><span>{t('editor.strong_lexicon')}</span></a>
+                  
+                  {sermon.key_locations && sermon.key_locations.length > 0 && (
+                    <div className="maps-container-sacred">
+                      <p className="resource-sublabel">{t('editor.biblical_maps')}</p>
+                      {sermon.key_locations.map((loc, index) => (
+                        <a 
+                          key={index} 
+                          href={`https://www.google.com/maps/search/${encodeURIComponent(loc + ' biblical location')}`} 
+                          target="_blank" 
+                          rel="noreferrer" 
+                          className="map-link-item"
+                        >
+                          <span className="material-symbols-outlined" style={{fontSize: '1rem'}}>map</span>
+                          {loc}
+                        </a>
+                      ))}
+                    </div>
+                  )}
                 </>
               ) : (
                 <div className="premium-lock-box" onClick={() => navigate('/pricing')}>
