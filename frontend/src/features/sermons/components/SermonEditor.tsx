@@ -28,7 +28,7 @@ const SermonEditor: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    if (!id) {
+    if (!id || id === 'new') {
       setSermon(initialState);
     } else {
       loadSermon(id);
@@ -79,25 +79,30 @@ const SermonEditor: React.FC = () => {
     try {
       const res = await sermonService.generateAnalysis(sermon.main_passage || '');
       
-      const updatedSermon = {
+      const analysisContent = `VERSIÓN RVR1960:\n${res.version_rv1960}\n\nVERSIÓN NVI:\n${res.version_nvi}\n\n1. TIPO LITERARIO:\n${res.literary_type}\n\n2. AUTORÍA:\n${res.author}\n\n3. PROPÓSITO ORIGINAL:\n${res.purpose}\n\n4. CONTEXTO HISTÓRICO:\n${res.historical_context}\n\n5. CONTEXTO DE SIGNIFICANCIA:\n${res.significance_context}\n\n6. IDIOMAS ORIGINALES:\n${res.original_languages}\n\n7. ATRIBUCIÓN:\n${res.source_attribution}`;
+      
+      const updatedSermon: Partial<Sermon> = {
         ...sermon,
         title: `${t('editor.exegesis')} - ${sermon.main_passage}`,
-        content: `VERSIÓN RVR1960:\n${res.version_rv1960}\n\nVERSIÓN NVI:\n${res.version_nvi}\n\n1. TIPO LITERARIO:\n${res.literary_type}\n\n2. AUTORÍA:\n${res.author}\n\n3. PROPÓSITO ORIGINAL:\n${res.purpose}\n\n4. CONTEXTO HISTÓRICO:\n${res.historical_context}\n\n5. CONTEXTO DE SIGNIFICANCIA:\n${res.significance_context}\n\n6. IDIOMAS ORIGINALES:\n${res.original_languages}\n\n7. ATRIBUCIÓN:\n${res.source_attribution}`,
+        content: analysisContent,
         key_locations: res.key_locations
       };
 
       setSermon(updatedSermon);
 
-      // AUTO-GUARDADO: Si ya existe el ID, actualizamos inmediatamente en la DB
+      // AUTO-GUARDADO DINÁMICO
       if (id && id !== 'new') {
         await sermonService.update(id, updatedSermon);
         addNotification('Análisis generado y guardado.', 'success');
       } else {
-        addNotification('Análisis generado. Recuerda guardar tu nuevo estudio.', 'success');
+        const created = await sermonService.create(updatedSermon);
+        addNotification('Estudio creado con éxito.', 'success');
+        navigate(`/sermons/${created.id}`, { replace: true });
       }
       
       loadProfile(); 
     } catch (error) {
+      console.error("Error en análisis:", error);
       addNotification('Error al generar.', 'error');
     } finally {
       setLoading(false);
@@ -107,7 +112,7 @@ const SermonEditor: React.FC = () => {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      if (id) {
+      if (id && id !== 'new') {
         await sermonService.update(id, sermon);
         addNotification('Actualizado.', 'success');
       } else {
@@ -153,12 +158,12 @@ const SermonEditor: React.FC = () => {
           <div className="header-column-left-aligned">
             <div className="verse-input-wrapper-aligned">
               <span className="material-symbols-outlined verse-icon">auto_awesome</span>
-              <input type="text" className="verse-input-sacred" placeholder={hasNoCredits ? 'SIN CRÉDITOS' : t('editor.verse_placeholder')} value={sermon.main_passage} disabled={loading || !!id || hasNoCredits} onChange={(e) => setSermon({...sermon, main_passage: e.target.value})} />
+              <input type="text" className="verse-input-sacred" placeholder={hasNoCredits ? 'SIN CRÉDITOS' : t('editor.verse_placeholder')} value={sermon.main_passage} disabled={loading || (!!id && id !== 'new') || hasNoCredits} onChange={(e) => setSermon({...sermon, main_passage: e.target.value})} />
             </div>
           </div>
           <div className="header-column-center">
             <div className="header-button-group">
-              <button className="btn-generate-sacred" onClick={handleGenerateAnalysis} disabled={loading || !!id || hasNoCredits}>{loading ? '...' : t('editor.analyze_btn')}</button>
+              <button className="btn-generate-sacred" onClick={handleGenerateAnalysis} disabled={loading || (!!id && id !== 'new') || hasNoCredits}>{loading ? '...' : t('editor.analyze_btn')}</button>
               <button className="btn-save-top-sacred" onClick={handleSave} disabled={isSaving}><span className="material-symbols-outlined">save</span>{isSaving ? '...' : language === 'es' ? 'Guardar' : 'Save'}</button>
             </div>
           </div>
@@ -195,7 +200,7 @@ const SermonEditor: React.FC = () => {
                       {sermon.key_locations.map((loc, index) => (
                         <a 
                           key={index} 
-                          href={`https://www.bible-history.com/maps/search.php?q=${encodeURIComponent(loc)}`} 
+                          href={`https://bibleatlas.org/search.php?q=${encodeURIComponent(loc)}`} 
                           target="_blank" 
                           rel="noreferrer" 
                           className="map-link-item"
