@@ -200,7 +200,7 @@ const SermonEditor: React.FC = () => {
                       {sermon.key_locations.map((loc, index) => (
                         <a 
                           key={index} 
-                          href={`https://bibleatlas.org/search.php?q=${encodeURIComponent(loc)}`} 
+                          href={`https://www.openbible.info/geo/atlas/search?q=${encodeURIComponent(loc)}`} 
                           target="_blank" 
                           rel="noreferrer" 
                           className="map-link-item"
